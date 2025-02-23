@@ -4,13 +4,16 @@
     box-sizing: border-box;
 }
 body{
+    height: 90svh;
     background-color: #f8f9fa;
 
 }
 .register-container{
+    height: 90svh;
     padding: 2rem;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 form{
