@@ -26,6 +26,11 @@ form{
     border-bottom: 2px solid #133e87 ;
 }
 
+form span{
+    margin-top: 2px;
+    color: #FF0000;
+}
+
 .rowName{
     display: flex;
 }
@@ -50,7 +55,13 @@ label{
 
 
 input[type="text"], input[type="password"]{
+    border: none;
+    border-bottom: 1px solid #000;
     padding: 0.5em;
+}
+
+input:focus{
+    outline: none;
 }
 
 .rowUsername, .rowPassword, .rowConfirmPassword{
