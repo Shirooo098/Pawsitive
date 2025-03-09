@@ -1,16 +1,19 @@
-import RegisterPage from "./pages/RegisterPage";
-import HomePage from "./pages/HomePage";
-import Navbar from "./components/Navbar"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import AppRoute from "./router";
+import { BrowserRouter} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import { fetchBackendData } from "./services/api";
 
 function App(){
+
+  const [backendData, setBackendData] = useState([{}])
+
+  useEffect(() => {
+    fetchBackendData().then(setBackendData)
+  }, [])
+
     return (
     <BrowserRouter>
-      <Navbar/>
-      <Routes>
-        <Route index element={<HomePage/>}/>
-        <Route path="/RegisterPage" element={<RegisterPage/>}/>
-      </Routes>
+      <AppRoute/>
     </BrowserRouter>
     )
 }
