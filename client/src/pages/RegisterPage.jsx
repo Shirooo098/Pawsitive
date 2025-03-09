@@ -13,10 +13,29 @@ function RegisterPage(){
 
     const [errors, setErrors] = useState({});
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const validationError = validateForm(formData)
         setErrors(validationError);
+
+        if (Object.keys(validationError).length > 0) {
+            return; 
+        }
+        try {
+
+            const { confirmPassword, ...filteredFormData } = formData;
+            console.log("Sending data:", filteredFormData);
+
+            const response = fetch("http://localhost:3000/register", {
+                method: "POST",
+                headers: { "Content-Type" : "application/json"},
+                body: JSON.stringify(filteredFormData)
+            })
+            console.log(response);
+
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 
     const handleChange = (e) => {

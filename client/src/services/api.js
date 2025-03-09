@@ -1,6 +1,6 @@
 export const fetchBackendData = async () => {
     try{
-        const response = await fetch('/api');
+        const response = await fetch('/');
         if(!response.ok) 
             throw new error("Failed Fetching Data");
         return await response.json();
