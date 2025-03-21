@@ -30,18 +30,24 @@ app.post("/register", async(req, res) => {
     try {
 
         console.log("Received in backend:", req.body);
-        const { firstName, lastName, username, password } = req.body;
+        const { firstName, lastName, email, password } = req.body;
 
-        const newUser = await db.query(
-            "INSERT INTO users (firstname, lastname, username, password) VALUES($1, $2, $3, $4)",
-            [firstName, lastName, username, password]
-        );
+        const checkUser = await db.query("SELECT * FROM users WHERE email = $1", [
+            email
+        ])
 
-        res.json(newUser.rows[0]);
+        if(checkUser.rows.length > 0 ){
+            res.json({ message: "Email already exists. Try logging in."})
+        }else {     
+            const newUser = await db.query(
+                "INSERT INTO users (firstname, lastname, email, password) VALUES($1, $2, $3, $4)",
+                [firstName, lastName, email, password]
+            );
+            res.json(newUser.rows[0]);
+        }
     } catch (err) {
         console.error(err.message);
     }
-
 })
 
 app.listen(port, () => {

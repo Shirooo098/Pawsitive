@@ -1,12 +1,13 @@
 import './Register.css';
 import {useState} from 'react';
+import { registerValidation } from '../services/api';
 
 function RegisterPage(){
 
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
-        username: "",
+        email: "",
         password: "",
         confirmPassword: ""
     });
@@ -21,22 +22,19 @@ function RegisterPage(){
         if (Object.keys(validationError).length > 0) {
             return; 
         }
+
         try {
+            const res = await registerValidation(formData);
 
-            const { confirmPassword, ...filteredFormData } = formData;
-            console.log("Sending data:", filteredFormData);
-
-            const response = fetch("http://localhost:3000/register", {
-                method: "POST",
-                headers: { "Content-Type" : "application/json"},
-                body: JSON.stringify(filteredFormData)
-            })
-            console.log(response);
-
+            if(res.error){
+                setErrors({ server: res.error });
+            }
         } catch (error) {
-            console.error(error.message);
+            setErrors({ server: "Unexpected error occured." })
         }
     }
+        
+    
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -54,8 +52,8 @@ function RegisterPage(){
         if(!data.lastName){
             errors.lastName = 'Last name is required!'
         }
-        if(!data.username){
-            errors.username = 'Username is required!'
+        if(!data.email){
+            errors.email = 'email is required!'
         }
         if(!data.password){
             errors.password = 'Password is required!'
@@ -98,14 +96,14 @@ function RegisterPage(){
                 </div>
             </div>
 
-            <div className="rowUsername">
-                <label htmlFor="username">Username</label>
-                <input type="text"
-                    name="username"
+            <div className="rowEmail">
+                <label htmlFor="email">Email</label>
+                <input type="email"
+                    name="email"
                     onChange={handleChange}
-                    value={formData.username}
+                    value={formData.email}
                 />
-                {errors.username && <span>{errors.username}</span>}
+                {errors.email && <span>{errors.email}</span>}
             </div>
 
             <div className="rowPassword">
