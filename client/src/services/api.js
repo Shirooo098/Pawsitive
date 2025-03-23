@@ -15,8 +15,6 @@ export const registerValidation = async (formData) => {
             headers: { "Content-Type": "application/json" }
         })
 
-
-
         // if(!response.ok){
         //     throw new Error(data.message || "Failed to register");
         // }
@@ -26,7 +24,7 @@ export const registerValidation = async (formData) => {
 
     } catch (error) {
         console.error("Error:", error.response?.data?.message || error.message);
-        return { error: error.response?.data?.message || "Unexpected error occurred."}
+        return { error: error.response?.data?.message}
     }
 }
 
@@ -36,12 +34,12 @@ export const loginValidation = async (loginData) => {
 
         const response = await axios.post("http://localhost:3000/login", loginData,{
             headers: { "Content-Type" : "application/json" }
-        })
+        });
 
         console.log(response.data);
         return response.data;
     } catch (error) {
-        console.error("Error:", error.response?.data?.message || error.message);
-        return { error: error.response?.data?.message || "Unexpected error occurred."}
+        console.error("Error:", error.response.data.message || error.message);
+        return { error: error.response.data.error || "Unexpected error occurred."}
     }
 }

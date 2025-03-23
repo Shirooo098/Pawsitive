@@ -24,7 +24,6 @@ function LoginPage(){
                 setErrors({ server: res.error });
             }
         } catch (error) {
-            setErrors({ server: "Unexpected error occured." })
         }
     }
 
@@ -64,6 +63,8 @@ function LoginPage(){
                         </div>
 
 
+                        <span>{errors.server || errors.email || errors.password}</span>
+
                         <div className="rowEmail">
                             <label htmlFor="email">Email</label>
                             <input type="email"
@@ -71,7 +72,7 @@ function LoginPage(){
                                 onChange={handleChange}
                                 value={loginData.email}
                             />
-                            {errors.email && <span>{errors.email}</span>}
+                           
                         </div>
 
                         <div className="rowPassword">
@@ -81,7 +82,7 @@ function LoginPage(){
                                 onChange={handleChange}
                                 value={loginData.password}
                             />
-                            {errors.password && <span>{errors.password}</span>}
+                           
                         </div>
 
                         <div className="login-container">

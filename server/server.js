@@ -59,12 +59,12 @@ app.post("/login", async(req, res) => {
         ]);
 
         if(result.rows.length > 0){
+            console.log(result.rows);
             const user = result.rows[0];
             const storedPassword = user.password;
 
-            console.log("User Credentials:", user.email, user.password)
-
             if(password !== storedPassword){
+                console.log("Incorrect Email or Password");
                 return res.status(401).json({ error: "Incorrect email or password "});
             }
 
@@ -77,10 +77,12 @@ app.post("/login", async(req, res) => {
                         email: user.email
                     }
                 });
+        }else{
+            return res.status(401).json({ error : "Email not found"});
         }
     } catch (error) {
         console.error("Login error:", error);
-
+        return res.status(401).json({ error: "Unexpected error occurred"})
     }
 });
 
