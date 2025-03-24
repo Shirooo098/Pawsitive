@@ -3,9 +3,12 @@ import pg from 'pg';
 import 'dotenv/config';
 import cors from 'cors';
 import bodyParser from "body-parser";
+import bcrypt from "bcrypt";
 
 const app = express();
 const port = 3000;
+const saltRounds = 10;
+
 const db_user = process.env.POSTGRE_DB_USER;
 const db_host = process.env.POSTGRE_HOST;
 const db_name = process.env.POSTGRE_DB_NAME;
@@ -39,11 +42,7 @@ app.post("/register", async(req, res) => {
         if(checkUser.rows.length > 0 ){
             res.json({ message: "Email already exists. Try logging in."})
         }else {     
-            const newUser = await db.query(
-                "INSERT INTO users (firstname, lastname, email, password) VALUES($1, $2, $3, $4)",
-                [firstName, lastName, email, password]
-            );
-            res.json(newUser.rows[0]);
+            passwordHashing(res, firstName, lastName, email, password, saltRounds)
         }
     } catch (err) {
         console.error(err.message);
@@ -61,24 +60,11 @@ app.post("/login", async(req, res) => {
         if(result.rows.length > 0){
             console.log(result.rows);
             const user = result.rows[0];
-            const storedPassword = user.password;
+            const storedHashedPassword = user.password;
 
-            if(password !== storedPassword){
-                console.log("Incorrect Email or Password");
-                return res.status(401).json({ error: "Incorrect email or password "});
-            }
-
-            console.log("Login Success, Email: ", user.email)
-
-            res.json({ message: "Login Successful", 
-                user:
-                    {
-                        id: user.id,
-                        email: user.email
-                    }
-                });
+            decryptHashedPassword(password, storedHashedPassword, user, res);
         }else{
-            return res.status(401).json({ error : "Email not found"});
+            return res.status(401).json({ error : "User not found"});
         }
     } catch (error) {
         console.error("Login error:", error);
@@ -88,4 +74,38 @@ app.post("/login", async(req, res) => {
 
 app.listen(port, () => {
     console.log(`Server is running at Port ${port}`);
-})
+});
+
+const passwordHashing = (res, firstName, lastName, email, password, saltRounds) => {
+    bcrypt.hash(password, saltRounds, async (err, hash) => {
+        if(err){
+            console.error("Error Hashing password:", err);
+        }else{
+            console.log("Hashed Password:", hash);
+            const newUser = await db.query(
+                "INSERT INTO users (firstname, lastname, email, password) VALUES($1, $2, $3, $4)",
+                [firstName, lastName, email, hash]
+            );
+            res.json(newUser.rows[0]);
+        }
+    });
+}
+
+const decryptHashedPassword = (password, storedHashedPassword, user, res) => {
+    bcrypt.compare(password, storedHashedPassword, (err, result) => {
+        if(err){
+            console.error("Error comparing passwords:", err);
+        }else{
+            if(result){
+                console.log("Login Success, Email: ", user.email)
+                res.json({ message: "Login Successful", 
+                    user:
+                        {
+                            id: user.id,
+                            email: user.email
+                        }
+                    });
+            }
+        }
+    });
+}

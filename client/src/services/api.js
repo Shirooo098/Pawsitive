@@ -5,19 +5,9 @@ export const registerValidation = async (formData) => {
         const { confirmPassword, ...filteredFormData } = formData;
         console.log("Sending data:", filteredFormData);
 
-        // const response = await fetch("http://localhost:3000/register", {
-        //     method: "POST",
-        //     headers: { "Content-Type" : "application/json"},
-        //     body: JSON.stringify(filteredFormData)
-        // })
-
         const response = await axios.post("http://localhost:3000/register", filteredFormData, {
             headers: { "Content-Type": "application/json" }
-        })
-
-        // if(!response.ok){
-        //     throw new Error(data.message || "Failed to register");
-        // }
+        });
 
         console.log(response.data);
         return response.data;
