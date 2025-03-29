@@ -4,6 +4,8 @@ import 'dotenv/config';
 import cors from 'cors';
 import bodyParser from "body-parser";
 import bcrypt from "bcrypt";
+import session from "express-session";
+import passport from "passport";
 
 const app = express();
 const port = 3000;
@@ -14,10 +16,18 @@ const db_host = process.env.POSTGRE_HOST;
 const db_name = process.env.POSTGRE_DB_NAME;
 const db_password = process.env.POSTGRE_DB_PASSWORD;
 const db_port = process.env.POSTGRE_DB_PORT;
+const session_secret = process.env.COOKIE_SESSION_SECRET;
 
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended : true }));
+
+app.use(session({
+    secret: session_secret,
+    resave: false,
+    saveUninitialized: true 
+}));
+
 
 const db = new pg.Client({
     user: db_user,
@@ -76,18 +86,25 @@ app.listen(port, () => {
     console.log(`Server is running at Port ${port}`);
 });
 
-const passwordHashing = (res, firstName, lastName, email, password, saltRounds) => {
-    bcrypt.hash(password, saltRounds, async (err, hash) => {
-        if(err){
-            console.error("Error Hashing password:", err);
-        }else{
-            console.log("Hashed Password:", hash);
-            const newUser = await db.query(
-                "INSERT INTO users (firstname, lastname, email, password) VALUES($1, $2, $3, $4)",
-                [firstName, lastName, email, hash]
-            );
-            res.json(newUser.rows[0]);
-        }
+const passwordHashing = (
+        res, 
+        firstName, 
+        lastName, 
+        email,
+        password,
+        saltRounds
+    ) => {
+        bcrypt.hash(password, saltRounds, async (err, hash) => {
+            if(err){
+                console.error("Error Hashing password:", err);
+            }else{
+                console.log("Hashed Password:", hash);
+                const newUser = await db.query(
+                    "INSERT INTO users (firstname, lastname, email, password) VALUES($1, $2, $3, $4)",
+                    [firstName, lastName, email, hash]
+                );
+                res.json(newUser.rows[0]);
+            }
     });
 }
 
@@ -98,7 +115,8 @@ const decryptHashedPassword = (password, storedHashedPassword, user, res) => {
         }else{
             if(result){
                 console.log("Login Success, Email: ", user.email)
-                res.json({ message: "Login Successful", 
+                res.json({ 
+                    message: "Login Successful", 
                     user:
                         {
                             id: user.id,

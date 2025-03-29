@@ -33,3 +33,7 @@ export const loginValidation = async (loginData) => {
         return { error: error.response.data.error || "Unexpected error occurred."}
     }
 }
+
+const isLogin = () => {
+    
+}
