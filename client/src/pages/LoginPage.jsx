@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { loginValidation } from "../services/api";
+import { loginValidation } from "../services/auth";
 
 function LoginPage(){
 

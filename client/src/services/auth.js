@@ -24,7 +24,8 @@ export const loginValidation = async (loginData) => {
         console.log("Login Data: ", loginData);
 
         const response = await axios.post("http://localhost:3000/login", loginData,{
-            headers: { "Content-Type" : "application/json" }
+            headers: { "Content-Type" : "application/json" },
+            withCredentials: true
         });
 
         console.log(response.data);
@@ -39,7 +40,8 @@ export const isLogin = async (navigate) => {
 
     try {
         const response = await axios.get("http://localhost:3000/appointment", {
-            headers: { "Content-Type" : "application/json" }
+            headers: { "Content-Type" : "application/json" },
+            withCredentials: true
         });
 
         if (!response.data.authenticated){

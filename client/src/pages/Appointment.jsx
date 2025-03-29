@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import {isLogin} from "../services/api";
+import {isLogin} from "../services/auth";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 

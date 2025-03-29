@@ -19,7 +19,10 @@ const db_password = process.env.POSTGRE_DB_PASSWORD;
 const db_port = process.env.POSTGRE_DB_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended : true }));
 
@@ -62,28 +65,24 @@ app.post("/register", async(req, res) => {
     }
 })
 
-app.post("/login", async(req, res) => {
-    const { email, password } = req.body;
+app.post("/login", (req, res, next) => {
+    console.log("Login Request:", req.body); 
+    passport.authenticate("local", (err, user, info) => {
+        if(err) return res.status(500).json({ error : "Server error"});
+        if(!user) return res.status(401).json({ error : info.message});
 
-    try {
-        const result = await db.query("SELECT * FROM users WHERE email = $1", [
-            email
-        ]);
-
-        if(result.rows.length > 0){
-            console.log(result.rows);
-            const user = result.rows[0];
-            const storedHashedPassword = user.password;
-
-            decryptHashedPassword(password, storedHashedPassword, user, res);
-        }else{
-            return res.status(401).json({ error : "User not found"});
-        }
-    } catch (error) {
-        console.error("Login error:", error);
-        return res.status(401).json({ error: "Unexpected error occurred"})
-    }
-});
+        req.login(user, (err) => {
+            if(err) return res.status(500).json({ error: "Login Failed" });
+            return res.json({
+                message: "Login Sucessful",
+                user: {
+                    id: user.id,
+                    email: user.email
+                }
+            })
+        })
+    })(req, res, next);
+})
 
 app.get("/appointment", (req, res) => {
     if(!req.isAuthenticated()){
@@ -91,6 +90,47 @@ app.get("/appointment", (req, res) => {
     }
     res.json({ authenticated: true});
 });
+
+passport.use(
+    new Strategy({ usernameField: "email"},async function verify(email, password, cb){
+        console.log(email);
+
+        try {
+            const result = await db.query("SELECT * FROM users WHERE email = $1", [
+                email
+            ]);
+
+            if(result.rows.length > 0){
+                console.log(result.rows);
+                const user = result.rows[0];
+                const storedHashedPassword = user.password;
+
+                bcrypt.compare(password, storedHashedPassword, (err, result) => {
+                    if(err) return cb(err);
+
+                    if(result){
+                        console.log("Login Success, Email:", user.email);
+                        return cb(null, user);
+                    } else {
+                        return cb(null, false, { message: "Incorrect Password "});
+                    }
+                })
+            }else{
+                return cb(null, false, "User not found");
+            }
+        } catch (error) {
+           console.error("Login Error:", error);
+           return cb(error);
+        }
+}))
+
+passport.serializeUser((user, cb) => {
+    cb(null, user);
+})
+
+passport.deserializeUser((user, cb) => {
+    cb(null, user);
+})
 
 app.listen(port, () => {
     console.log(`Server is running at Port ${port}`);
@@ -115,25 +155,5 @@ const passwordHashing = (
                 );
                 res.json(newUser.rows[0]);
             }
-    });
-}
-
-const decryptHashedPassword = (password, storedHashedPassword, user, res) => {
-    bcrypt.compare(password, storedHashedPassword, (err, result) => {
-        if(err){
-            console.error("Error comparing passwords:", err);
-        }else{
-            if(result){
-                console.log("Login Success, Email: ", user.email)
-                res.json({ 
-                    message: "Login Successful", 
-                    user:
-                        {
-                            id: user.id,
-                            email: user.email
-                        }
-                    });
-            }
-        }
     });
 }

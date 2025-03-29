@@ -1,6 +1,6 @@
 import './Register.css';
 import {useState} from 'react';
-import { registerValidation } from '../services/api';
+import { registerValidation } from '../services/auth';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
