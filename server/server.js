@@ -85,10 +85,12 @@ app.post("/login", (req, res, next) => {
 })
 
 app.get("/appointment", (req, res) => {
-    if(!req.isAuthenticated()){
-        return res.json({ authenticated: false});
+    if(req.isAuthenticated()){
+        return res.json({ authenticated: true});
+    }else{
+        res.json({ authenticated: false});
     }
-    res.json({ authenticated: true});
+
 });
 
 passport.use(
