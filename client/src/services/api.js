@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export const registerValidation = async (formData) => {
     try {
@@ -34,6 +35,20 @@ export const loginValidation = async (loginData) => {
     }
 }
 
-const isLogin = () => {
-    
+export const isLogin = async (navigate) => {
+
+    try {
+        const response = await axios.get("http://localhost:3000/appointment", {
+            headers: { "Content-Type" : "application/json" }
+        });
+
+        if (!response.data.authenticated){
+            return navigate("/login");
+        }
+        navigate("/appointment");
+
+    } catch (error) {
+        console.error("Error checking authentication:", error);
+        navigate("/login");
+    }
 }

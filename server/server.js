@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import passport from "passport";
+import { Strategy } from "passport-local";
 
 const app = express();
 const port = 3000;
@@ -28,6 +29,8 @@ app.use(session({
     saveUninitialized: true 
 }));
 
+app.use(passport.initialize());
+app.use(passport.session());
 
 const db = new pg.Client({
     user: db_user,
@@ -80,6 +83,13 @@ app.post("/login", async(req, res) => {
         console.error("Login error:", error);
         return res.status(401).json({ error: "Unexpected error occurred"})
     }
+});
+
+app.get("/appointment", (req, res) => {
+    if(!req.isAuthenticated()){
+        return res.json({ authenticated: false});
+    }
+    res.json({ authenticated: true});
 });
 
 app.listen(port, () => {
