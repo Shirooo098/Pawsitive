@@ -154,7 +154,7 @@ function RegisterPage(){
 
 
                         <div className="login-link">
-                            <p>Already have an account? <Link to="/Login">Login</Link></p>
+                            <p>Already have an account? <Link to="/login">Login</Link></p>
                         </div>
                     </form>
 

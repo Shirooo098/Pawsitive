@@ -29,7 +29,10 @@ app.use(bodyParser.urlencoded({ extended : true }));
 app.use(session({
     secret: session_secret,
     resave: false,
-    saveUninitialized: true 
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000
+    } 
 }));
 
 app.use(passport.initialize());
