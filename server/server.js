@@ -97,7 +97,7 @@ app.get("/appointment", (req, res) => {
 });
 
 passport.use(
-    new Strategy({ usernameField: "email"},async function verify(email, password, cb){
+    new Strategy({ usernameField: "email"}, async function verify(email, password, cb){
         console.log(email);
 
         try {

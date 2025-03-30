@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { loginValidation } from "../services/auth";
 
 function LoginPage(){
+
+    const navigate = useNavigate();
 
     const [loginData, setLoginData] = useState({
         email: '',
@@ -19,6 +21,8 @@ function LoginPage(){
 
         try {
             const res = await loginValidation(loginData);
+            
+            navigate("/");
 
             if(res.error){
                 setErrors({ server: res.error });

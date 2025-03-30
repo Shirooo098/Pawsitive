@@ -46,7 +46,7 @@ export const isLogin = async (navigate) => {
         if (!response.data.authenticated){
             return navigate("/login");
         }
-        navigate("/appointment");
+        return navigate("/appointment");
 
     } catch (error) {
         console.error("Error checking authentication:", error);

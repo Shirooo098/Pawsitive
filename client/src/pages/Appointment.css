@@ -1,0 +1,70 @@
+.appointment-container{
+    display: flex;
+    justify-content: center;
+    padding: 2em;
+}
+.appointment-container label{
+    font-weight: 600;
+    color: #444444;
+}
+
+.appointment-container form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 80%;
+}
+
+.appointment-container form input, select{
+    height: 40px;
+    font-size: 1rem;
+}
+.schedule-information{
+    display: flex;
+    width: 100%;
+    gap: 1em;
+    padding: 1em 0;
+}
+
+.schedule-information h2{
+    color: #888888;
+}
+.colUser, .colPet{
+    height: 100%;
+    width: 100%;
+}
+
+.rowSchedule{
+    padding: 1em 0;
+}
+.rowSchedule input{
+    width: 15svw;
+}
+
+.rowSchedule, 
+.rowFullName, 
+.rowEmailApp, 
+.rowContact, 
+.rowAddress,
+.rowPetType, 
+.rowBreed, 
+.rowAge,
+.rowService{
+    display: flex;
+    flex-direction: column;
+}
+.rowFullName, 
+.rowEmailApp, 
+.rowContact, 
+.rowAddress,
+.rowPetType, 
+.rowBreed, 
+.rowAge,
+.rowService{
+    margin: 1em 0;
+}
+
+.appointmentBtn-container{
+    display: flex;
+    flex-direction: row-reverse;
+}
