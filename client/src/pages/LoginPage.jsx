@@ -6,7 +6,8 @@ import { useAuth } from "../hooks/AuthContext";
 function LoginPage(){
 
     const navigate = useNavigate();
-    const { setIsLoggedIn } = useAuth();
+    const { setIsLoggedIn, setUser } = useAuth();
+
 
     const [loginData, setLoginData] = useState({
         email: '',
@@ -21,11 +22,11 @@ function LoginPage(){
         setErrors(validationError);
 
         try {
-            const res = await loginValidation(loginData, setIsLoggedIn);
+            const res = await loginValidation(loginData, setIsLoggedIn, setUser);
             
             if(res.user){
-                if(res.user.role === 'admin'){
-                    navigate('/Dashboard');
+                if(res.user.type === 'admin'){
+                    navigate('/dashboard');
                 }else{
                     navigate('/');
                 }

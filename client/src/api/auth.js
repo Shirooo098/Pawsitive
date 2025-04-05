@@ -18,7 +18,7 @@ export const registerValidation = async (formData) => {
     }
 }
 
-export const loginValidation = async (loginData, setIsLoggedIn) => {
+export const loginValidation = async (loginData, setIsLoggedIn, setUser) => {
     try {
         console.log("Login Data: ", loginData);
 
@@ -27,8 +27,9 @@ export const loginValidation = async (loginData, setIsLoggedIn) => {
             withCredentials: true
         });
 
-        console.log(response.data);
+        console.log(response.data.user);
         setIsLoggedIn(true);
+        setUser(response.data.user)
         return response.data;
     } catch (error) {
         console.error("Error:", error.response.data.message || error.message);

@@ -3,7 +3,7 @@ import { useAuth } from "../hooks/AuthContext";
 import { logout } from "../api/logout";
 
 function Navbar(){
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { isLoggedIn, setIsLoggedIn, user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async() => {

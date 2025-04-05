@@ -1,0 +1,15 @@
+import { useAuth } from "../hooks/AuthContext";
+import { Navigate } from "react-router-dom";
+
+function ProtectedRoute({ element, requiredType }){
+    const { user, isLoggedIn } = useAuth();
+
+    if(!isLoggedIn || (requiredType && user?.type !== requiredType)){
+        console.log("Only Admin permission")
+        return <Navigate to="/login"/>
+    }
+
+    return element;
+}
+
+export default ProtectedRoute;

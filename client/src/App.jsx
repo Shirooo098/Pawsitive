@@ -6,6 +6,8 @@ import Appointment from "./pages/user/Appointment";
 import AuthProvider from "./hooks/AuthContext";
 import ProfilePage from "./pages/user/Profile";
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Dashboard from "./pages/admin/Dashboard";
 
 function App(){
     return (
@@ -18,6 +20,12 @@ function App(){
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/appointment" element={<Appointment />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute requiredType="admin" element={<Dashboard/>}/>
+              }
+            ></Route>
           </Routes>
         </BrowserRouter>
       </AuthProvider>

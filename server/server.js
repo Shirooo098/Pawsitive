@@ -76,12 +76,13 @@ app.post("/login", (req, res, next) => {
 
         req.login(user, (err) => {
             if(err) return res.status(500).json({ error: "Login Failed" });
+            console.log('Authenticated user:', req.user);
             return res.json({
                 message: "Login Sucessful",
                 user: {
                     id: user.id,
                     email: user.email,
-                    role: user.role
+                    type: user.type
                 }
             })
         })
