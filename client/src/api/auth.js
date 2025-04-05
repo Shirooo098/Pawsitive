@@ -18,7 +18,7 @@ export const registerValidation = async (formData) => {
     }
 }
 
-export const loginValidation = async (loginData) => {
+export const loginValidation = async (loginData, setIsLoggedIn) => {
     try {
         console.log("Login Data: ", loginData);
 
@@ -28,6 +28,7 @@ export const loginValidation = async (loginData) => {
         });
 
         console.log(response.data);
+        setIsLoggedIn(true);
         return response.data;
     } catch (error) {
         console.error("Error:", error.response.data.message || error.message);

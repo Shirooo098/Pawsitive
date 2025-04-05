@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import { loginValidation } from "../api/auth";
+import { useAuth } from "../hooks/AuthContext";
 
 function LoginPage(){
 
     const navigate = useNavigate();
+    const { setIsLoggedIn } = useAuth();
 
     const [loginData, setLoginData] = useState({
         email: '',
@@ -20,7 +21,7 @@ function LoginPage(){
         setErrors(validationError);
 
         try {
-            const res = await loginValidation(loginData);
+            const res = await loginValidation(loginData, setIsLoggedIn);
             
             if(res.user){
                 if(res.user.role === 'admin'){
@@ -61,10 +62,6 @@ function LoginPage(){
     
     return(
         <div>
-            <div className="">
-                <Navbar/>
-            </div>
-
             <div className="register-container">
                     <form onSubmit={handleSubmit}>
                         <div className="formHeader">

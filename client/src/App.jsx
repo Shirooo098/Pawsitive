@@ -5,11 +5,13 @@ import LoginPage from "./pages/LoginPage";
 import Appointment from "./pages/user/Appointment";
 import AuthProvider from "./hooks/AuthContext";
 import ProfilePage from "./pages/user/Profile";
+import Navbar from "./components/Navbar";
 
 function App(){
     return (
       <AuthProvider>
         <BrowserRouter>
+          <Navbar/>
           <Routes>
             <Route index element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />

@@ -77,10 +77,6 @@ function RegisterPage(){
     return(
 
         <div>
-            
-            <div className="">
-                <Navbar/>
-            </div>
 
             <div className="register-container">
                     <form onSubmit={handleSubmit}>

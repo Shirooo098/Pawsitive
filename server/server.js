@@ -103,6 +103,18 @@ app.get("/auth/check", (req, res) => {
       }
 });
 
+app.get('/logout', (req, res) => {
+    console.log("Logout CLicked")
+    req.logout((err) => {
+        if(err){
+            return res.status(500).json({ error: "Logout Failed"});
+        }
+        console.log("Logged Out Successfully");
+        res.clearCookie('connect.sid');
+        res.json({ message: 'Logged Out Successfully'});
+    })
+})
+
 passport.use(
     new Strategy({ usernameField: "email"}, async function verify(email, password, cb){
         console.log(email);

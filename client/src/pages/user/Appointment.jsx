@@ -56,7 +56,6 @@ function Appointment(){
 
     return(
         <>
-            <Navbar/>
             <h1>Appointment Page</h1>
             <div className="appointment-container">
                 <form onSubmit={handleSubmit}>
