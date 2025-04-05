@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar";
-import {isLogin} from "../services/auth";
+import Navbar from "../../components/Navbar";
+import {isLogin} from "../../api/auth";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './Appointment.css'

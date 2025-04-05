@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { loginValidation } from "../services/auth";
+import { loginValidation } from "../api/auth";
 
 function LoginPage(){
 
@@ -22,7 +22,13 @@ function LoginPage(){
         try {
             const res = await loginValidation(loginData);
             
-            navigate("/");
+            if(res.user){
+                if(res.user.role === 'admin'){
+                    navigate('/Dashboard');
+                }else{
+                    navigate('/');
+                }
+            }
 
             if(res.error){
                 setErrors({ server: res.error });

@@ -1,10 +1,12 @@
 import './Register.css';
 import {useState} from 'react';
-import { registerValidation } from '../services/auth';
-import { Link } from 'react-router-dom';
+import { registerValidation } from '../api/auth';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
 function RegisterPage(){
+
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -27,6 +29,8 @@ function RegisterPage(){
 
         try {
             const res = await registerValidation(formData);
+
+            navigate("/login");
 
             if(res.error){
                 setErrors({ server: res.error });

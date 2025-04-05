@@ -80,20 +80,27 @@ app.post("/login", (req, res, next) => {
                 message: "Login Sucessful",
                 user: {
                     id: user.id,
-                    email: user.email
+                    email: user.email,
+                    role: user.role
                 }
             })
         })
     })(req, res, next);
 })
 
-app.get("/appointment", (req, res) => {
-    if(req.isAuthenticated()){
-        return res.json({ authenticated: true});
-    }else{
-        res.json({ authenticated: false});
-    }
-
+app.get("/auth/check", (req, res) => {
+    if (req.isAuthenticated()) {
+        res.json({
+          authenticated: true,
+          user: {
+            id: req.user.id,
+            email: req.user.email,
+            role: req.user.role
+          },
+        });
+      } else {
+        res.json({ authenticated: false });
+      }
 });
 
 passport.use(

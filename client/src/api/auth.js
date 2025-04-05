@@ -35,21 +35,28 @@ export const loginValidation = async (loginData) => {
     }
 }
 
-export const isLogin = async (navigate) => {
-
+export const checkAuth = async () => {
     try {
-        const response = await axios.get("http://localhost:3000/appointment", {
-            headers: { "Content-Type" : "application/json" },
-            withCredentials: true
+        const response = await axios.get("http://localhost:3000/auth/check", {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
         });
 
-        if (!response.data.authenticated){
-            return navigate("/login");
-        }
-        return navigate("/appointment");
-
+        return response.data.authenticated;
     } catch (error) {
-        console.error("Error checking authentication:", error);
-        navigate("/login");
+        console.error("Auth check failed:", error);
+        return false;
+    }
+}
+
+
+export const isLogin = async (navigate) => {
+
+    const authenticated = await checkAuth();
+
+    if(authenticated){
+        return navigate("/appointment")
+    }else{
+        return navigate("/login");
     }
 }
