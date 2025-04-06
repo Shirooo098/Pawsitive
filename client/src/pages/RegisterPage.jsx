@@ -1,9 +1,11 @@
 import './Register.css';
 import {useState} from 'react';
-import { registerValidation } from '../api/auth';
+import { checkAuth, registerValidation } from '../api/auth';
 import { Link, useNavigate } from 'react-router-dom';
 
 function RegisterPage(){
+
+    checkAuth();
 
     const navigate = useNavigate();
 

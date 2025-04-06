@@ -161,7 +161,7 @@ passport.deserializeUser((user, cb) => {
 app.post("/appointment", async(req, res) => {
     try {
 
-        console.log("Appointment Sent in backend:", req.body);
+        console.log("user:", req.user)
 
         const { 
             scheduleDate, 
@@ -175,27 +175,29 @@ app.post("/appointment", async(req, res) => {
             service
         } = req.body;
 
-        // const newAppointment = await db.query(
-        //     "INSERT INTO appointments (appointmentDate, fullName, contact, address, petAge, petType, service)",
-        //     "VALUES ($1, $2, $3, $4, $5, $6, $7)",
-        //     [
-        //         scheduleDate, 
-        //         fullName, 
-        //         email, 
-        //         contact, 
-        //         address, 
-        //         petType, 
-        //         petName, 
-        //         petAge, 
-        //         service
-        //     ]
-        // );
-        // res.json(newAppointment.rows[0]);
+        const newAppointment = await db.query(
+            `INSERT INTO appointments(appointment_date, fullName, email, contact, address, pet_type, pet_name, pet_age, service, user_id)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+            [
+                scheduleDate, 
+                fullName, 
+                email, 
+                contact, 
+                address, 
+                petType, 
+                petName, 
+                petAge, 
+                service,
+                req.user.userID
+            ]
+        );
+        res.json(newAppointment.rows[0]);
 
     } catch (error) {
-        
+        console.error("Error Sending Appointment: ", error);
+        res.status(500).json({error: "Failed to save appointment"});
     }
-})
+});
 
 
 app.listen(port, () => {

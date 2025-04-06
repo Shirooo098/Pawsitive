@@ -7,6 +7,7 @@ import { sendAppointment } from "../../api/appointment";
 function Appointment(){
 
     const navigate = useNavigate();
+    const [errors, setErrors] = useState({});
     const [minDate, setMinDate] = useState('');
     const [appointmentData, setAppointmentData] = useState({
         scheduleDate: '',
@@ -34,7 +35,7 @@ function Appointment(){
                 setErrors({ server: res.error });
             }
         } catch (error) {
-            setErrors({ server: "Unexpected error occures."})
+            setErrors({ server: "Unexpected error occured." })
         }
     }
 
@@ -78,6 +79,8 @@ function Appointment(){
                     <div className="formHeader">
                         <h1>Set an Appointment</h1>
                     </div>
+
+                    <span>{errors.server}</span>
 
                     <div className="rowSchedule">
                         <label htmlFor="date">Schedule</label>
@@ -142,7 +145,7 @@ function Appointment(){
 
                             <div className="rowPetAge">
                                 <label htmlFor="PetAge">Pet Age</label>
-                                <input type="number"
+                                <input type="text"
                                 name="petAge"
                                 onChange={handleChange}
                                 value={appointmentData.petAge} />
