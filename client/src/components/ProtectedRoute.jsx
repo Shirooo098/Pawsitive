@@ -2,7 +2,11 @@ import { useAuth } from "../hooks/AuthContext";
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ element, requiredType }){
-    const { user, isLoggedIn } = useAuth();
+    const { user, isLoggedIn, loading } = useAuth();
+
+    if(loading){
+        return <div>Loading...</div>
+    }
 
     if(!isLoggedIn || (requiredType && user?.type !== requiredType)){
         console.log("Only Admin permission")

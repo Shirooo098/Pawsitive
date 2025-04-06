@@ -44,7 +44,7 @@ export const checkAuth = async () => {
             withCredentials: true,
         });
 
-        return response.data.authenticated;
+        return response.data;
     } catch (error) {
         console.error("Auth check failed:", error);
         return false;

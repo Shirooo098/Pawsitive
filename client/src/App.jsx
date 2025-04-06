@@ -20,12 +20,14 @@ function App(){
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/appointment" element={<Appointment />} />
+            
             <Route
               path="/dashboard"
               element={
                 <ProtectedRoute requiredType="admin" element={<Dashboard/>}/>
-              }
-            ></Route>
+              }>
+            
+            </Route>
           </Routes>
         </BrowserRouter>
       </AuthProvider>

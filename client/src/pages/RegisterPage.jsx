@@ -2,7 +2,6 @@ import './Register.css';
 import {useState} from 'react';
 import { registerValidation } from '../api/auth';
 import { Link, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 
 function RegisterPage(){
 

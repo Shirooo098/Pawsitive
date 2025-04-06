@@ -31,7 +31,7 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        maxAge: 24 * 60 * 60 * 1000
+        maxAge: 24 * 60 * 60 * 1000,
     } 
 }));
 
@@ -90,13 +90,15 @@ app.post("/login", (req, res, next) => {
 })
 
 app.get("/auth/check", (req, res) => {
+    console.log("Session:", req.session);
+    console.log("User from session:", req.user);
     if (req.isAuthenticated()) {
         res.json({
           authenticated: true,
           user: {
             id: req.user.id,
             email: req.user.email,
-            role: req.user.role
+            type: req.user.type
           },
         });
       } else {
@@ -111,7 +113,6 @@ app.get('/logout', (req, res) => {
             return res.status(500).json({ error: "Logout Failed"});
         }
         console.log("Logged Out Successfully");
-        res.clearCookie('connect.sid');
         res.json({ message: 'Logged Out Successfully'});
     })
 })
