@@ -11,23 +11,31 @@ function Navbar(){
     navigate('/login');
   }
 
+  const isAdmin = isLoggedIn && user?.type === 'admin';
 
     return (
       <nav>
         <ul>
-            <li><Link to="/">Home</Link></li>
-            <li>
-              {isLoggedIn ? (
-                <Link to="/profile">Profile</Link>
-              ) : (
-                <Link to="/login">Login</Link>
-              )}
-            </li>
-            <li><Link to="/appointment">Schedule</Link></li>
-            {isLoggedIn && (
+            {isAdmin ? (
+              <>
+                <li><Link to='/dashboard'>Dashboard</Link></li>
+                <li><button onClick={handleLogout}>Logout</button></li>
+              </>
+            ): (
+              <>
+              <li><Link to='/'>Home</Link></li>
+              <li><Link to='/appointment'>Schedule</Link></li>
               <li>
-                <button onClick={handleLogout}>Logout</button>
+                {isLoggedIn ? (
+                  <>
+                    <Link to='/profile'>Profile</Link>
+                    <li><button onClick={handleLogout}>Logout</button></li>
+                  </>
+                ): (  
+                  <Link to='/login'>Login</Link>
+                )}
               </li>
+              </>
             )}
         </ul>
       </nav>
