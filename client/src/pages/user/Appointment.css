@@ -47,8 +47,8 @@
 .rowContact, 
 .rowAddress,
 .rowPetType, 
-.rowBreed, 
-.rowAge,
+.rowPetName, 
+.rowPetAge,
 .rowService{
     display: flex;
     flex-direction: column;
@@ -58,8 +58,8 @@
 .rowContact, 
 .rowAddress,
 .rowPetType, 
-.rowBreed, 
-.rowAge,
+.rowPetName, 
+.rowPetAge,
 .rowService{
     margin: 1em 0;
 }

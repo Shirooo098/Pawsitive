@@ -1,13 +1,13 @@
-import Navbar from "../../components/Navbar";
 import {isLogin} from "../../api/auth";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './Appointment.css'
+import { sendAppointment } from "../../api/appointment";
 
 function Appointment(){
 
     const navigate = useNavigate();
-
+    const [minDate, setMinDate] = useState('');
     const [appointmentData, setAppointmentData] = useState({
         scheduleDate: '',
         fullName: '',
@@ -15,8 +15,8 @@ function Appointment(){
         contact: '',
         address: '',
         petType: '',
-        breed: '',
-        age: '',
+        petName: '',
+        petAge: '',
         service: ''
     }) 
 
@@ -25,6 +25,17 @@ function Appointment(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        try {
+            const res = await sendAppointment(appointmentData);
+
+            navigate("/appointment");
+            if(res.error){
+                setErrors({ server: res.error });
+            }
+        } catch (error) {
+            setErrors({ server: "Unexpected error occures."})
+        }
     }
 
     const handleChange = (e) => {
@@ -44,8 +55,8 @@ function Appointment(){
             contact: '',
             address: '',
             petType: '',
-            breed: '',
-            age: '',
+            petName: '',
+            petAge: '',
             service: ''
         })
     }
@@ -53,6 +64,11 @@ function Appointment(){
     useEffect(() => {
         isLogin(navigate);
     }, [navigate])
+
+    useEffect(() => {
+        const today = new Date().toISOString().split("T")[0];
+        setMinDate(today);
+    }, []);
 
     return(
         <>
@@ -68,6 +84,7 @@ function Appointment(){
                         <input type="date"
                             name="scheduleDate"
                             onChange={handleChange}
+                            min={minDate}
                             value={appointmentData.scheduleDate || ""}
                         />
                     </div>
@@ -115,6 +132,22 @@ function Appointment(){
                         <div className="colPet">
                             <h2>Pet Information</h2>
 
+                            <div className="rowPetName">
+                                <label htmlFor="petName">Pet Name</label>
+                                <input type="text"
+                                name="petName"
+                                onChange={handleChange}
+                                value={appointmentData.petName}/>
+                            </div>
+
+                            <div className="rowPetAge">
+                                <label htmlFor="PetAge">Pet Age</label>
+                                <input type="number"
+                                name="petAge"
+                                onChange={handleChange}
+                                value={appointmentData.petAge} />
+                            </div>
+
                             <div className="rowPetType">
                                 <label htmlFor="petType">Pet Type</label>
                                 <select name="petType"
@@ -127,22 +160,6 @@ function Appointment(){
                                         </option>
                                     ))}
                                     </select>
-                            </div>
-
-                            <div className="rowBreed">
-                                <label htmlFor="breed">Breed</label>
-                                <input type="text"
-                                name="breed"
-                                onChange={handleChange}
-                                value={appointmentData.breed} />
-                            </div>
-
-                            <div className="rowAge">
-                                <label htmlFor="age">Age</label>
-                                <input type="number"
-                                name="age"
-                                onChange={handleChange}
-                                value={appointmentData.age} />
                             </div>
 
                             <div className="rowService">

@@ -80,7 +80,7 @@ app.post("/login", (req, res, next) => {
             return res.json({
                 message: "Login Sucessful",
                 user: {
-                    id: user.id,
+                    id: user.userID,
                     email: user.email,
                     type: user.type
                 }
@@ -96,7 +96,7 @@ app.get("/auth/check", (req, res) => {
         res.json({
           authenticated: true,
           user: {
-            id: req.user.id,
+            id: req.user.userID,
             email: req.user.email,
             type: req.user.type
           },
@@ -157,6 +157,46 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser((user, cb) => {
     cb(null, user);
 })
+
+app.post("/appointment", async(req, res) => {
+    try {
+
+        console.log("Appointment Sent in backend:", req.body);
+
+        const { 
+            scheduleDate, 
+            fullName, 
+            email, 
+            contact, 
+            address, 
+            petType, 
+            petName, 
+            petAge, 
+            service
+        } = req.body;
+
+        // const newAppointment = await db.query(
+        //     "INSERT INTO appointments (appointmentDate, fullName, contact, address, petAge, petType, service)",
+        //     "VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        //     [
+        //         scheduleDate, 
+        //         fullName, 
+        //         email, 
+        //         contact, 
+        //         address, 
+        //         petType, 
+        //         petName, 
+        //         petAge, 
+        //         service
+        //     ]
+        // );
+        // res.json(newAppointment.rows[0]);
+
+    } catch (error) {
+        
+    }
+})
+
 
 app.listen(port, () => {
     console.log(`Server is running at Port ${port}`);
