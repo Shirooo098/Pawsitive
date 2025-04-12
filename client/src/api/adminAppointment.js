@@ -21,8 +21,39 @@ export const deleteAppointment = async(id) => {
         });
         
         alert('Appointment Successfully Deleted');
-        console.log("Appoitment deleted successfully", response.data);
+        console.log("Appointment deleted successfully", response.data);
     } catch (error) {
         console.error("Error deleting Appointment:", id);
+    }
+}
+
+export const fetchUserAppointment = async(id) =>{
+    try {
+        const response = await axios.get(`http://localhost:3000/admin/updateAppointment/${id}`, {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true
+        });
+        
+        console.log("Appointment fetch successfully", response.data);
+        return response.data
+    } catch (error) {
+        console.error("Error fetching appointment:", id);
+    }
+}
+
+export const updateUserAppointment = async(id, status) => {
+    try {
+        const response = await axios.patch(`http://localhost:3000/admin/updateAppointment/${id}`,
+            { status },
+            {
+                headers: { "Content-Type": "application/json" },
+                withCredentials: true
+            }
+        );
+
+        console.log("Appointment updated successfully", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error updating appointment:", id);
     }
 }
