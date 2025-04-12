@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
+import adminRoutes from './routes/adminRoutes.js';
 
 const app = express();
 const port = 3000;
@@ -47,6 +48,13 @@ const db = new pg.Client({
 })
 
 db.connect();
+
+app.use((req, res, next) => {
+    req.db = db;
+    next();
+});
+
+app.use('/admin', adminRoutes);
 
 app.post("/register", async(req, res) => {
     try {

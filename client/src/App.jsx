@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/admin/Dashboard";
 import ManageAppointment from "./pages/admin/ManageAppointment";
+import UpdateAppointment from "./pages/admin/UpdateAppointment";
 
 function App(){
     return (
@@ -34,7 +35,12 @@ function App(){
               path="admin/manageAppointment"
               element={
                 <ProtectedRoute requiredType="admin" element={<ManageAppointment/>}/>
-              }/>   
+              }/>
+            <Route
+            path="admin/updateAppointment/:id"
+            element={
+              <ProtectedRoute requiredType="admin" element={<UpdateAppointment/>}/>
+            }/>   
           </Routes>
         </BrowserRouter>
       </AuthProvider>

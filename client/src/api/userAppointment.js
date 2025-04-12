@@ -15,3 +15,5 @@ export const sendAppointment = async (appointmentData) => {
         console.error("Error:", error.response ? error.response.data : error.message);
     }
 }
+
+
