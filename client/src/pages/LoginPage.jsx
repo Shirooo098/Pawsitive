@@ -26,7 +26,7 @@ function LoginPage(){
             
             if(res.user){
                 if(res.user.type === 'admin'){
-                    navigate('/dashboard');
+                    navigate('/admin/dashboard');
                 }else{
                     navigate('/');
                 }

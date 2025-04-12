@@ -1,9 +1,9 @@
-function Dashboard(){
-    return(
-        <>
-            <h1>Admin Page</h1>
-        </>
-    )
-}
+import React from 'react'
 
-export default Dashboard;
+export default function Dashboard() {
+  return (
+    <>
+        <h1>Dashboard</h1>
+    </>
+  )
+}

@@ -18,7 +18,8 @@ function Navbar(){
         <ul>
             {isAdmin ? (
               <>
-                <li><Link to='/dashboard'>Dashboard</Link></li>
+                <li><Link to='admin/dashboard'>Dashboard</Link></li>
+                <li><Link to='admin/manageAppointment'>Appointment</Link></li>
                 <li><button onClick={handleLogout}>Logout</button></li>
               </>
             ): (

@@ -8,6 +8,7 @@ import ProfilePage from "./pages/user/Profile";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/admin/Dashboard";
+import ManageAppointment from "./pages/admin/ManageAppointment";
 
 function App(){
     return (
@@ -25,12 +26,15 @@ function App(){
             />
             
             <Route
-              path="/dashboard"
+              path="admin/dashboard"
               element={
                 <ProtectedRoute requiredType="admin" element={<Dashboard/>}/>
-              }>
-            
-            </Route>
+              }/>
+            <Route
+              path="admin/manageAppointment"
+              element={
+                <ProtectedRoute requiredType="admin" element={<ManageAppointment/>}/>
+              }/>   
           </Routes>
         </BrowserRouter>
       </AuthProvider>

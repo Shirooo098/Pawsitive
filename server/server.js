@@ -191,8 +191,9 @@ app.post("/appointment", async(req, res) => {
                 req.user.userID
             ]
         );
+        
+        console.log("Success Sending Appointment");
         res.json(newAppointment.rows[0]);
-
     } catch (error) {
         console.error("Error Sending Appointment: ", error);
         res.status(500).json({error: "Failed to save appointment"});
