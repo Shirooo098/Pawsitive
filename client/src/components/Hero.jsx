@@ -1,5 +1,8 @@
 import React from 'react';
 import logo from '../assets/logo-transparent.png';
+import dog from '../assets/dog.jpg';
+import kitten from '../assets/kitten.webp';
+import puppy from '../assets/puppy.avif';
 
 export default function Hero() {
   return (
@@ -15,14 +18,14 @@ export default function Hero() {
           <div className="col-md-6">
             <div id="animalCarousel" className="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
               <div className="carousel-inner">
-                <div className="carousel-item active">
-                  {/* <img src={dog} className="d-block w-100" alt="Happy dog" /> */}
+                   <div className="carousel-item active">
+                  <img src={dog} className="d-block w-100" alt="Happy dog" />
                 </div>
                 <div className="carousel-item">
-                  {/* <img src={kitten} className="d-block w-100" alt="Cute kitten" /> */}
+                  <img src={kitten} className="d-block w-100" alt="Cute kitten" />
                 </div>
                 <div className="carousel-item">
-                  {/* <img src={puppy} className="d-block w-100" alt="Playful puppy" /> */}
+                  <img src={puppy} className="d-block w-100" alt="Playful puppy" />
                 </div>
               </div>
               <button className="carousel-control-prev" type="button" data-bs-target="#animalCarousel" data-bs-slide="prev">
