@@ -1,14 +1,5 @@
 {
-    "rewrites": [
-      { "source": "/", "destination": "/" },
-      { "source": "/login", "destination": "/" },
-      { "source": "/register", "destination": "/" },
-      { "source": "/profile", "destination": "/" },
-      { "source": "/appointment", "destination": "/" },
-      { "source": "/history", "destination": "/" },
-      { "source": "/admin/dashboard", "destination": "/" },
-      { "source": "/admin/manageAppointment", "destination": "/" },
-      { "source": "/admin/updateAppointment/:id", "destination": "/" }
+    "rewrites" : [
+        { "source": "/(.*)", "destination": "/"}
     ]
-  }
-  
+}
