@@ -8,6 +8,7 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import adminRoutes from './routes/adminRoutes.js';
+import userRoutes from './routes/userRoutes.js'
 
 const app = express();
 const port = 3000;
@@ -55,6 +56,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/admin', adminRoutes);
+app.use('/', userRoutes);
 
 app.post("/register", async(req, res) => {
     try {
@@ -98,7 +100,6 @@ app.post("/login", (req, res, next) => {
 })
 
 app.get("/auth/check", (req, res) => {
-    console.log("Session:", req.session);
     console.log("User from session:", req.user);
     if (req.isAuthenticated()) {
         res.json({
@@ -106,6 +107,8 @@ app.get("/auth/check", (req, res) => {
           user: {
             id: req.user.userID,
             email: req.user.email,
+            firstName: req.user.firstname,
+            lastName: req.user.lastname,
             type: req.user.type
           },
         });
@@ -165,49 +168,6 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser((user, cb) => {
     cb(null, user);
 })
-
-app.post("/appointment", async(req, res) => {
-    try {
-
-        console.log("user:", req.user)
-
-        const { 
-            scheduleDate, 
-            fullName, 
-            email, 
-            contact, 
-            address, 
-            petType, 
-            petName, 
-            petAge, 
-            service
-        } = req.body;
-
-        const newAppointment = await db.query(
-            `INSERT INTO appointments(appointment_date, fullName, email, contact, address, pet_type, pet_name, pet_age, service, user_id)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
-            [
-                scheduleDate, 
-                fullName, 
-                email, 
-                contact, 
-                address, 
-                petType, 
-                petName, 
-                petAge, 
-                service,
-                req.user.userID
-            ]
-        );
-        
-        console.log("Success Sending Appointment");
-        res.json(newAppointment.rows[0]);
-    } catch (error) {
-        console.error("Error Sending Appointment: ", error);
-        res.status(500).json({error: "Failed to save appointment"});
-    }
-});
-
 
 app.listen(port, () => {
     console.log(`Server is running at Port ${port}`);

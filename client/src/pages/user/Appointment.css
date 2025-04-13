@@ -23,7 +23,7 @@
     display: flex;
     width: 100%;
     gap: 1em;
-    padding: 1em 0;
+    padding: 1em;
 }
 
 .schedule-information h2{
@@ -35,7 +35,7 @@
 }
 
 .rowSchedule{
-    padding: 1em 0;
+    padding: 1em;
 }
 .rowSchedule input{
     width: 15svw;

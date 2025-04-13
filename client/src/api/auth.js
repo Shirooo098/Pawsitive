@@ -47,18 +47,7 @@ export const checkAuth = async () => {
         return response.data;
     } catch (error) {
         console.error("Auth check failed:", error);
+
         return false;
-    }
-}
-
-
-export const isLogin = async (navigate) => {
-
-    const authenticated = await checkAuth();
-
-    if(authenticated){
-        return navigate("/appointment")
-    }else{
-        return navigate("/login");
     }
 }

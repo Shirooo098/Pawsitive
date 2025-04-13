@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/admin/Dashboard";
 import ManageAppointment from "./pages/admin/ManageAppointment";
 import UpdateAppointment from "./pages/admin/UpdateAppointment";
+import History from "./pages/user/History";
 
 function App(){
     return (
@@ -20,12 +21,15 @@ function App(){
             <Route index element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route 
+              path="/profile" 
+              element={<ProtectedRoute requiredType="user" element={<ProfilePage/>}/>} />
             <Route
               path="/appointment"
-              element={<ProtectedRoute element={<Appointment />} />}
-            />
-            
+              element={<ProtectedRoute requiredType="user" element={<Appointment />}/>} />
+              <Route
+              path="/history"
+              element={<ProtectedRoute requiredType="user" element={<History />}/>} />
             <Route
               path="admin/dashboard"
               element={
@@ -37,10 +41,10 @@ function App(){
                 <ProtectedRoute requiredType="admin" element={<ManageAppointment/>}/>
               }/>
             <Route
-            path="admin/updateAppointment/:id"
-            element={
-              <ProtectedRoute requiredType="admin" element={<UpdateAppointment/>}/>
-            }/>   
+              path="admin/updateAppointment/:id"
+              element={
+                <ProtectedRoute requiredType="admin" element={<UpdateAppointment/>}/>
+              }/>   
           </Routes>
         </BrowserRouter>
       </AuthProvider>

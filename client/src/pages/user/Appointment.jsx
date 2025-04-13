@@ -1,11 +1,11 @@
-import {isLogin} from "../../api/auth";
+import {checkAuth} from "../../api/auth";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './Appointment.css'
 import { sendAppointment } from "../../api/userAppointment";
 
 function Appointment(){
-
+    const [user, setUser] = useState();
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});
     const [minDate, setMinDate] = useState('');
@@ -63,8 +63,21 @@ function Appointment(){
     }
 
     useEffect(() => {
-        isLogin(navigate);
-    }, [navigate])
+        const fetchUserDetails = async() => {
+            const userDetails = await checkAuth();
+            if(userDetails && userDetails.user){
+                setUser(userDetails.user);
+
+                setAppointmentData((prev) => ({
+                    ...prev,
+                    fullName: `${userDetails.user.firstName} ${userDetails.user.lastName}`,
+                    email: userDetails.user.email
+                }))
+            }   
+        }
+
+        fetchUserDetails();
+    }, []);
 
     useEffect(() => {
         const today = new Date().toISOString().split("T")[0];
@@ -101,6 +114,7 @@ function Appointment(){
                                     name="fullName"
                                     onChange={handleChange}
                                     value={appointmentData.fullName}
+                                    disabled
                                 />
                             </div>
 
@@ -110,6 +124,7 @@ function Appointment(){
                                     name="email"
                                     onChange={handleChange}
                                     value={appointmentData.email}
+                                    disabled
                                 />
                             </div>
 

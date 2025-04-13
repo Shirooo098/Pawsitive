@@ -30,7 +30,7 @@ function Navbar(){
                 {isLoggedIn ? (
                   <>
                     <Link to='/profile'>Profile</Link>
-                    <li><button onClick={handleLogout}>Logout</button></li>
+                    <button onClick={handleLogout}>Logout</button>
                   </>
                 ): (  
                   <Link to='/login'>Login</Link>

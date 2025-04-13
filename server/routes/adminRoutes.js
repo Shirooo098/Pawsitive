@@ -22,7 +22,6 @@ router.get("/manageAppointment", isAdmin, async (req, res) => {
 router.delete("/deleteAppointment/:id", isAdmin, async (req, res) => {
     const {id} = req.params;
 
-
     console.log(`Appointment ID ${id}`)
     try {
         const result = await req.db.query("DELETE FROM appointments WHERE appointmentid = $1 RETURNING *",
@@ -82,4 +81,3 @@ router.patch('/updateAppointment/:id', isAdmin, async(req, res) => {
 });
 
 export default router;
-
