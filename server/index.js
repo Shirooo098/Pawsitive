@@ -4,7 +4,7 @@ import 'dotenv/config';
 import cors from 'cors';
 import bodyParser from "body-parser";
 import bcrypt from "bcrypt";
-import session from "express-session";
+import session from "cookie-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import adminRoutes from './routes/adminRoutes.js';
