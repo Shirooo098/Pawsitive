@@ -9,10 +9,12 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import adminRoutes from './routes/adminRoutes.js';
 import userRoutes from './routes/userRoutes.js'
+import pgSession from 'connect-pg-simple';
 
 const app = express();
 const port = 3000;
 const saltRounds = 10;
+const PgSession = pgSession(session);
 
 const db_user = process.env.POSTGRE_DB_USER;
 const db_host = process.env.POSTGRE_HOST;
@@ -20,25 +22,6 @@ const db_name = process.env.POSTGRE_DB_NAME;
 const db_password = process.env.POSTGRE_DB_PASSWORD;
 const db_port = process.env.POSTGRE_DB_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
-
-app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
-}));
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended : true }));
-
-app.use(session({
-    secret: session_secret,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        maxAge: 24 * 60 * 60 * 1000,
-    } 
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 const db = new pg.Client({
     user: db_user,
@@ -48,12 +31,39 @@ const db = new pg.Client({
     port: db_port
 })
 
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended : true }));
+
+app.use(session({
+    store: new PgSession({
+        pool: db, 
+        tableName: 'user_sessions',
+        pruneSessionInterval: 86400
+    }),
+    secret: session_secret,
+    resave: false,
+    saveUninitialized: false, 
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000 
+    }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 db.connect();
 
 app.use((req, res, next) => {
     req.db = db;
     next();
 });
+
+
 
 app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
@@ -120,11 +130,15 @@ app.get("/auth/check", (req, res) => {
 app.get('/logout', (req, res) => {
     console.log("Logout CLicked")
     req.logout((err) => {
-        if(err){
-            return res.status(500).json({ error: "Logout Failed"});
-        }
-        console.log("Logged Out Successfully");
-        res.json({ message: 'Logged Out Successfully'});
+        if(err) return res.status(500).json({ error: "Logout Failed"});
+        
+        req.session.destroy((err => {
+            if (err) return res.status(500).json({ error: "Session destroy Failed"});
+
+            res.clearCookie('connect.sid');
+            console.log("Logged Out Successfully");
+            res.json({ message: 'Logged Out Successfully'});
+        }))
     })
 })
 
