@@ -80,7 +80,7 @@ app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
 
 app.get('/', (req, res) => {
-    res.json({  message: 'Backend is running' });
+    res.redirect(process.env.FRONTEND_URL);
   });
 
 app.post("/register", async(req, res) => {
