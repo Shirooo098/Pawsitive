@@ -12,7 +12,7 @@ import userRoutes from './routes/userRoutes.js'
 import pgSession from 'connect-pg-simple';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 const saltRounds = 10;
 const PgSession = pgSession(session);
 
@@ -24,11 +24,12 @@ const db_port = process.env.POSTGRE_DB_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
 const db = new pg.Client({
-    user: db_user,
-    host: db_host,
-    database: db_name, 
-    password: db_password,
-    port: db_port
+    // user: db_user,
+    // host: db_host,
+    // database: db_name, 
+    // password: db_password,
+    // port: db_port
+    connectionString: process.env.POSTGRES_URL + "?sslmode=require",
 })
 
 app.use(cors({
