@@ -16,7 +16,7 @@ const port = process.env.PORT;
 const saltRounds = 10;
 const PgSession = pgSession(session);
 
-const prod_API = process.env.PUBLIC_API_URL;
+const client = process.env.FRONTEND_URL;
 
 // const db_user = process.env.POSTGRE_DB_USER;
 // const db_host = process.env.POSTGRE_HOST;
@@ -38,11 +38,14 @@ const db = new pg.Client({
     // password: db_password,
     // port: db_port
 
-    connectionString: process.env.POSTGRES_URL + "?sslmode=require"
+    connectionString: process.env.POSTGRES_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 })
 
 app.use(cors({
-    origin: prod_API,
+    origin: client,
     credentials: true
 }));
 app.use(express.json());
