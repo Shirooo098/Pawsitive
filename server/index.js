@@ -36,7 +36,7 @@ const db = new pg.Client({
     // password: db_password,
     // port: db_port
 
-    connectionString: process.env.POSTGRES_URL
+    connectionString: process.env.POSTGRES_URL + "?sslmode=require"
 })
 
 app.use(cors({
