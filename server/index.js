@@ -16,10 +16,16 @@ const port = process.env.PORT;
 const saltRounds = 10;
 const PgSession = pgSession(session);
 
-const db_user = process.env.POSTGRE_DB_USER;
+// const db_user = process.env.POSTGRE_DB_USER;
+// const db_host = process.env.POSTGRE_HOST;
+// const db_name = process.env.POSTGRE_DB_NAME;
+// const db_password = process.env.POSTGRE_DB_PASSWORD;
+// const db_port = process.env.POSTGRE_DB_PORT;
+
+const db_user = process.env.POSTGRE_USER;
 const db_host = process.env.POSTGRE_HOST;
-const db_name = process.env.POSTGRE_DB_NAME;
-const db_password = process.env.POSTGRE_DB_PASSWORD;
+const db_name = process.env.POSTGRE_DATABASE;
+const db_password = process.env.POSTGRE_PASSWORD;
 const db_port = process.env.POSTGRE_DB_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
@@ -29,7 +35,12 @@ const db = new pg.Client({
     // database: db_name, 
     // password: db_password,
     // port: db_port
-    connectionString: process.env.POSTGRES_URL + "?sslmode=require",
+
+    user: db_user,
+    host: db_host,
+    database: db_name, 
+    password: db_password,
+    port: db_port
 })
 
 app.use(cors({
