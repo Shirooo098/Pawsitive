@@ -16,6 +16,8 @@ const port = process.env.PORT;
 const saltRounds = 10;
 const PgSession = pgSession(session);
 
+const prod_API = process.env.PUBLIC_API_URL;
+
 // const db_user = process.env.POSTGRE_DB_USER;
 // const db_host = process.env.POSTGRE_HOST;
 // const db_name = process.env.POSTGRE_DB_NAME;
@@ -40,7 +42,7 @@ const db = new pg.Client({
 })
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: prod_API,
     credentials: true
 }));
 app.use(express.json());
