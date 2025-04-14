@@ -79,7 +79,7 @@ app.use((req, res, next) => {
 app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
 
-pp.get('/', (req, res) => {
+app.get('/', (req, res) => {
     res.json({  message: 'Backend is running' });
   });
 
