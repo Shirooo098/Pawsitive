@@ -79,6 +79,10 @@ app.use((req, res, next) => {
 app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
 
+pp.get('/', (req, res) => {
+    res.json({  message: 'Backend is running' });
+  });
+
 app.post("/register", async(req, res) => {
     try {
 
