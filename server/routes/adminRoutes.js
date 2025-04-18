@@ -11,10 +11,10 @@ const isAdmin = (req, res, next) => {
 
 router.get("/manageAppointment", isAdmin, async (req, res) => {
     try {
-        const result = await req.db.query("SELECT * FROM appointments ORDER BY appointment_date DESC")
+        const result = await req.db.query("SELECT * FROM appointments ORDER BY appointment_date")
         res.json(result.rows)
     } catch (error) {
-        console.error("Error Fetching Appointments:", err);
+        console.error("Error Fetching Appointments:", error);
         res.status(500).json({ error: 'Failed to fetch appointments '});
     }
 });

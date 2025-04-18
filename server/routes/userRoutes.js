@@ -49,7 +49,7 @@ router.get('/history', async(req, res) => {
         console.log("User data:", req.user.userID);
         const userID = req.user.userID;
 
-        const result = await req.db.query("SELECT * FROM appointments WHERE user_id = $1 ORDER BY appointment_date DESC",
+        const result = await req.db.query("SELECT * FROM appointments WHERE user_id = $1 ORDER BY appointment_date ASC",
             [userID]
         );
 

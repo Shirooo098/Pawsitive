@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { checkAuth } from '../../api/auth'
 import { deleteAppointment, fetchAppointments } from '../../api/adminAppointment';
+import AppoinmentRow from '../../components/AppoinmentRow';
 
 export default function ManageAppointment() {
   checkAuth();
 
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
+  const [filterStatus, setFilterStatus] = useState("All");
+
+  const filterAppoinments = appointments.filter(appt => 
+    filterStatus === 'All' || appt.status.toLowerCase() === filterStatus.toLowerCase()
+  )
 
   useEffect(() => {
     const loadUserAppointments = async() => {
@@ -42,6 +48,14 @@ export default function ManageAppointment() {
         <h1>Manage Appointments</h1>
       </div>
 
+      <select value={filterStatus} onChange={(e) => {
+        setFilterStatus(e.target.value)
+      }}>
+        <option value="All">All</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+      </select>
+
       <table>
       <caption>A list of your upcoming appointments.</caption>
       <thead>
@@ -56,24 +70,13 @@ export default function ManageAppointment() {
         </tr>
       </thead>
       <tbody>
-        {appointments.map((appt, index) => (
-          <tr key={index}>
-            <td>
-              {
-                new Date(appt.appointment_date)    
-                .toISOString()
-                .slice(0, 10)    
-              }</td>
-            <td>{appt.fullname}</td>
-            <td>{appt.contact}</td>
-            <td>{appt.pet_type}</td>
-            <td>{appt.service}</td>
-            <td>{appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}</td>
-            <td>
-              <button onClick={() => handleUpdate(appt.appointmentid)}>Update</button>
-              <button onClick={() => handleDelete(appt.appointmentid)}>Delete</button>
-            </td>
-          </tr>
+        {filterAppoinments.map((appt, index) => (
+         <AppoinmentRow
+          key={index}
+          appt={appt}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+         />
         ))}
       </tbody>
     </table>

@@ -134,7 +134,6 @@ export default function UpdateAppointment() {
                                         onChange={(e) => 
                                             setUpdateAppointment({...updateAppointment, status: e.target.value})
                                         }>
-                                    <option value="">Select a Status</option>
                                     {status.map((type) => (
                                         <option key={type} value={type}>
                                             {type.charAt(0).toUpperCase() + type.slice(1)}
