@@ -22,7 +22,7 @@ function Appointment(){
     }) 
 
     const petTypes = ['Dog', 'Cat', 'Rabbit']
-    const serviceTypes = ['Groom', 'Vaccine']
+    const serviceTypes = ['Groom', 'Vaccine', 'Surgery', 'Dental', 'Nutritional']
 
     const handleSubmit = async (e) => {
         e.preventDefault();
