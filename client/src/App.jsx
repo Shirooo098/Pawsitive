@@ -11,6 +11,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import ManageAppointment from "./pages/admin/ManageAppointment";
 import UpdateAppointment from "./pages/admin/UpdateAppointment";
 import History from "./pages/user/History";
+import Consultation from "./pages/user/Consultation";
 
 function App(){
     return (
@@ -27,9 +28,12 @@ function App(){
             <Route
               path="/appointment"
               element={<ProtectedRoute requiredType="user" element={<Appointment />}/>} />
-              <Route
+            <Route
               path="/history"
               element={<ProtectedRoute requiredType="user" element={<History />}/>} />
+            <Route
+              path="/consult"
+              element={<ProtectedRoute requiredType="user" element={<Consultation />}/>} />
             <Route
               path="admin/dashboard"
               element={

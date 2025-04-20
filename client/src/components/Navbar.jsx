@@ -26,16 +26,15 @@ function Navbar(){
               <>
               <li><Link to='/'>Home</Link></li>
               <li><Link to='/appointment'>Schedule</Link></li>
-              <li>
                 {isLoggedIn ? (
                   <>
-                    <Link to='/profile'>Profile</Link>
+                    <li><Link to='/profile'>Profile</Link></li>
+                    <li><Link to='/consult'>Consultation</Link></li>
                     <button onClick={handleLogout}>Logout</button>
                   </>
                 ): (  
                   <Link to='/login'>Login</Link>
                 )}
-              </li>
               </>
             )}
         </ul>
