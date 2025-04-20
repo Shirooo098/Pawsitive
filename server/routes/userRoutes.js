@@ -46,9 +46,8 @@ router.post("/appointment", async(req, res) => {
 
 router.get('/history', async(req, res) => {
     try {
-        console.log("User data:", req.user.userID);
         const userID = req.user.userID;
-
+        console.log("User data:", userID);
         const result = await req.db.query("SELECT * FROM appointments WHERE user_id = $1 ORDER BY appointment_date ASC",
             [userID]
         );
@@ -63,6 +62,26 @@ router.get('/history', async(req, res) => {
         res.status(500).json({ error: "Failed to fetch appointments" });
     }
 
+});
+
+router.get('/profile', async(req, res) => {
+    try {
+        const userID = req.user.userID;
+        console.log("User data:", userID);
+        const result = await req.db.query("SELECT * FROM users WHERE user_id = $1",
+            [userID]
+        )
+
+        if(result.rows.length === 0){
+            return res.status(404).json({ message: "User not found"});
+        }
+
+        res.json(result.rows);
+
+    } catch (error) {
+        console.error("Error Fetching User Data:", error);
+        res.status(500).json({ error: "Failed to fetch user data"});
+    }
 })
 
 export default router;
