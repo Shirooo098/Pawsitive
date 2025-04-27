@@ -20,6 +20,7 @@ function Navbar(){
               <>
                 <li><Link to='admin/dashboard'>Dashboard</Link></li>
                 <li><Link to='admin/manageAppointment'>Appointment</Link></li>
+                <li><Link to='admin/addPet'>Pet</Link></li>
                 <li><button onClick={handleLogout}>Logout</button></li>
               </>
             ): (
@@ -29,7 +30,6 @@ function Navbar(){
                 {isLoggedIn ? (
                   <>
                     <li><Link to='/profile'>Profile</Link></li>
-                    <li><Link to='/consult'>Consultation</Link></li>
                     <button onClick={handleLogout}>Logout</button>
                   </>
                 ): (  

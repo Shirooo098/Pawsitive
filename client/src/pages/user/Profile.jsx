@@ -1,12 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import { checkAuth } from '../../api/auth'
 import { Link } from "react-router-dom";
-import { getUserProfile } from '../../api/userProfile';
 
 export default function Profile() {
-    checkAuth();
-
-
     const [userData, setUserData] = useState({
         fullName: '',
         email: '',
@@ -28,8 +24,13 @@ export default function Profile() {
 
     useEffect(() => {
         const fetchUserInformation = async() => {
-            const userInformation = await getUserProfile();
+            const userInformation = await checkAuth()
+            if(userInformation && userInformation.user){
+                setUserData(userInformation.user);
+            }
         }
+
+        fetchUserInformation();
     }, [])
 
     return (
@@ -49,7 +50,7 @@ export default function Profile() {
                                 <label htmlFor="fullName">Name</label>
                                 <input type="text"
                                     name="fullName"
-                                    value={userData.fullName}
+                                    value={`${userData.firstName}${userData.lastName}`}
                                     disabled
                                 />
                             </div>
@@ -68,7 +69,7 @@ export default function Profile() {
                                 <input type="text"
                                     name="contact"
                                     onChange={handleChange}
-                                    value={userData.contact}
+                                    // value={userData.contact}
                                 />
                             </div>
 
@@ -77,7 +78,7 @@ export default function Profile() {
                                 <input type="text"
                                     name="address"
                                     onChange={handleChange}
-                                    value={userData.address}
+                                    // value={userData.address}
                                 />
                             </div>
                         </div>

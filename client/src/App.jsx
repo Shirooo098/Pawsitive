@@ -11,7 +11,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import ManageAppointment from "./pages/admin/ManageAppointment";
 import UpdateAppointment from "./pages/admin/UpdateAppointment";
 import History from "./pages/user/History";
-import Consultation from "./pages/user/Consultation";
+import AddPet from "./pages/admin/AddPet";
 
 function App(){
     return (
@@ -32,12 +32,14 @@ function App(){
               path="/history"
               element={<ProtectedRoute requiredType="user" element={<History />}/>} />
             <Route
-              path="/consult"
-              element={<ProtectedRoute requiredType="user" element={<Consultation />}/>} />
-            <Route
               path="admin/dashboard"
               element={
                 <ProtectedRoute requiredType="admin" element={<Dashboard/>}/>
+              }/>
+            <Route
+              path="admin/addPet"
+              element={
+                <ProtectedRoute requiredType="admin" element={<AddPet/>}/>
               }/>
             <Route
               path="admin/manageAppointment"

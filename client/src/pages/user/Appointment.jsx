@@ -198,8 +198,8 @@ function Appointment(){
 
                     </div>
                     <div className="appointmentBtn-container">
-                        <button className="appointmentCancelBtn" type="button" onClick={handleCancel}>Cancel</button>
-                        <button className="appointmentBtnSubmit" type="submit">Submit</button>
+                        <button className="formCancelBtn" type="button" onClick={handleCancel}>Cancel</button>
+                        <button className="formBtnSubmit" type="submit">Submit</button>
                     </div>
                 </form>
             </div>

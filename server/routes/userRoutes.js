@@ -32,7 +32,7 @@ router.post("/appointment", async(req, res) => {
                 petName, 
                 petAge, 
                 service,
-                req.user.userID
+                req.user.userid
             ]
         );
         
@@ -68,7 +68,7 @@ router.get('/profile', async(req, res) => {
     try {
         const userID = req.user.userID;
         console.log("User data:", userID);
-        const result = await req.db.query("SELECT * FROM users WHERE user_id = $1",
+        const result = await req.db.query("SELECT * FROM users WHERE userid = $1",
             [userID]
         )
 
@@ -76,7 +76,7 @@ router.get('/profile', async(req, res) => {
             return res.status(404).json({ message: "User not found"});
         }
 
-        res.json(result.rows);
+        res.json(result.rows[0]);
 
     } catch (error) {
         console.error("Error Fetching User Data:", error);

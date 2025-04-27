@@ -1,6 +1,23 @@
 import express from 'express';
+import multer from 'multer';
 
 const router = express.Router();
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix)
+
+    }
+});
+const upload = multer({ storage: storage})
+
+const petImgs = [
+    { name: 'petBeforeImage', maxCount: 1},
+    { name: 'petAfterImage', maxCount: 1}
+]
 
 const isAdmin = (req, res, next) => {
     if(req.isAuthenticated() && req.user.type === 'admin'){
@@ -79,5 +96,16 @@ router.patch('/updateAppointment/:id', isAdmin, async(req, res) => {
         res.status(500).json({ error: "Failed to update appointment"})
     }
 });
+
+router.post('/addPet', isAdmin, upload.fields([
+    { name: 'before', maxCount: 1},
+    { name: 'after', maxCount: 1}]), async(req, res) => {
+
+    const { name, age, breed } = req.body;
+    const { beforeImg, afterImg } = req.files;
+
+    console.log("Request Body:", req.body);
+    console.log("Before Image:", req.files);
+ });
 
 export default router;
