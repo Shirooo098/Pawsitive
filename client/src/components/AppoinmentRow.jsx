@@ -1,7 +1,8 @@
 import React from 'react'
 
 export default function AppoinmentRow({appt, onUpdate, onDelete}) {
-    const formatDate = new Date(appt.appointment_date).toISOString().slice(0, 10);
+    const date = new Date(appt.appointment_date)
+    const formatDate = date.toLocaleDateString('en-CA');
     const status = appt.status.charAt(0).toUpperCase() + appt.status.slice(1);    
 
     return(

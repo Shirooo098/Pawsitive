@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { checkAuth } from '../../api/auth'
 import { fetchAppointment } from '../../api/userAppointment';
 
+
 export default function History() {
     checkAuth();
 
@@ -17,7 +18,6 @@ export default function History() {
 
         loadAppointments();
     }, [])
-
     return (
         <>
             <div>
@@ -36,12 +36,12 @@ export default function History() {
             </thead>
             <tbody>
                 {appointments.map((appt, index) => (
+                    
+
                 <tr key={index}>
                     <td>
                     {
-                        new Date(appt.appointment_date)    
-                        .toISOString()
-                        .slice(0, 10)    
+                        new Date(appt.appointment_date).toLocaleDateString('en-CA')
                     }</td>
                     <td>{appt.pet_name}</td>
                     <td>{appt.pet_type}</td>
