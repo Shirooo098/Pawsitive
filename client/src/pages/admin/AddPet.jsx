@@ -9,7 +9,7 @@ export default function AddPet() {
         petName: '',
         petAge: '',
         petSex: '',
-        petBreed: ''
+        petBreed: '',
     })
 
     const handleChange = (e) => {
@@ -28,12 +28,11 @@ export default function AddPet() {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append('petBeforeImage', pet.petBeforeImage);
-        formData.append('petAfterImage', pet.petAfterImage);
+        formData.append('petImage', pet.petImage);
         formData.append('petName', pet.petName);
         formData.append('petAge', pet.petAge);
-        formData.append('petBreed', pet.petBreed);
         formData.append('petSex', pet.petSex);
+        formData.append('petBreed', pet.petBreed);
 
         try {
             const res = await uploadImage(formData);
@@ -53,18 +52,10 @@ export default function AddPet() {
                         <h1>Add Pet Adoption</h1>
                     </div>
 
-                    <div className="rowBeforeImage">
-                        <label htmlFor="petBeforeImage">Pet Before Image</label>
+                    <div className="rowImage">
+                        <label htmlFor="petImage">Pet Image</label>
                         <input type="file"
-                            name="petBeforeImage"
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="rowAfterImage">
-                        <label htmlFor="petAfterImage">Pet After Image</label>
-                        <input type="file"
-                            name="petAfterImage"
+                            name="petImage"
                             onChange={handleChange}
                         />
                     </div>

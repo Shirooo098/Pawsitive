@@ -14,11 +14,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage})
 
-const petImgs = [
-    { name: 'petBeforeImage', maxCount: 1},
-    { name: 'petAfterImage', maxCount: 1}
-]
-
 const isAdmin = (req, res, next) => {
     if(req.isAuthenticated() && req.user.type === 'admin'){
         return next();
@@ -97,15 +92,34 @@ router.patch('/updateAppointment/:id', isAdmin, async(req, res) => {
     }
 });
 
-router.post('/addPet', isAdmin, upload.fields([
-    { name: 'before', maxCount: 1},
-    { name: 'after', maxCount: 1}]), async(req, res) => {
+router.post('/addPet', isAdmin,
+    upload.single('petImage'),
+    async(req, res) => {
 
-    const { name, age, breed } = req.body;
-    const { beforeImg, afterImg } = req.files;
+    const { petName, petAge, petSex, petBreed } = req.body;
+    const petImage = req.file;
+    const petImgPath = petImage ? `/uploads/${petImage.filename}` : null;
 
     console.log("Request Body:", req.body);
-    console.log("Before Image:", req.files);
+    console.log("Image:", req.file);
+
+    try {
+        
+        const result = await req.db.query(
+            `INSERT INTO adopt_pets
+            (petName, petAge, petSex, petBreed, petImage)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING *`,
+            [petName, petAge, petSex, petBreed, petImgPath]
+        )
+
+        console.log('Pet Added Successfully:', result.rows[0]);
+        res.json({ message: "Pet added successfully", pet: result.rows[0]});
+
+    } catch (error) {
+        console.error("Error adding pet:", error);
+        res.status(500).json({ error: "Failed to add pet"});
+    }
  });
 
 export default router;
