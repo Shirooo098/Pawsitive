@@ -101,7 +101,7 @@ router.post('/addPet', isAdmin,
     const petImgPath = petImage ? `/uploads/${petImage.filename}` : null;
 
     console.log("Request Body:", req.body);
-    console.log("Image:", req.file);
+    console.log("Image:", petImgPath);
 
     try {
         

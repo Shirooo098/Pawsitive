@@ -2,6 +2,7 @@ import express from 'express';
 
 const router = express.Router();
 
+
 router.post("/appointment", async(req, res) => {
     try {
 
@@ -76,11 +77,22 @@ router.get('/profile', async(req, res) => {
             return res.status(404).json({ message: "User not found"});
         }
 
-        res.json(result.rows[0]);
+        res.json(result.rows);
 
     } catch (error) {
         console.error("Error Fetching User Data:", error);
         res.status(500).json({ error: "Failed to fetch user data"});
+    }
+});
+
+router.get('/', async(req, res) => {
+    try {
+        const result = await req.db.query("SELECT id, petName, petImage  FROM adopt_pets ORDER BY petName")
+        res.json(result.rows);
+        console.log("fetched pets:", result.rows);
+    } catch (error) {
+        console.error("Error fetching cats:", error);
+        res.status(500).json({ error: "Failed to fetch pets" });
     }
 })
 
