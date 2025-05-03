@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchAdoptPets } from '../api/userAdoption';
 
 export default function Adoption() {
+    const navigate = useNavigate();
+    const { id } = useParams();
     const [pets, setPets] = useState([]);
+
     useEffect(() => {
         const fetchPets = async() => {
             try {
                 const response = await fetchAdoptPets();
-
-                console.log("Pets:", response);
-
                 if(!response) return;
 
                 setPets(response);
@@ -20,6 +21,12 @@ export default function Adoption() {
 
         fetchPets()
     }, [])
+
+    const handleAdoptClick = (petId) => {
+        console.log(`Pet ID: ${petId}`);
+        navigate(`/adopt/${petId}`);
+    }
+
   return (
     <section id="adoption" className="container-fluid px-0">
     <div className="py-5 text-center">
@@ -33,7 +40,7 @@ export default function Adoption() {
                     <img src={`http://localhost:3000${pet.petimage}`} alt={pet.petName} />
                     <h3>{pet.petname}</h3>
                     <p>A sweet {pet.petname} looking for a forever home.</p>
-                    <button className="btn btn-primary">Adopt Me</button>
+                    <button className="btn btn-primary" onClick={() => handleAdoptClick(pet.id)}>Adopt Me</button>
                 </div>
             ))}
         </div>

@@ -96,4 +96,23 @@ router.get('/', async(req, res) => {
     }
 })
 
+router.get('/adopt/:id', async(req, res) => {
+    const { id } = req.params;
+    console.log("Pet ID:", id);
+
+    try {
+        const result = await req.db.query("SELECT * FROM adopt_pets WHERE id = $1", [id]);
+
+        if(result.rows.length === 0) {
+            return res.status(404).json({ message: "Pet not found" });
+        }
+
+        res.json(result.rows[0]);
+        console.log("Fetched Pet:", result.rows);
+    } catch (error) {
+        console.error("Error fetching pet:", error);
+        res.status(500).json({ error: "Failed to fetch pet" });
+    }
+})
+
 export default router;

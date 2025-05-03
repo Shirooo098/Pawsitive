@@ -12,6 +12,7 @@ import ManageAppointment from "./pages/admin/ManageAppointment";
 import UpdateAppointment from "./pages/admin/UpdateAppointment";
 import History from "./pages/user/History";
 import AddPet from "./pages/admin/AddPet";
+import AdoptionForm from "./pages/user/AdoptionForm";
 
 function App(){
     return (
@@ -31,6 +32,10 @@ function App(){
             <Route
               path="/history"
               element={<ProtectedRoute requiredType="user" element={<History />}/>} />
+            <Route
+              path="/adopt/:id"
+              element={<ProtectedRoute requiredType="user" element={<AdoptionForm />}/>} />
+
             <Route
               path="admin/dashboard"
               element={

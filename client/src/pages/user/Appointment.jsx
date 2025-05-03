@@ -5,6 +5,7 @@ import './Appointment.css'
 import { sendAppointment } from "../../api/userAppointment";
 
 function Appointment(){
+    checkAuth();
     const [user, setUser] = useState();
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});

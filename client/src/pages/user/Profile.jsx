@@ -3,6 +3,7 @@ import { checkAuth } from '../../api/auth'
 import { Link } from "react-router-dom";
 
 export default function Profile() {
+    checkAuth();
     const [userData, setUserData] = useState({
         fullName: '',
         email: '',
