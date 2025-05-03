@@ -2,6 +2,7 @@ import express from 'express';
 
 const router = express.Router();
 
+
 router.post("/appointment", async(req, res) => {
     try {
 
@@ -32,7 +33,7 @@ router.post("/appointment", async(req, res) => {
                 petName, 
                 petAge, 
                 service,
-                req.user.userID
+                req.user.userid
             ]
         );
         
@@ -46,10 +47,9 @@ router.post("/appointment", async(req, res) => {
 
 router.get('/history', async(req, res) => {
     try {
-        console.log("User data:", req.user.userID);
         const userID = req.user.userID;
-
-        const result = await req.db.query("SELECT * FROM appointments WHERE user_id = $1 ORDER BY appointment_date DESC",
+        console.log("User data:", userID);
+        const result = await req.db.query("SELECT * FROM appointments WHERE user_id = $1 ORDER BY appointment_date ASC",
             [userID]
         );
 
@@ -63,6 +63,56 @@ router.get('/history', async(req, res) => {
         res.status(500).json({ error: "Failed to fetch appointments" });
     }
 
+});
+
+router.get('/profile', async(req, res) => {
+    try {
+        const userID = req.user.userID;
+        console.log("User data:", userID);
+        const result = await req.db.query("SELECT * FROM users WHERE userid = $1",
+            [userID]
+        )
+
+        if(result.rows.length === 0){
+            return res.status(404).json({ message: "User not found"});
+        }
+
+        res.json(result.rows);
+
+    } catch (error) {
+        console.error("Error Fetching User Data:", error);
+        res.status(500).json({ error: "Failed to fetch user data"});
+    }
+});
+
+router.get('/', async(req, res) => {
+    try {
+        const result = await req.db.query("SELECT id, petName, petImage  FROM adopt_pets ORDER BY petName")
+        res.json(result.rows);
+        console.log("fetched pets:", result.rows);
+    } catch (error) {
+        console.error("Error fetching cats:", error);
+        res.status(500).json({ error: "Failed to fetch pets" });
+    }
+})
+
+router.get('/adopt/:id', async(req, res) => {
+    const { id } = req.params;
+    console.log("Pet ID:", id);
+
+    try {
+        const result = await req.db.query("SELECT * FROM adopt_pets WHERE id = $1", [id]);
+
+        if(result.rows.length === 0) {
+            return res.status(404).json({ message: "Pet not found" });
+        }
+
+        res.json(result.rows[0]);
+        console.log("Fetched Pet:", result.rows);
+    } catch (error) {
+        console.error("Error fetching pet:", error);
+        res.status(500).json({ error: "Failed to fetch pet" });
+    }
 })
 
 export default router;

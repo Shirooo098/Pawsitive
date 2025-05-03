@@ -134,7 +134,6 @@ export default function UpdateAppointment() {
                                         onChange={(e) => 
                                             setUpdateAppointment({...updateAppointment, status: e.target.value})
                                         }>
-                                    <option value="">Select a Status</option>
                                     {status.map((type) => (
                                         <option key={type} value={type}>
                                             {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -144,9 +143,9 @@ export default function UpdateAppointment() {
                             </div>
                     </div>
 
-                    <div className="appointmentBtn-container">
-                        <button className="appointmentCancelBtn" type="button">Cancel</button>
-                        <button className="appointmentBtnSubmit" type="submit">Submit</button>
+                    <div className="formBtn-container">
+                        <button className="formCancelBtn" type="button">Cancel</button>
+                        <button className="formBtnSubmit" type="submit">Submit</button>
                     </div>
                 </form>
             </div>

@@ -1,8 +1,7 @@
 import { useAuth } from "../hooks/AuthContext";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ element, requiredType }){
-    const location = useLocation();
     const { user, isLoggedIn, loading } = useAuth();
 
     if(loading){
@@ -10,8 +9,8 @@ function ProtectedRoute({ element, requiredType }){
     }
 
     if(!isLoggedIn || (requiredType && user?.type !== requiredType)){
-        console.log(`You don't have ${requiredType} permission`)
-        return <Navigate to="/" state={{ from: location}} replace/>
+        alert("Please Login to access this page. Redirecting to login page...");
+        return <Navigate to="/login" />;
     }
 
     return element;

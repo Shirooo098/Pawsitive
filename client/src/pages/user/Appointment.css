@@ -1,6 +1,7 @@
 .appointment-container{
     display: flex;
     justify-content: center;
+    width: 100%;
     padding: 2em;
 }
 .appointment-container label{
@@ -49,26 +50,48 @@
 .rowPetType, 
 .rowPetName, 
 .rowPetAge,
-.rowService{
+.rowService,
+.rowPetWeight{
     display: flex;
     flex-direction: column;
 }
 .rowFullName, 
-.rowEmailApp, 
+.rowEmailApp,
 .rowContact, 
 .rowAddress,
 .rowPetType, 
 .rowPetName, 
 .rowPetAge,
-.rowService{
+.rowService,
+.rowPetWeight{
     margin: 1em 0;
 }
 
-.appointmentBtn-container{
+.formBtn-container{
     display: flex;
     flex-direction: row-reverse;
 }
+.formStatus-container{
+    display: flex;
+    justify-content: center;
+}
+
 .appointmentStatus-container{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.rowStatus{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.rowStatus select{
+    border: 1px solid #000 !important;
+}
+.rowStatus label {
     display: flex;
     justify-content: center;
 }

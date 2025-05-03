@@ -48,6 +48,8 @@ app.use(cors({
     origin: client,
     credentials: true
 }));
+
+app.use('/uploads', express.static('uploads/'));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended : true }));
 

@@ -5,6 +5,7 @@ import './Appointment.css'
 import { sendAppointment } from "../../api/userAppointment";
 
 function Appointment(){
+    checkAuth();
     const [user, setUser] = useState();
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});
@@ -22,7 +23,7 @@ function Appointment(){
     }) 
 
     const petTypes = ['Dog', 'Cat', 'Rabbit']
-    const serviceTypes = ['Groom', 'Vaccine']
+    const serviceTypes = ['Groom', 'Vaccine', 'Surgery', 'Dental', 'Nutritional']
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -198,8 +199,8 @@ function Appointment(){
 
                     </div>
                     <div className="appointmentBtn-container">
-                        <button className="appointmentCancelBtn" type="button" onClick={handleCancel}>Cancel</button>
-                        <button className="appointmentBtnSubmit" type="submit">Submit</button>
+                        <button className="formCancelBtn" type="button" onClick={handleCancel}>Cancel</button>
+                        <button className="formBtnSubmit" type="submit">Submit</button>
                     </div>
                 </form>
             </div>
