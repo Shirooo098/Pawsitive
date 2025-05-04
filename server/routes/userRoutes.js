@@ -5,9 +5,6 @@ const router = express.Router();
 
 router.post("/appointment", async(req, res) => {
     try {
-
-        console.log("user:", req.user)
-
         const { 
             scheduleDate, 
             fullName, 
@@ -87,7 +84,12 @@ router.get('/profile', async(req, res) => {
 
 router.get('/', async(req, res) => {
     try {
-        const result = await req.db.query("SELECT id, petName, petImage  FROM adopt_pets ORDER BY petName")
+        const result = await req.db.query(`
+            SELECT p.id, p.petName, p.petImage, p.petage, p.petsex, p.petbreed  
+            FROM adopt_pets p
+            LEFT JOIN adoption a ON p.id = a.petid 
+            AND a.status = 'pending'
+            WHERE a.petid IS NULL`)
         res.json(result.rows);
         console.log("fetched pets:", result.rows);
     } catch (error) {
@@ -125,10 +127,8 @@ router.post('/adopt', async(req, res) => {
         address,
         reason,
     } = req.body
-    const userID = req.user.userid;
 
-    console.log("Adoption Data:", req.body);
-    console.log("User :", userID);
+    const userID = req.user.userid;
 
     try {
         const newAdoption = await req.db.query(
