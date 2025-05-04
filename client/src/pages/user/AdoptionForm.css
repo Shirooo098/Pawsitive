@@ -1,16 +1,19 @@
-.adoption-wrapper{
-    display: flex;
-    width: 100svw;
+body {
+    background-color: #fce4ec !important;
+    font-family:Arial, Helvetica, sans-serif;
+  }
+.pet-card img {
+    border-radius: 1rem;
 }
-.pet-container{
-    width: 50%;
+.text-center button {
+    background-color: #64b5f6;
+    color: white;
+    border: none;
 }
-
-.pet-container img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.text-center button:hover {
+    background-color: #ff4081;
+    color: white;
 }
 .adoption-form{
-    width: 50%;
+    border-radius: 8px;
 }

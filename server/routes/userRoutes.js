@@ -115,4 +115,43 @@ router.get('/adopt/:id', async(req, res) => {
     }
 })
 
+router.post('/adopt', async(req, res) => {
+    const {
+        petID,
+        scheduleDate,
+        fullName,
+        email,
+        contact,
+        address,
+        reason,
+    } = req.body
+    const userID = req.user.userid;
+
+    console.log("Adoption Data:", req.body);
+    console.log("User :", userID);
+
+    try {
+        const newAdoption = await req.db.query(
+            `INSERT INTO adoption(scheduledate, fullname, email, contact, address, reason, petID, userID)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+            [
+                scheduleDate,
+                fullName,
+                email,
+                contact,
+                address,
+                reason,
+                petID,
+                userID
+            ]
+        );
+
+        res.json(newAdoption.rows[0]);
+    } catch (error) {
+        console.error("Error Sending Adoption:", error);
+        res.status(500).json({ error: "Failed to send adoption" });
+    }
+
+}) 
+
 export default router;
