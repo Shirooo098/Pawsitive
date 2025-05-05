@@ -28,7 +28,7 @@ export default function UpdateAppointment() {
 
     const handleSubmit = async(e) => {
         e.preventDefault();
-
+        
         try {
             const res = await updateUserAppointment(id, updateAppointment.status);
             
