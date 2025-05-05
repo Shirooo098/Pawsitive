@@ -26,3 +26,16 @@ export const fetchAdoptPetRequest = async () => {
         console.error("Error Fetching Adoption Requests:", error);
     }
 }
+
+export const deleteAdoption = async (id) => {
+    try {
+        const response = await axios.delete(`http://localhost:3000/admin/deleteAdoption/${id}`, {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true
+        });
+
+        alert('Appointment Successfully Deleted', response.data);
+    } catch (error) {
+        console.error("Error Deleting Adoption:", id);
+    }
+}

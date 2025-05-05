@@ -2,7 +2,7 @@ import './Adoption.css'
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { checkAuth } from '../../api/auth'
-import { fetchAdoptPetRequest } from '../../api/adminAdoption';
+import { fetchAdoptPetRequest, deleteAdoption } from '../../api/adminAdoption';
 import AdoptRow from '../../components/AdoptRow';
 
 export default function ManageAdoption() {
@@ -31,9 +31,9 @@ export default function ManageAdoption() {
     if(!confirmDelete) return;
 
     try {
-        await deleteAppointment(id);
+        await deleteAdoption(id);
 
-        setAppointments(prev => prev.filter(appointments => appointments.appointmentid !== id));
+        setAdoptRequest(prev => prev.filter(adopt => adopt.id !== id));
     } catch (error) {
       
     }
