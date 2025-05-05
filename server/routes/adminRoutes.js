@@ -122,4 +122,19 @@ router.post('/addPet', isAdmin,
     }
  });
 
+router.get('/manageAdoption', isAdmin, async(req, res) => { 
+    try {
+        const result = await req.db.query(`
+            SELECT a.*, p.* 
+            FROM adoption a
+            JOIN adopt_pets p ON a.petid = p.id
+            WHERE a.status = 'pending'
+            ORDER BY scheduledate`);
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Error Fetching Adoptions:", error);
+        res.status(500).json({ error: "Failed to fetch adoptions"});
+    }
+})
+
 export default router;

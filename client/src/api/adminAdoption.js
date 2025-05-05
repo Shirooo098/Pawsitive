@@ -13,3 +13,16 @@ export const uploadImage = async (formData) => {
         console.error("Error uploading image:", error);
     } 
 }
+
+export const fetchAdoptPetRequest = async () => {
+    try {
+        const response = await axios.get("http://localhost:3000/admin/manageAdoption", {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true
+        })
+
+        return response.data;
+    } catch (error) {
+        console.error("Error Fetching Adoption Requests:", error);
+    }
+}

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { useNavigate } from "react-router-dom";
-import { uploadImage } from '../../api/adminUploadImg';
+import { uploadImage } from '../../api/adminAdoption';
+import ManageAdoption from './ManageAdoption';
 
 export default function AddPet() {
 
@@ -102,6 +103,8 @@ export default function AddPet() {
                     </div>
                 </form>
             </div>
+
+            <ManageAdoption/>
         </>
     )
 }
