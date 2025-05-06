@@ -100,9 +100,6 @@ router.post('/addPet', isAdmin,
     const petImage = req.file;
     const petImgPath = petImage ? `/uploads/${petImage.filename}` : null;
 
-    console.log("Request Body:", req.body);
-    console.log("Image:", petImgPath);
-
     try {
         
         const result = await req.db.query(

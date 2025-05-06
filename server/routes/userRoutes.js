@@ -85,10 +85,12 @@ router.get('/profile', async(req, res) => {
 router.get('/', async(req, res) => {
     try {
         const result = await req.db.query(`
-            SELECT p.id, p.petName, p.petImage, p.petage, p.petsex, p.petbreed  
+            SELECT p.id, p.petName, p.petImage,
+            p.petage, p.petsex, p.petbreed  
             FROM adopt_pets p
             LEFT JOIN adoption a ON p.id = a.petid 
             AND a.status = 'pending'
+            AND a.status = 'approved'
             WHERE a.petid IS NULL`)
         res.json(result.rows);
         console.log("fetched pets:", result.rows);
