@@ -34,6 +34,8 @@ export default function Profile() {
         fetchUserInformation();
     }, [])
 
+    console.log("User Data:", userData);
+
     return (
         <>
             <h1>Profile Page</h1>

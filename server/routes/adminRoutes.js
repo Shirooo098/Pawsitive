@@ -100,9 +100,6 @@ router.post('/addPet', isAdmin,
     const petImage = req.file;
     const petImgPath = petImage ? `/uploads/${petImage.filename}` : null;
 
-    console.log("Request Body:", req.body);
-    console.log("Image:", petImgPath);
-
     try {
         
         const result = await req.db.query(
@@ -121,5 +118,39 @@ router.post('/addPet', isAdmin,
         res.status(500).json({ error: "Failed to add pet"});
     }
  });
+
+router.get('/manageAdoption', isAdmin, async(req, res) => { 
+    try {
+        const result = await req.db.query(`
+            SELECT a.*, p.petname, p.petImage
+            FROM adoption a
+            JOIN adopt_pets p ON a.petid = p.id
+            WHERE a.status = 'pending'
+            ORDER BY scheduledate`);
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Error Fetching Adoptions:", error);
+        res.status(500).json({ error: "Failed to fetch adoptions"});
+    }
+});
+
+router.delete("/deleteAdoption/:id", isAdmin, async (req, res) => {
+    const {id} = req.params;
+
+    console.log(`Adoption ID ${id}`)
+    try {
+        const result = await req.db.query("DELETE FROM adoption WHERE id = $1 RETURNING *",
+            [id]
+        )
+        if (result.rowCount === 0){
+        return res.status(404).json({ error : "Adoption not found"})
+        }
+
+        res.json({ message: 'Adoption deleted successfully', adoption: result.rows[0]})
+    } catch (error) {
+        console.error("Error Deleting Adoption:", error);
+        res.status(500).json({ error: 'Failed to delete Adoption'});
+    }
+});
 
 export default router;

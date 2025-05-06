@@ -18,7 +18,7 @@ export default function Adoption() {
             }
         }
 
-        fetchPets()
+        fetchPets();
     }, [])
 
     const handleAdoptClick = (petId) => {
@@ -36,7 +36,7 @@ export default function Adoption() {
         <div className="pet-carousel" id="petCarousel">
             {pets.map((pet) => (
                 <div key={pet.id} className="adoption-card">
-                    <img src={`http://localhost:3000${pet.petimage}`} alt={pet.petName} />
+                    <img src={`http://localhost:3000${pet.petimage}`} alt={pet.petname} />
                     <h3>{pet.petname}</h3>
                     <p>A sweet {pet.petname} looking for a forever home.</p>
                     <button className="btn btn-primary" onClick={() => handleAdoptClick(pet.id)}>Adopt Me</button>

@@ -27,3 +27,17 @@ export const fetchAdoptPetDetails = async(id) => {
     }
 }
 
+export const sendAdoption = async(adoptionData, id) => {
+    try {
+        const res = await axios.post(`http://localhost:3000/adopt`, adoptionData, {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true
+        })
+
+        console.log("Adoption data sent:", res.data);
+        return res.data;
+    } catch (error) {
+        console.error("Error:", error.response ? error.response.data : error.message);
+    }
+}
+

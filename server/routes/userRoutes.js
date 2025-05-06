@@ -5,9 +5,6 @@ const router = express.Router();
 
 router.post("/appointment", async(req, res) => {
     try {
-
-        console.log("user:", req.user)
-
         const { 
             scheduleDate, 
             fullName, 
@@ -87,7 +84,14 @@ router.get('/profile', async(req, res) => {
 
 router.get('/', async(req, res) => {
     try {
-        const result = await req.db.query("SELECT id, petName, petImage  FROM adopt_pets ORDER BY petName")
+        const result = await req.db.query(`
+            SELECT p.id, p.petName, p.petImage,
+            p.petage, p.petsex, p.petbreed  
+            FROM adopt_pets p
+            LEFT JOIN adoption a ON p.id = a.petid 
+            AND a.status = 'pending'
+            AND a.status = 'approved'
+            WHERE a.petid IS NULL`)
         res.json(result.rows);
         console.log("fetched pets:", result.rows);
     } catch (error) {
@@ -114,5 +118,42 @@ router.get('/adopt/:id', async(req, res) => {
         res.status(500).json({ error: "Failed to fetch pet" });
     }
 })
+
+router.post('/adopt', async(req, res) => {
+    const {
+        petID,
+        scheduleDate,
+        fullName,
+        email,
+        contact,
+        address,
+        reason,
+    } = req.body
+
+    const userID = req.user.userid;
+
+    try {
+        const newAdoption = await req.db.query(
+            `INSERT INTO adoption(scheduledate, fullname, email, contact, address, reason, petID, userID)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+            [
+                scheduleDate,
+                fullName,
+                email,
+                contact,
+                address,
+                reason,
+                petID,
+                userID
+            ]
+        );
+
+        res.json(newAdoption.rows[0]);
+    } catch (error) {
+        console.error("Error Sending Adoption:", error);
+        res.status(500).json({ error: "Failed to send adoption" });
+    }
+
+}) 
 
 export default router;

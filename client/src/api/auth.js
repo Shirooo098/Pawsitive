@@ -45,7 +45,7 @@ export const checkAuth = async () => {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
         });
-
+        
         return response.data;
     } catch (error) {
         console.error("Auth check failed:", error);
