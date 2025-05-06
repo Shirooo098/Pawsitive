@@ -13,6 +13,7 @@ import UpdateAppointment from "./pages/admin/UpdateAppointment";
 import History from "./pages/user/History";
 import AddPet from "./pages/admin/AddPet";
 import AdoptionForm from "./pages/user/AdoptionForm";
+import UpdateAdoption from "./pages/admin/UpdateAdoption";
 
 function App(){
     return (
@@ -35,7 +36,6 @@ function App(){
             <Route
               path="/adopt/:id"
               element={<ProtectedRoute requiredType="user" element={<AdoptionForm />}/>} />
-
             <Route
               path="admin/dashboard"
               element={
@@ -55,7 +55,12 @@ function App(){
               path="admin/updateAppointment/:id"
               element={
                 <ProtectedRoute requiredType="admin" element={<UpdateAppointment/>}/>
-              }/>   
+              }/>
+              <Route
+              path="admin/updateAdoption/:id"
+              element={
+                <ProtectedRoute requiredType="admin" element={<UpdateAdoption/>}/>
+              }/>    
           </Routes>
         </BrowserRouter>
       </AuthProvider>

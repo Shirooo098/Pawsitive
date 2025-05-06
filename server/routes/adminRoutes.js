@@ -125,7 +125,6 @@ router.get('/manageAdoption', isAdmin, async(req, res) => {
             SELECT a.*, p.petname, p.petImage
             FROM adoption a
             JOIN adopt_pets p ON a.petid = p.id
-            WHERE a.status = 'pending'
             ORDER BY scheduledate`);
         res.json(result.rows);
     } catch (error) {
@@ -152,5 +151,59 @@ router.delete("/deleteAdoption/:id", isAdmin, async (req, res) => {
         res.status(500).json({ error: 'Failed to delete Adoption'});
     }
 });
+
+router.get('/updateAdoption/:id', isAdmin, async(req, res) => {
+    const {id} = req.params;
+    try {
+        console.log(`Adoption ID: ${id}`);
+
+        const result = await req.db.query(`
+            SELECT a.*,
+            p.petname, p.petimage, p.petage,
+            p.petsex, p.petbreed 
+            FROM adoption a
+            JOIN adopt_pets p on a.petid = p.id  
+            WHERE a.id = $1 `,
+            [id]
+        )
+
+
+        if(result.rowCount === 0) {
+            return res.status(404).json({ error : "Adoption not found"});
+        }
+
+        console.log("Adoption Details:", result.rows[0])
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error("Error fetching adoption:", error);
+        res.status(500).json({ error: 'Failed to fetch adoption'});
+    }
+});
+
+router.patch('/updateAdoption/:id', isAdmin, async(req, res) => {
+    const {id} = req.params;
+    const {status} = req.body;
+    
+
+    console.log("Received request to update adoption:", {id, status});
+    try {
+        const result = await req.db.query("UPDATE adoption SET status = $1 WHERE id = $2 RETURNING *",
+            [status, id]
+        );
+
+        if(result.rowCount === 0){
+            return res.status(404).json({ error: "Adoption Request not found"});
+        }
+
+        res.json({ message: "Adoption Request updated successfully",
+            adoption: result.rows[0]
+        })
+        
+    } catch (error) {
+        console.error("Error updating Adoption:", error);
+        res.status(500).json({error: "Failed to update adoption request."});
+    }
+})
+
 
 export default router;

@@ -1,10 +1,11 @@
 import './AdoptionForm.css'
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAdoptPetDetails, sendAdoption } from '../../api/userAdoption';
 import { checkAuth } from '../../api/auth';
 
 export default function AdoptionForm() {
+    const navigate = useNavigate();
     const { id } = useParams();
     const [user, setUser] = useState();
     const [minDate, setMinDate] = useState('');
@@ -76,6 +77,7 @@ export default function AdoptionForm() {
         try {
             const res = await sendAdoption(adoptionData);
 
+            navigate("/");
             if(res.error){
                 console.error("Server Error:", res.error);
             }
