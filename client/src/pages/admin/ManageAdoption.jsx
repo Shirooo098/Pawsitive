@@ -40,7 +40,7 @@ export default function ManageAdoption() {
   }
   const handleUpdate = (id) => {
     console.log(`Update appointment: ${id}`)
-    // navigate(`/admin/updateAdoption/${id}`)
+    navigate(`/admin/updateAdoption/${id}`)
   }
 
   return (

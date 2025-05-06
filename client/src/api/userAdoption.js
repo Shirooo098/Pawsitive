@@ -35,6 +35,8 @@ export const sendAdoption = async(adoptionData, id) => {
         })
 
         console.log("Adoption data sent:", res.data);
+        alert("Adoption Request Sent Successfully!");
+        
         return res.data;
     } catch (error) {
         console.error("Error:", error.response ? error.response.data : error.message);

@@ -44,7 +44,7 @@ router.post("/appointment", async(req, res) => {
 
 router.get('/history', async(req, res) => {
     try {
-        const userID = req.user.userID;
+        const userID = req.user.userid;
         console.log("User data:", userID);
         const result = await req.db.query("SELECT * FROM appointments WHERE user_id = $1 ORDER BY appointment_date ASC",
             [userID]
@@ -75,7 +75,6 @@ router.get('/profile', async(req, res) => {
         }
 
         res.json(result.rows);
-
     } catch (error) {
         console.error("Error Fetching User Data:", error);
         res.status(500).json({ error: "Failed to fetch user data"});
@@ -89,8 +88,11 @@ router.get('/', async(req, res) => {
             p.petage, p.petsex, p.petbreed  
             FROM adopt_pets p
             LEFT JOIN adoption a ON p.id = a.petid 
+<<<<<<< HEAD
             AND a.status = 'pending'
             AND a.status = 'approved'
+=======
+>>>>>>> 26f4a9a47a2007e189e85af1a500419646eea218
             WHERE a.petid IS NULL`)
         res.json(result.rows);
         console.log("fetched pets:", result.rows);
