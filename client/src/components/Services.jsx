@@ -1,8 +1,8 @@
 import React from 'react'
-import petBoarding from '../assets/pet-boarding.png';
-import dogIcon from '../assets/dog-icon.png';
-import toothbrush from '../assets/toothbrush.png';
-import emergencyServices from '../assets/emergency-services.png';
+import petBoarding from '../assets/images/pet-boarding.png';
+import dogIcon from '../assets/images/dog-icon.png';
+import toothbrush from '../assets/images/toothbrush.png';
+import emergencyServices from '../assets/images/emergency-services.png';
 
 const serviceData = [
   {

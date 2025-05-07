@@ -1,4 +1,4 @@
-import './Register.css';
+import './../assets/styles/Register.css';
 import {useState} from 'react';
 import { registerValidation } from '../api/auth';
 import { Link, useNavigate } from 'react-router-dom';

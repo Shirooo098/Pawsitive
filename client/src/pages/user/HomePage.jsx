@@ -3,7 +3,7 @@ import Footer from '../../components/Footer';
 import Services from '../../components/Services';
 import Hero from '../../components/Hero';
 import Adoption from '../../components/Adoption';
-import './Homepage.css';
+import '../../assets/styles//Homepage.css';
 
 export default function HomePage() {
   useEffect(() => {

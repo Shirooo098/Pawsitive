@@ -1,4 +1,4 @@
-import './AdoptionForm.css'
+import '../../assets/styles/AdoptionForm.css'
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAdoptPetDetails, sendAdoption } from '../../api/userAdoption';

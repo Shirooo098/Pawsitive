@@ -1,7 +1,7 @@
 import {checkAuth} from "../../api/auth";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import './Appointment.css'
+import '../../assets/styles/Appointment.css'
 import { sendAppointment } from "../../api/userAppointment";
 
 function Appointment(){
@@ -23,7 +23,7 @@ function Appointment(){
     }) 
 
     const petTypes = ['Dog', 'Cat', 'Rabbit']
-    const serviceTypes = ['Groom', 'Vaccine', 'Surgery', 'Dental', 'Nutritional']
+    const serviceTypes = ['Groom', 'Vaccine', 'Surgery', 'Dental', 'Nutritional', 'Pet Boarding']
 
     const handleSubmit = async (e) => {
         e.preventDefault();

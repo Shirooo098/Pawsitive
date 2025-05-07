@@ -88,11 +88,6 @@ router.get('/', async(req, res) => {
             p.petage, p.petsex, p.petbreed  
             FROM adopt_pets p
             LEFT JOIN adoption a ON p.id = a.petid 
-<<<<<<< HEAD
-            AND a.status = 'pending'
-            AND a.status = 'approved'
-=======
->>>>>>> 26f4a9a47a2007e189e85af1a500419646eea218
             WHERE a.petid IS NULL`)
         res.json(result.rows);
         console.log("fetched pets:", result.rows);

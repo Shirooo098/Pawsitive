@@ -14,6 +14,8 @@ import History from "./pages/user/History";
 import AddPet from "./pages/admin/AddPet";
 import AdoptionForm from "./pages/user/AdoptionForm";
 import UpdateAdoption from "./pages/admin/UpdateAdoption";
+import PetBoarding from "./pages/PetBoarding";
+import CheckUp from "./pages/CheckUp";
 
 function App(){
     return (
@@ -24,6 +26,8 @@ function App(){
             <Route index element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/petBoarding" element={<PetBoarding />} />
+            <Route path="/checkUp" element={<CheckUp />} />
             <Route 
               path="/profile" 
               element={<ProtectedRoute requiredType="user" element={<ProfilePage/>}/>} />

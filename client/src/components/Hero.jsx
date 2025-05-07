@@ -1,13 +1,13 @@
 import React from 'react';
-import logo from '../assets/logo-transparent.png';
-import dog from '../assets/dog.jpg';
-import kitten from '../assets/kitten.webp';
-import puppy from '../assets/puppy.avif';
+import logo from '../assets/images/logo-transparent.png';
+import dog from '../assets/images/dog.jpg';
+import kitten from '../assets/images/kitten.webp';
+import puppy from '../assets/images/puppy.avif';
 
 export default function Hero() {
   return (
     <section className="hero-wrapper py-5">
-      <div className="container d-flex align-items-center text-center hero-section">
+      <div className="container d-flex align-items-center text-center">
         <div className="row w-100">
           <div className="col-md-6 d-flex flex-column align-items-center">
             <img src={logo} alt="Pawsitive Care Logo" className="img-fluid mb-3 logo" />
