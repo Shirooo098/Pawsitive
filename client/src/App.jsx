@@ -16,6 +16,13 @@ import AdoptionForm from "./pages/user/AdoptionForm";
 import UpdateAdoption from "./pages/admin/UpdateAdoption";
 import PetBoarding from "./pages/PetBoarding";
 import CheckUp from "./pages/CheckUp";
+import DentalCare from "./pages/DentalCare";
+import Emergency from "./pages/Emergency";
+import Grooming from "./pages/Grooming";
+import Nutritional from "./pages/Nutritional";
+import Surgery from "./pages/Surgery";
+import Vaccination from "./pages/Vaccination";
+import About from "./pages/About";
 
 function App(){
     return (
@@ -28,6 +35,13 @@ function App(){
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/petBoarding" element={<PetBoarding />} />
             <Route path="/checkUp" element={<CheckUp />} />
+            <Route path="/dentalCare" element={<DentalCare />} />
+            <Route path="/emergency" element={<Emergency />} />
+            <Route path="/grooming" element={<Grooming />} />
+            <Route path="/nutritional" element={<Nutritional />} />
+            <Route path="/surgery" element={<Surgery />} />
+            <Route path="/vaccination" element={<Vaccination />} />
+            <Route path="/about" element={<About />} />
             <Route 
               path="/profile" 
               element={<ProtectedRoute requiredType="user" element={<ProfilePage/>}/>} />

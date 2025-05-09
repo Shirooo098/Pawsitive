@@ -9,7 +9,7 @@ export default function UpdateAppointment() {
         status: ''
     });
     const { id } = useParams();
-    const status = ['approved', 'declined']
+    const status = ['pending','approved', 'declined']
     console.log("ID from URL:", id);
 
     useEffect(() => {

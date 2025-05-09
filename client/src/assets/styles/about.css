@@ -1,0 +1,404 @@
+body {
+    background-color: rgb(255, 255, 255);
+    color: #333;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.pacifico-regular {
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+/* Navbar */
+.navbar {
+    background-color: #fce4ec !important;
+    padding-top: 0%;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    font-weight: bold;
+    color: #64b5f6 !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ff4081 !important;
+}
+
+.dropdown-menu {
+    background-color: #ffffff;
+    border: 1px solid #ffb6c1;
+}
+
+.dropdown-item {
+    color: #64b5f6;
+    font-size: 1rem;
+}
+
+.dropdown-item:hover {
+    background-color: #ffb6c1;
+    color: white;
+}
+.container {
+    padding: 20px;
+    margin-top: 20px;
+}
+
+/*about section*/
+.about-section {
+    background-color: #ffffff;
+    min-height: 90vh;
+    padding: 40px 50px;
+    margin: 0;
+}
+
+.about-section h2 {
+    font-size: 80px;
+    color: #ff79a1;
+    font-weight: bold;
+    padding-top: 25px;
+    text-align: center;
+}
+
+.about-section .about-card{
+    background-color: #fdfff7; 
+    border: 2px solid #ff79a1;
+    border-radius: 20px; 
+    padding: 20px;
+    text-align: center; 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; 
+    margin: 50px 0px; 
+    height: 500px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.about-image {
+    width: 100%; /* Full width */
+    height: 200px; /* Fixed height for square aspect */
+    object-fit: cover; /* Cover the area without distortion */
+    border-radius: 10px; /* Optional: rounded corners */
+    margin-bottom: 15px; /* Space between the image and text */
+}
+
+.about-section .about-card h3 {
+    margin: 0;
+    color: #ffb6c1;
+    font-size: 30px;
+    font-weight: 600; 
+    margin-bottom: 10px; 
+}
+
+.about-section .about-card p {
+    margin: 0; 
+    color: #030303; 
+    text-align: justify; 
+    font-size: 17px; 
+    flex-grow: 1; 
+    display: block; 
+    padding: 20px; 
+}
+
+.about-section .about-card:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); 
+}
+
+
+/*values section*/
+.values-section{
+background-color: #f6f8c4;
+min-height: 95vh;
+padding: 40px 50px;
+margin: 0;
+}
+
+.values-section h2 {
+    font-size: 75px;
+    color: #e592ae;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 25px;
+    font-family: Pacifico;
+
+}
+
+.values-container {
+    background-color: #ffe8e8; /* Light background for contrast */
+    border: 2px solid #ff79a1;
+    padding: 30px; /* Increased padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.value-item {
+    background-color: #ffffff; /* White background for each value */
+    border: 2px solid #ff79a1;
+    padding: 30px; /* Increased padding */
+    border-radius: 8px; /* More rounded corners */
+    margin-bottom: 20px; /* Space between items */
+    transition: background-color 0.3s;
+    height: 90%;
+}
+
+.value-item:hover {
+    background-color: hsl(208, 89%, 90%); /* Light blue on hover */
+}
+
+/* Font color styles */
+.value-item h3 {
+    color: #64b5f6; /* Consistent color for headings */
+    font-weight: bold; /* Bold for emphasis */
+    font-size: 30px;
+}
+
+.value-item p {
+    color: #e592ae; /* Slightly lighter color for paragraphs */
+    line-height: 1.5; /* Improved readability */
+    font-size: 16px;
+}
+
+.icon {
+    font-size: 50px; /* Larger icons */
+    color: #ff69b4; /* Match icon color with headings */
+    margin-bottom: 10px; /* Space below icons */
+}
+
+
+/*members*/
+.member-container {
+    background-color: #f6fad8; /* Soft background color */
+    border: 2px solid #ff79a1;
+    padding: 5px;
+    margin: 10px; /* Added margin for spacing around each container */
+    border-radius: 10px; /* Slightly larger border radius */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Deeper shadow for more depth */
+    text-align: center;
+    color: #8B4513; /* Text color for member details */
+    font-size: 18px;
+    transition: transform 0.3s; /* Smooth hover effect */
+    width: 350px;
+    height: 270px;
+}
+
+.member-container:hover {
+    transform: scale(1.03); /* Slightly enlarge on hover */
+}
+
+.member-image {
+    width: 150px;
+    height: 150px;
+    background-color: #e0e0e0; /* Placeholder color */
+    border-radius: 50%; /* Circular frame */
+    margin: 0 auto 15px; /* Increased bottom margin for better spacing */
+    border: 3px solid #c2dcf1; /* Border to enhance visibility */
+}
+
+.team-section{
+    background-color: #fae7d5;
+    min-height: 95vh;
+    padding: 40px 50px;
+    margin: 0;
+    }
+
+    .team-section h2 {
+        font-size: 75px;
+        color: #64b5f6;
+        font-weight: bold;
+        text-align: center;
+        padding-top: 25px;
+        font-family: Pacifico;
+
+    }
+
+    /* Doctors */
+.es-section02 {
+    background-color: #f1e1ec; 
+    background-size: cover; 
+    padding: 90px 0; 
+    margin: 0; 
+}
+
+.es-section02 h1 {
+    font-size: 80px; 
+    font-weight: bold;
+    color: #8b1713; 
+    margin-bottom: 5px; 
+}
+
+.es-section02 p {
+    font-size: 22px;
+    color: #333; 
+    margin-bottom: 40px; 
+}
+
+.es-card {
+    margin-bottom: 20px; 
+    transition: transform 0.3s; 
+}
+
+.es-card img {
+    border-radius: 100px; /* Set border radius to 100px */
+}
+
+.es-card:hover {
+    transform: scale(1.05); 
+}
+
+.es-info h3 {
+    font-size: 30px; 
+    text-align: left;
+    padding-left: 75px;
+    font-weight: bold;
+    color: black;
+    margin-bottom: 10px; 
+}
+
+.es-info p {
+    font-size: 18px; 
+    text-align: justify;
+    padding-right: 75px;
+    padding-left: 75px;
+    color: black;
+}
+
+.highlight-dr{
+    color: #8b1713;
+    font-size: 40px; 
+    font-style: italic;
+}
+
+/* Reviews Section */
+.reviews {
+    background-color: #fef9e1;
+    min-height: 85vh;
+    padding-top: 20px;
+    margin: 0;
+}
+
+.reviews h2 {
+    color: #8B4513; 
+    font-size: 70px;
+    font-weight: bold;
+    margin-bottom: 70px;
+    text-align: center;
+}
+
+#display-reviews h4,
+#add-review h4 {
+    margin-bottom: 30px;
+}
+
+.reviews h4 {
+    font-size: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-weight: bold;
+    color: #85022e;
+    text-align: center;
+}
+
+.reviews p{
+    font-size: 20px;
+}
+
+.review-box {
+    background: #f2d6e8;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.review-box p {
+    margin: 5px 0;
+}
+
+#add-review {
+    border-left: 2px solid black; 
+    padding-left: 20px;
+}
+
+#review-form {
+    margin-top: 20px;
+    color: black;
+}
+
+#review-form label {
+    font-weight: bold;
+}
+
+#review-form .btn-primary {
+    background-color: #f2d6e8;
+    border: none;
+    margin-top: 4%;
+    color: black;
+}
+
+#review-form .btn-primary:hover {
+    background-color: #64b5f6;
+}  
+
+
+/*footer*/
+.footer {
+    background-color: #fce4ec;
+    color: #333;
+    text-align: center;
+}
+
+.footer h4 {
+    color: #64b5f6;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.footer p {
+    font-size: 1rem;
+    margin: 5px 0;
+    color: #555;
+    display: block; 
+}
+
+.footer-divider {
+    width: 80%;
+    margin: 15px auto;
+    border-top: 1px solid #e592ae;
+}
+
+.copyright {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.social-icon {
+    font-size: 1rem; 
+    color: #555;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px; 
+    margin: 5px;
+}
+
+.social-icon i {
+    font-size: 0.9rem; 
+}
+
+.social-icon:hover {
+    color: #ff4081;
+}
+
+.footer .socials {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.col-md-6:last-child{
+    margin-top: 0 !important;
+}
