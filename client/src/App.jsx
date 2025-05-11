@@ -10,7 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/admin/Dashboard";
 import ManageAppointment from "./pages/admin/ManageAppointment";
 import UpdateAppointment from "./pages/admin/UpdateAppointment";
-import History from "./pages/user/History";
+import AppointmentHistory from "./pages/user/AppointmentHistory";
 import AddPet from "./pages/admin/AddPet";
 import AdoptionForm from "./pages/user/AdoptionForm";
 import UpdateAdoption from "./pages/admin/UpdateAdoption";
@@ -23,6 +23,8 @@ import Nutritional from "./pages/Nutritional";
 import Surgery from "./pages/Surgery";
 import Vaccination from "./pages/Vaccination";
 import About from "./pages/About";
+import AdoptionHistory from "./pages/user/AdoptionHistory";
+
 
 function App(){
     return (
@@ -49,8 +51,11 @@ function App(){
               path="/appointment"
               element={<ProtectedRoute requiredType="user" element={<Appointment />}/>} />
             <Route
-              path="/history"
-              element={<ProtectedRoute requiredType="user" element={<History />}/>} />
+              path="/appointmentHistory"
+              element={<ProtectedRoute requiredType="user" element={<AppointmentHistory />}/>} />
+            <Route 
+              path="/adoptionHistory" 
+              element={<ProtectedRoute requiredType="user" element={<AdoptionHistory/>}/>} />
             <Route
               path="/adopt/:id"
               element={<ProtectedRoute requiredType="user" element={<AdoptionForm />}/>} />
