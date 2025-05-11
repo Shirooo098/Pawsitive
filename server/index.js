@@ -28,15 +28,15 @@ const db_user = process.env.POSTGRE_USER;
 const db_host = process.env.POSTGRE_HOST;
 const db_name = process.env.POSTGRE_DATABASE;
 const db_password = process.env.POSTGRE_PASSWORD;
-const db_port = process.env.POSTGRE_DB_PORT;
+const db_port = process.env.POSTGRE_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
 const db = new pg.Client({
-    // user: db_user,
-    // host: db_host,
-    // database: db_name, 
-    // password: db_password,
-    // port: db_port
+    user: db_user,
+    host: db_host,
+    database: db_name, 
+    password: db_password,
+    port: db_port,
 
     connectionString: process.env.POSTGRES_URL,
     ssl: {
