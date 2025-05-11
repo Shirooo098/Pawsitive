@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const API_BASE_URL = process.env.API_URL
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 export const registerValidation = async (formData) => {
     try {
@@ -45,8 +45,7 @@ export const checkAuth = async () => {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
         });
-        
-        console.log("API_BASE_URL:", API_BASE_URL);
+
         return response.data;
     } catch (error) {
         console.error("Auth check failed:", error);
