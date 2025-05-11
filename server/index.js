@@ -31,7 +31,7 @@ const client = process.env.FRONTEND_URL;
 // const db_port = process.env.POSTGRE_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
-const db = new pg.Client({
+const db = new pg.Pool({
     connectionString: process.env.POSTGRES_URL,
     ssl: {
         rejectUnauthorized: false
