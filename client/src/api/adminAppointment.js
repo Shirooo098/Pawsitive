@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { PROD_API_URL } from './auth';
+import { API_BASE_URL } from './auth';
+
 
 export const fetchAppointments = async() => {
     try {
-        const response = await axios.get(`${PROD_API_URL}/admin/manageAppointments`, {
+        const response = await axios.get(`${API_BASE_URL}/admin/manageAppointments`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         })  
@@ -16,7 +17,7 @@ export const fetchAppointments = async() => {
 
 export const deleteAppointment = async(id) => {
     try {
-        const response = await axios.delete(`${PROD_API_URL}/admin/deleteAppointment/${id}`, {
+        const response = await axios.delete(`${API_BASE_URL}/admin/deleteAppointment/${id}`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         });
@@ -30,7 +31,7 @@ export const deleteAppointment = async(id) => {
 
 export const fetchUserAppointment = async(id) =>{
     try {
-        const response = await axios.get(`${PROD_API_URL}/admin/updateAppointment/${id}`, {
+        const response = await axios.get(`${API_BASE_URL}/admin/updateAppointment/${id}`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         });
@@ -44,7 +45,7 @@ export const fetchUserAppointment = async(id) =>{
 
 export const updateUserAppointment = async(id, status) => {
     try {
-        const response = await axios.patch(`${PROD_API_URL}/admin/updateAppointment/${id}`,
+        const response = await axios.patch(`${API_BASE_URL}/admin/updateAppointment/${id}`,
             { status },
             {
                 headers: { "Content-Type": "application/json" },

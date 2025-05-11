@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { PROD_API_URL } from './auth';
+import { API_BASE_URL } from './auth';
 
 export const sendAppointment = async (appointmentData) => {
     try {
         console.log("Sending appointment data:", appointmentData)
 
-        const response = await axios.post(`${PROD_API_URL}/appointment`, appointmentData, {
+        const response = await axios.post(`${API_BASE_URL}/appointment`, appointmentData, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         });
@@ -20,7 +20,7 @@ export const sendAppointment = async (appointmentData) => {
 export const fetchAppointment = async() => {
     try {
         
-        const response = await axios.get(`${PROD_API_URL}/appointment`, {
+        const response = await axios.get(`${API_BASE_URL}/appointment`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         })

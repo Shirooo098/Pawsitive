@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { API_BASE_URL } from './auth';
 
 export const uploadImage = async (formData) => {
     try {
-        const response = await axios.post("http://localhost:3000/admin/addPet", formData, {
+        const response = await axios.post(`${API_BASE_URL}admin/addPet`, formData, {
             headers: { "Content-Type": "multipart/form-data" },
             withCredentials: true
         });
@@ -17,7 +18,7 @@ export const uploadImage = async (formData) => {
 
 export const fetchAdoptPetRequest = async () => {
     try {
-        const response = await axios.get("http://localhost:3000/admin/manageAdoption", {
+        const response = await axios.get(`${API_BASE_URL}admin/manageAdoption`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         })
@@ -30,7 +31,7 @@ export const fetchAdoptPetRequest = async () => {
 
 export const deleteAdoption = async (id) => {
     try {
-        const response = await axios.delete(`http://localhost:3000/admin/deleteAdoption/${id}`, {
+        const response = await axios.delete(`${API_BASE_URL}admin/deleteAdoption/${id}`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         });
@@ -43,7 +44,7 @@ export const deleteAdoption = async (id) => {
 
 export const fetchAdoptDetails = async(id) => {
     try {
-        const response = await axios.get(`http://localhost:3000/admin/updateAdoption/${id}`,{
+        const response = await axios.get(`${API_BASE_URL}admin/updateAdoption/${id}`,{
             headers: { "Content-Type": "application/jspon" },
             withCredentials: true
         })
@@ -57,7 +58,7 @@ export const fetchAdoptDetails = async(id) => {
 
 export const updateAdoptionRequest = async(id, status) => {
     try {
-        const response = await axios.patch(`http://localhost:3000/admin/updateAdoption/${id}`, 
+        const response = await axios.patch(`${API_BASE_URL}admin/updateAdoption/${id}`, 
             {status}, 
             {
                 headers: {"Content-Type": "application/json"},

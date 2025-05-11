@@ -1,8 +1,9 @@
 import axios from "axios";
+import { API_BASE_URL } from "./auth";
 
 export const fetchAdoptPets = async() => {
     try {
-        const res = await axios.get("http://localhost:3000/", {
+        const res = await axios.get(`${API_BASE_URL}`, {
             withCredentials: true
         });
 
@@ -15,7 +16,7 @@ export const fetchAdoptPets = async() => {
 
 export const fetchAdoptPetDetails = async(id) => {
     try {
-        const res = await axios.get(`http://localhost:3000/adopt/${id}`, {
+        const res = await axios.get(`${API_BASE_URL}/adopt/${id}`, {
             withCredentials: true
         });
         console.log(res.data);
@@ -29,7 +30,7 @@ export const fetchAdoptPetDetails = async(id) => {
 
 export const sendAdoption = async(adoptionData, id) => {
     try {
-        const res = await axios.post(`http://localhost:3000/adopt`, adoptionData, {
+        const res = await axios.post(`${API_BASE_URL}/adopt`, adoptionData, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         })
@@ -45,7 +46,7 @@ export const sendAdoption = async(adoptionData, id) => {
 
 export const fetchAdoptionHistory = async() => { 
     try {
-        const res = await axios.get("http://localhost:3000/adoptionHistory", {
+        const res = await axios.get(`${API_BASE_URL}/adoptionHistory`, {
             withCredentials: true
         });
 

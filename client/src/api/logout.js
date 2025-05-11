@@ -1,9 +1,9 @@
 import axios from "axios";
-import { PROD_API_URL } from "./auth";
+import { API_BASE_URL } from "./auth";
 
 export const logout = async (setIsLoggedIn) => {
     try {
-        const res = await axios.get(`${PROD_API_URL}/logout`, {
+        const res = await axios.get(`${API_BASE_URL}/logout`, {
             withCredentials: true,
         })
 
