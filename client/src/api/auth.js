@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const API_BASE_URL = process.env.PUBLIC_API_URL
+export const API_BASE_URL = process.env.API_URL
 
 export const registerValidation = async (formData) => {
     try {
