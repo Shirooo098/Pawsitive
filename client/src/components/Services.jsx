@@ -8,7 +8,7 @@ import petGrooming from '../assets/images/pet-grooming.png';
 import petFood from '../assets/images/pet-food.png';
 import scalpel from '../assets/images/scalpel.png';
 import vaccine from '../assets/images/vaccine.png';
-import '../assets/styles/Homepage.css';
+import '../assets/styles/HomePage.css';
 
 const serviceData = [
   {
