@@ -1,6 +1,7 @@
 import React from 'react'
 import Footer from '../components/Footer'
 import '../assets/styles/surgery.css'
+import AppointmentButton from '../components/AppointmentButton'
 
 export default function Surgery() {
   return (
@@ -8,9 +9,7 @@ export default function Surgery() {
         <section className="hero-section-surg text-center">
             <h1>Surgery Services</h1>
             <p>Ensuring your pet’s health with safe and compassionate surgical care.</p>
-            <a href="appointment.html" className="btn btn-primary">
-            Schedule an Appointment
-            </a>
+            <AppointmentButton/>
         </section>
 
         <section className="info-section">

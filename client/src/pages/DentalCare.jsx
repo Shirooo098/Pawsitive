@@ -1,6 +1,7 @@
 import React from 'react'
 import Footer from '../components/Footer'
 import '../assets/styles/dentalcare.css'
+import AppointmentButton from '../components/AppointmentButton'
 
 export default function DentalCare() {
   return (
@@ -15,9 +16,7 @@ export default function DentalCare() {
                 Providing the best dental care tips and products for your furry
                 friends.
               </p>
-              <a href="appointment.html" className="btn btn-primary">
-                Book an Appointment
-              </a>
+              <AppointmentButton/>
             </div>
           </div>
         </div>

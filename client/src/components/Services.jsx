@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import petBoarding from '../assets/images/pet-boarding.png';
 import dogIcon from '../assets/images/dog-icon.png';
 import toothbrush from '../assets/images/toothbrush.png';
@@ -13,49 +14,49 @@ const serviceData = [
   {
     name: 'Pet Boarding',
     image: petBoarding,
-    id: 'petboarding.html',
+    id: '/petboarding',
     description: 'Safe and comfortable pet boarding while you\'re away.',
   },
   {
     name: 'Routine Check-ups',
     image: dogIcon,
-    id: 'checkups.html',
+    id: '/checkUp',
     description: 'Comprehensive health assessments for your pets.',
   },
   {
     name: 'Dental Care',
     image: toothbrush,
-    id: 'dentalcare.html',
+    id: '/dentalCare',
     description: 'Keep your pet’s teeth and gums healthy with expert dental care.',
   },
   {
     name: 'Emergency Services',
     image: emergencyServices,
-    id: 'emergency.html',
+    id: '/emergency',
     description: 'Immediate care for urgent pet health issues.',
   },
   {
     name: 'Grooming',
     image: petGrooming,
-    id: 'grooming.html',
+    id: '/groom',
     description: 'Professional grooming services to keep your pet clean and stylish.',
   },
   {
     name: 'Nutritional Counseling',
     image: petFood,
-    id: 'nutritional.html',
+    id: '/nutritional',
     description: 'Expert advice on the best diet for your pet’s health.',
   },
   {
     name: 'Surgery',
     image: scalpel,
-    id: 'surgery.html',
+    id: '/surgery',
     description: 'Safe and professional surgical procedures for your pet’s needs.',
   },
   {
     name: 'Vaccinations',
     image: vaccine,
-    id: 'vaccination.html',
+    id: '/vaccination',
     description: 'Protect your pet from diseases with up-to-date vaccinations.',
   },
 ];
@@ -100,9 +101,9 @@ export default function Services() {
                   className="service-card-home-image"
                 />
                 <p>{service.description}</p>
-                <a href={service.id} className="btn btn-primary">
+                <Link to={service.id} className="btn btn-primary">
                   Learn More
-                </a>
+                </Link>
               </div>
             </div>
           ))}

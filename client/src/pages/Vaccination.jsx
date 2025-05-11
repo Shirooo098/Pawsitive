@@ -1,6 +1,7 @@
 import React from 'react'
 import Footer from '../components/Footer'
 import '../assets/styles/vaccination.css'
+import AppointmentButton from '../components/AppointmentButton'
 
 export default function Vaccination() {
   return (
@@ -9,9 +10,7 @@ export default function Vaccination() {
         <div className="container">
           <h1>Vaccination Services</h1>
           <p>Keep Your Furry Friends Happy and Healthy!</p>
-          <a href="appointment.html" className="btn btn-primary">
-            Schedule an Appointment
-          </a>
+          <AppointmentButton/>
         </div>
       </section>
 

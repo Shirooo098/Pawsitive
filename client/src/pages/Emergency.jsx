@@ -7,6 +7,7 @@ import relief from '../assets/images/relief.jpeg'
 import equipment from '../assets/images/equipment.jpeg'
 import available from '../assets/images/24.jpeg'
 import happy from '../assets/images/happy.jpeg'
+import AppointmentButton from '../components/AppointmentButton'
 
 export default function Emergency() {
   return (
@@ -22,9 +23,7 @@ export default function Emergency() {
             <p className="lead fs-5 mt-2">
               When It Can’t Wait – Emergency Services Available.
             </p>
-            <a href="appointment.html" className="btn btn-primary">
-              Emergency Care
-            </a>
+            <AppointmentButton/>
           </div>
         </div>
       </div>

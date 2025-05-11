@@ -85,7 +85,7 @@ body {
     color: #A0522D;
 }
 
-.hero-section-petBoarding .btn-primary-pb {
+.hero-section-petBoarding .btn-primary {
     background-color: #FF6347;
     padding: 15px 25px;
     font-size: 20px;
@@ -95,7 +95,7 @@ body {
     transition: background 0.3s ease;
 }
 
-.hero-section-petBoarding .btn-primary-pb:hover {
+.hero-section-petBoarding .btn-primary:hover {
     background-color: #B22222;
 }
 

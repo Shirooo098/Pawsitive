@@ -4,6 +4,7 @@ import vitamins from '../assets/images/vitamins.png'
 import eat from '../assets/images/eat.png'
 import weigh from '../assets/images/weigh.png'
 import '../assets/styles/Nutritional.css'
+import AppointmentButton from '../components/AppointmentButton'
 
 export default function Nutritional() {
   return (
@@ -16,9 +17,7 @@ export default function Nutritional() {
             Helping your pets live healthier, happier lives with personalized
             nutrition plans.
           </p>
-          <a href="appointment.html" className="btn btn-primary">
-            Schedule an Appointment
-          </a>
+          <AppointmentButton/>
         </div>
       </section>
 

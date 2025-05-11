@@ -1,6 +1,7 @@
 import React from 'react'
 import Footer from '../components/Footer'
 import '../assets/styles/grooming.css'
+import AppointmentButton from '../components/AppointmentButton'
 
 export default function Grooming() {
   return (
@@ -14,9 +15,7 @@ export default function Grooming() {
             Our professional grooming services are designed to keep your <br />
             furry friends looking and feeling their best.
           </p>
-          <a href="appointment.html" className="btn btn-primary">
-            Schedule an Appointment
-          </a>
+          <AppointmentButton/>
         </div>
       </section>
 

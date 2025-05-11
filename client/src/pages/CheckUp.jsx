@@ -2,6 +2,7 @@ import React from 'react'
 import './../assets/styles/checkups.css'
 import Footer from '../components/Footer'
 import CheckUpInclusion from '../components/CheckUpInclusion'
+import AppointmentButton from '../components/AppointmentButton'
 
 export default function CheckUp() {
   return (
@@ -10,7 +11,7 @@ export default function CheckUp() {
         <div className="container">
           <h1 className="display-4">Routine Check-ups</h1>
           <p className="lead">Because your pet’s health deserves regular attention!</p>
-          <a href="appointment.html" className="btn btn-primary">Schedule an Appointment</a>
+          <AppointmentButton/>
         </div>
       </section>
 
