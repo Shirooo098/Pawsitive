@@ -37,8 +37,6 @@ const db = new pg.Client({
     database: db_name, 
     password: db_password,
     port: db_port,
-
-    connectionString: process.env.POSTGRES_URL,
     ssl: {
         rejectUnauthorized: false
     }
