@@ -46,6 +46,7 @@ export const checkAuth = async () => {
             withCredentials: true,
         });
         
+        console.log("API_BASE_URL:", API_BASE_URL);
         return response.data;
     } catch (error) {
         console.error("Auth check failed:", error);
