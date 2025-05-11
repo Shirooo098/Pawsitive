@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
+export const API_BASE_URL = "https://pawsitive-production.up.railway.app"
 
 
 if (!process.env.NEXT_PUBLIC_API_URL) {
