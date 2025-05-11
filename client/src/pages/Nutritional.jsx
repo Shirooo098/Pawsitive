@@ -3,7 +3,7 @@ import Footer from '../components/Footer'
 import vitamins from '../assets/images/vitamins.png'
 import eat from '../assets/images/eat.png'
 import weigh from '../assets/images/weigh.png'
-import '../assets/styles/Nutritional.css'
+import '../assets/styles/nutritional.css'
 import AppointmentButton from '../components/AppointmentButton'
 
 export default function Nutritional() {

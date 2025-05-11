@@ -12,15 +12,23 @@ import userRoutes from './routes/userRoutes.js'
 import pgSession from 'connect-pg-simple';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 const saltRounds = 10;
 const PgSession = pgSession(session);
 
-const db_user = process.env.POSTGRE_DB_USER;
+const client = process.env.FRONTEND_URL;
+
+// const db_user = process.env.POSTGRE_DB_USER;
+// const db_host = process.env.POSTGRE_HOST;
+// const db_name = process.env.POSTGRE_DB_NAME;
+// const db_password = process.env.POSTGRE_DB_PASSWORD;
+// const db_port = process.env.POSTGRE_DB_PORT;
+
+const db_user = process.env.POSTGRE_USER;
 const db_host = process.env.POSTGRE_HOST;
-const db_name = process.env.POSTGRE_DB_NAME;
-const db_password = process.env.POSTGRE_DB_PASSWORD;
-const db_port = process.env.POSTGRE_DB_PORT;
+const db_name = process.env.POSTGRE_DATABASE;
+const db_password = process.env.POSTGRE_PASSWORD;
+const db_port = process.env.POSTGRE_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
 const db = new pg.Client({
@@ -28,11 +36,16 @@ const db = new pg.Client({
     host: db_host,
     database: db_name, 
     password: db_password,
-    port: db_port
+    port: db_port,
+
+    connectionString: process.env.POSTGRES_URL,
+    ssl: {
+        rejectUnauthorized: false
+    }
 })
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: client,
     credentials: true
 }));
 
@@ -67,6 +80,10 @@ app.use((req, res, next) => {
 
 app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
+
+app.get('/', (req, res) => {
+    res.json({  message: 'Backend is running' });
+  });
 
 app.post("/register", async(req, res) => {
     try {

@@ -16,6 +16,10 @@ export default function AdoptUserRow({userAdopt, onDelete}) {
             <td>{userAdopt.petname}</td>
             <td>{status}</td>
             <td><button onClick={() => onDelete(userAdopt.id)}>Delete</button> </td>
+            { /* 
+                Add Complete Status in adoption
+            */}
+
         </tr>
     )
 }

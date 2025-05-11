@@ -1,10 +1,11 @@
 import axios from 'axios';
+import { PROD_API_URL } from './auth';
 
 export const sendAppointment = async (appointmentData) => {
     try {
         console.log("Sending appointment data:", appointmentData)
 
-        const response = await axios.post("http://localhost:3000/appointment", appointmentData, {
+        const response = await axios.post(`${PROD_API_URL}/appointment`, appointmentData, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         });
@@ -19,7 +20,7 @@ export const sendAppointment = async (appointmentData) => {
 export const fetchAppointment = async() => {
     try {
         
-        const response = await axios.get("http://localhost:3000/history", {
+        const response = await axios.get(`${PROD_API_URL}/appointment`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         })

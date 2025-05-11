@@ -1,11 +1,13 @@
 import axios from 'axios';
 
+export const PROD_API_URL = process.env.PUBLIC_API_URL
+
 export const registerValidation = async (formData) => {
     try {
         const { confirmPassword, ...filteredFormData } = formData;
         console.log("Sending data:", filteredFormData);
 
-        const response = await axios.post("http://localhost:3000/register", filteredFormData, {
+        const response = await axios.post(`${PROD_API_URL}/register`, filteredFormData, {
             headers: { "Content-Type": "application/json" }
         });
 
@@ -22,7 +24,7 @@ export const loginValidation = async (loginData, setIsLoggedIn, setUser) => {
     try {
         console.log("Login Data: ", loginData);
 
-        const response = await axios.post("http://localhost:3000/login", loginData,{
+        const response = await axios.post(`${PROD_API_URL}/login`, loginData,{
             headers: { "Content-Type" : "application/json" },
             withCredentials: true
         });
@@ -39,7 +41,7 @@ export const loginValidation = async (loginData, setIsLoggedIn, setUser) => {
 
 export const checkAuth = async () => {
     try {
-        const response = await axios.get("http://localhost:3000/auth/check", {
+        const response = await axios.get(`${PROD_API_URL}/auth/check`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
         });
