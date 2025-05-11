@@ -39,7 +39,8 @@ export default function Profile() {
     return (
         <>
             <h1>Profile Page</h1>
-            <Link to='/history'>History</Link>
+            <Link to='/appointmentHistory'>Appointments</Link>
+            <Link to='/adoptionHistory'>Adoptions</Link>
 
             <div className="appointment-container">
                 <form onSubmit={handleSubmit}>
@@ -53,7 +54,7 @@ export default function Profile() {
                                 <label htmlFor="fullName">Name</label>
                                 <input type="text"
                                     name="fullName"
-                                    value={`${userData.firstName}${userData.lastName}`}
+                                    value={`${userData.firstName} ${userData.lastName}`}
                                     disabled
                                 />
                             </div>

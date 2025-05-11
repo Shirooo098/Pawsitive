@@ -91,9 +91,9 @@ app.post("/register", async(req, res) => {
         console.log("Received in backend:", req.body);
         const { firstName, lastName, email, password } = req.body;
 
-        const checkUser = await db.query("SELECT * FROM users WHERE email = $1", [
-            email
-        ])
+        const checkUser = await db.query("SELECT * FROM users WHERE email = $1", 
+            [email]
+        )
 
         if(checkUser.rows.length > 0 ){
             res.json({ message: "Email already exists. Try logging in."})

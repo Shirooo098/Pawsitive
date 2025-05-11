@@ -35,7 +35,7 @@ export default function Adoption() {
     <div className="carousel-container">
         <div className="pet-carousel" id="petCarousel">
             {pets.map((pet) => (
-                <div key={pet.id} className="adoption-card">
+                <div key={pet.id} className="adoption-card-home">
                     <img src={`http://localhost:3000${pet.petimage}`} alt={pet.petname} />
                     <h3>{pet.petname}</h3>
                     <p>A sweet {pet.petname} looking for a forever home.</p>

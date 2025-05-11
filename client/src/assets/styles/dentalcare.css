@@ -1,0 +1,455 @@
+/* homepage.css */
+body {
+    background-color: white;
+    color: #333;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #fce4ec !important;
+    padding-top: 0%;
+}
+
+.navbar-nav .nav-link {
+    font-size: 20px;
+    padding: 4px;
+    font-weight: bold;
+    color: #64b5f6 !important;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ff4081 !important;
+}
+
+.dropdown-menu {
+    background-color: #ffffff;
+    border: 1px solid #ffb6c1;
+}
+
+.dropdown-item {
+    color: #64b5f6;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.dropdown-item:hover {
+    background-color: #ffb6c1;
+    color: white;
+}
+
+.container {
+    padding: 20px;
+    margin-top: 20px;
+}
+
+/* Dental Section */
+.dental-section {
+    background: url('../images/dentalpet01.png') no-repeat center center;
+    background-size: cover; 
+    height: 90vh; 
+    display: flex;
+    align-items: center; 
+}
+
+.dental-section h1 {
+    color: #8B4513;
+    font-weight: bolder;
+    font-size: 100px;
+    margin: 0;
+}
+
+.dental-section p {
+    font-size: 25px;
+    color: #524c4c; 
+}
+
+.dental-section .btn-primary {
+    background-color: #FF6347;
+    padding: 15px 25px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 50px;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+.dental-section .btn-primary:hover {
+    background-color: #B22222;
+}
+
+/* Section 1: Dental Services */
+.dc-section01 {
+    height: 100%; 
+    background-color: #cff4ff;
+    padding: 40px;
+}
+
+.dc-section01 h2 {
+    color: #8B4513;
+    font-size: 50px;
+    padding-top: 30px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.dc-section01 p {
+    font-size: 18px;
+    color: #524c4c;   
+}
+
+.dc-section01 .service-card {
+    background-color: #fdfff7; 
+    border-radius: 15px; 
+    padding: 40px;
+    text-align: center; 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; 
+    margin: 15px; 
+    height: 420px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.dc-section01 .service-card h3 {
+    color: #8b3e06;
+    font-size: 27px;
+    font-weight: 600; 
+}
+
+.dc-section01 .service-card p {
+    color: #524c4c; 
+    text-align: justify; 
+    font-size: clamp(0.7rem, 2vw, 1.1rem);
+    flex-grow: 1; 
+    display: block; 
+    padding: 10px; 
+}
+
+.dc-section01 .service-card:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); 
+}
+
+/* Section 2: Dental Clinic */
+.dc-section02 {
+    height: 100%; 
+    background-color: #ffe3db;
+    padding: 40px;
+}
+
+.dc-section02 h2 {
+    font-size: 50px;
+    font-weight: bolder;
+    color: #8B4513;
+}
+
+.dc-section02 .table th {
+    background-color: #8B4513; 
+    color: #ffffff; 
+}
+
+.dc-section02 .right-column h2 {
+    padding-bottom: 2px !important;
+}
+
+.dc-section02 .right-column p {
+    padding: 10px 55px 10px !important;
+    text-align: justify;
+    font-size: 20px;
+    text-align-last: center;
+}
+
+.dc-section02 .btn-primary {
+    background-color: #FF6347;
+    padding: 15px 25px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 50px;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+.dc-section02 .btn-primary:hover {
+    background-color: #B22222;
+}
+
+/* Membership Section Styles */
+.disben-section {
+    display: flex;
+    padding-top: 100px;
+    padding-bottom: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #d7f0f8;
+}
+
+.disben-section h2 {
+    font-size: 45px;
+    font-weight: bold;
+    color: #8B4513;
+    padding-bottom: 50px;
+    text-align: center;
+}
+
+.left-column,
+.right-column {
+    text-align: center; /* Center text in both columns */
+    flex: 1; /* Allow columns to take equal space */
+    min-width: 300px; /* Minimum width for better responsiveness */
+    padding: 20px; /* Padding for inner spacing */
+}
+
+.right-column .table-responsive {
+    margin-top: 15%;
+}
+
+.services-style {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center align items vertically */
+    margin-bottom: 20px; /* Space between services */
+}
+
+.services-style img {
+    margin-right: 20px; /* Space between image and text */
+}
+
+.disben-section h3 {
+    font-size: 30px;
+    font-weight: bolder;
+    text-align: left;
+    color: #8B4513;
+}
+
+.disben-section p {
+    font-size: 18px;
+    text-align: left; /* Align text to the left */
+    color: #000000; /* Text color */
+}
+
+.disben-section .table {
+    margin-top: 20px;
+    padding: 150px;
+    height: 50vh;
+    font-size: 20px;
+    text-align: center;
+}
+
+.disben-section .table th {
+    background-color: #A0522D; /* Header background */
+    color: #ffffff; /* Header text color */
+}
+
+.disben-section .table td {
+    vertical-align: middle; /* Center text vertically */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .disben-section {
+        flex-direction: column; /* Stack columns on smaller screens */
+    }
+
+    .left-column, 
+    .right-column {
+        margin-bottom: 20px; /* Add space between stacked columns */
+    }
+
+    .services-style {
+        flex-direction: column; /* Stack image and text vertically on small screens */
+        align-items: center; /* Center align for mobile view */
+    }
+
+    .services-style img {
+        margin-right: 0; /* Remove right margin on smaller screens */
+        margin-bottom: 10px; /* Add space below the image */
+    }
+}
+
+/* Doctors */
+.es-section02 {
+    background-color: #f1e1ec; 
+    background-size: cover; 
+    padding: 90px 0; 
+    margin: 0; 
+}
+
+.es-section02 h1 {
+    font-size: 80px; 
+    font-weight: bold;
+    color: #8b1713; 
+    margin-bottom: 5px; 
+}
+
+.es-section02 p {
+    font-size: 22px;
+    color: #333; 
+    margin-bottom: 40px; 
+}
+
+.es-card {
+    margin-bottom: 20px; 
+    transition: transform 0.3s; 
+}
+
+.es-card img {
+    border-radius: 100px; /* Set border radius to 100px */
+}
+
+.es-card:hover {
+    transform: scale(1.05); 
+}
+
+.es-info h3 {
+    font-size: 30px; 
+    text-align: left;
+    padding-left: 75px;
+    font-weight: bold;
+    color: black;
+    margin-bottom: 10px; 
+}
+
+.es-info p {
+    font-size: 18px; 
+    text-align: justify;
+    padding-right: 75px;
+    padding-left: 75px;
+    color: black;
+}
+
+.highlight-dr{
+    color: #8b1713;
+    font-size: 40px; 
+    font-style: italic;
+}
+
+/* Reviews Section */
+.reviews {
+    background-color: #fef9e1;
+    min-height: 100vh;
+    padding-top: 20px;
+    margin: 0;
+}
+
+.reviews h2 {
+    color: #8B4513; 
+    font-size: 70px;
+    font-weight: bold;
+    margin-bottom: 70px;
+    text-align: center;
+}
+
+#display-reviews h4,
+#add-review h4 {
+    margin-bottom: 30px;
+}
+
+.reviews h4 {
+    font-size: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-weight: bold;
+    color: #85022e;
+    text-align: center;
+}
+
+.reviews p{
+    font-size: 20px;
+}
+
+.review-box {
+    background: #f2d6e8;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.review-box p {
+    margin: 5px 0;
+}
+
+#add-review {
+    border-left: 2px solid black; 
+    padding-left: 20px;
+}
+
+#review-form {
+    margin-top: 20px;
+    color: black;
+}
+
+#review-form label {
+    font-weight: bold;
+}
+
+#review-form .btn-primary {
+    background-color: #f2d6e8;
+    border: none;
+    margin-top: 4%;
+    color: black;
+}
+
+#review-form .btn-primary:hover {
+    background-color: #64b5f6;
+}
+
+/* Footer Section */
+.footer {
+    background-color: #fce4ec;
+    color: #333;
+    text-align: center;
+}
+
+.footer h4 {
+    color: #64b5f6;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.footer p {
+    font-size: 1rem;
+    margin: 5px 0;
+    color: #555;
+    text-align: center;
+    display: block; 
+}
+
+.footer-divider {
+    width: 80%;
+    margin: 15px auto;
+    border-top: 1px solid #e592ae;
+}
+
+.copyright {
+    font-size: 0.9rem;
+    color: #777;
+
+}
+
+.social-icon {
+    font-size: 1rem; 
+    color: #555;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px; 
+    margin: 5px;
+}
+
+.social-icon i {
+    font-size: 0.9rem; 
+}
+
+.social-icon:hover {
+    color: #ff4081;
+}
+
+.footer .socials {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}

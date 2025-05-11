@@ -44,7 +44,7 @@ router.post("/appointment", async(req, res) => {
 
 router.get('/history', async(req, res) => {
     try {
-        const userID = req.user.userID;
+        const userID = req.user.userid;
         console.log("User data:", userID);
         const result = await req.db.query("SELECT * FROM appointments WHERE user_id = $1 ORDER BY appointment_date ASC",
             [userID]
@@ -62,25 +62,7 @@ router.get('/history', async(req, res) => {
 
 });
 
-router.get('/profile', async(req, res) => {
-    try {
-        const userID = req.user.userID;
-        console.log("User data:", userID);
-        const result = await req.db.query("SELECT * FROM users WHERE userid = $1",
-            [userID]
-        )
 
-        if(result.rows.length === 0){
-            return res.status(404).json({ message: "User not found"});
-        }
-
-        res.json(result.rows);
-
-    } catch (error) {
-        console.error("Error Fetching User Data:", error);
-        res.status(500).json({ error: "Failed to fetch user data"});
-    }
-});
 
 router.get('/', async(req, res) => {
     try {
@@ -89,8 +71,6 @@ router.get('/', async(req, res) => {
             p.petage, p.petsex, p.petbreed  
             FROM adopt_pets p
             LEFT JOIN adoption a ON p.id = a.petid 
-            AND a.status = 'pending'
-            AND a.status = 'approved'
             WHERE a.petid IS NULL`)
         res.json(result.rows);
         console.log("fetched pets:", result.rows);
@@ -154,6 +134,33 @@ router.post('/adopt', async(req, res) => {
         res.status(500).json({ error: "Failed to send adoption" });
     }
 
-}) 
+});
+
+router.get("/adoptionHistory", async(req, res) => {
+    try {
+        const userID = req.user.userid; 
+        console.log("User data:", userID);
+
+        const result = await req.db.query(
+            `SELECT a.scheduledate, a.fullname,
+            a.email, a.contact, a.address, a.reason,
+            a.status, p.petname, p.petimage, p.petsex,
+            p.petbreed
+            FROM adoption a
+            JOIN adopt_pets p on a.petid = p.id
+            WHERE userID = $1`,
+            [userID]
+        );
+
+        if(result.rows.length === 0){
+            return res.status(404).json({ message: "Adoption history not found" });
+        }
+
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Error fetching adoption history:", error);
+        res.status(500).json({ error: "Failed to fetch adoption history" });
+    }
+})
 
 export default router;

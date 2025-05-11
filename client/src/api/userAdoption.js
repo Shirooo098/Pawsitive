@@ -35,9 +35,23 @@ export const sendAdoption = async(adoptionData, id) => {
         })
 
         console.log("Adoption data sent:", res.data);
+        alert("Adoption Request Sent Successfully!");
+        
         return res.data;
     } catch (error) {
         console.error("Error:", error.response ? error.response.data : error.message);
     }
 }
 
+export const fetchAdoptionHistory = async() => { 
+    try {
+        const res = await axios.get("http://localhost:3000/adoptionHistory", {
+            withCredentials: true
+        });
+
+        console.log("Adoption History:", res.data);
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching adoption history:", error);
+    }
+}

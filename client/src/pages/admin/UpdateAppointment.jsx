@@ -9,7 +9,7 @@ export default function UpdateAppointment() {
         status: ''
     });
     const { id } = useParams();
-    const status = ['approved', 'declined']
+    const status = ['pending','approved', 'declined']
     console.log("ID from URL:", id);
 
     useEffect(() => {
@@ -28,7 +28,7 @@ export default function UpdateAppointment() {
 
     const handleSubmit = async(e) => {
         e.preventDefault();
-
+        
         try {
             const res = await updateUserAppointment(id, updateAppointment.status);
             
