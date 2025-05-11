@@ -47,6 +47,11 @@ app.use('/uploads', express.static('uploads/'));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended : true }));
 
+if (!process.env.COOKIE_SESSION_SECRET || !process.env.POSTGRES_URL) {
+    console.error('Missing required environment variables');
+    process.exit(1);
+}
+
 app.use(session({
     store: new PgSession({
         pool: db, 
@@ -63,9 +68,6 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-db.connect();
 
 app.use((req, res, next) => {
     req.db = db;
