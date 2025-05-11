@@ -184,8 +184,8 @@ font-weight: 600;
 }
 
 .service-image {
-    width: 450px; 
-    height: 300px; 
+    width: 100%; 
+    height: 100%;
     object-fit: cover; 
     border-radius: 10px; 
     margin-bottom: 10px;

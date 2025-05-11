@@ -35,7 +35,7 @@ export default function Grooming() {
                   <img
                     src="https://t4.ftcdn.net/jpg/10/31/35/57/360_F_1031355754_26IX4msNS7rtTgt8MXooveBaecblVw90.jpg"
                     alt="Bathing and Drying"
-                    className="service-image"
+                    className="service-groom-image"
                   />
                   <h3>Bathing and Drying</h3>
                   <p>
@@ -51,7 +51,7 @@ export default function Grooming() {
                   <img
                     src="https://images.airtasker.com/v7/https://airtasker-seo-assets-prod.s3.amazonaws.com/en_AU/1647854982499_lioncut.jpg"
                     alt="Haircuts and Styling"
-                    className="service-image"
+                    className="service-groom-image"
                   />
                   <h3>Haircuts and Styling</h3>
                   <p>
@@ -67,7 +67,7 @@ export default function Grooming() {
                   <img
                     src="https://images.surferseo.art/d3be53e9-1e74-4e92-994b-4b47eac71426.jpeg"
                     alt="Nail Trimming"
-                    className="service-image"
+                    className="service-groom-image"
                   />
                   <h3>
                     Nail
@@ -86,7 +86,7 @@ export default function Grooming() {
                   <img
                     src="https://www.thesprucepets.com/thmb/xvoaG8fXZrR5l0XJLS1PBqf_Jlo=/2699x0/filters:no_upscale():strip_icc()/how-to-clean-cat-ears-552112-hero-3ff4b31d30c94b91be022707e657e57e.jpg"
                     alt="Ear Cleaning"
-                    className="service-image"
+                    className="service-groom-image"
                   />
                   <h3>
                     Ear
@@ -105,7 +105,7 @@ export default function Grooming() {
                   <img
                     src="https://www.metlifepetinsurance.com/content/dam/metlifecom/us/metlifepetinsurance/images/blog/Pet-Health/anal-gland-expression-inline-min.webp"
                     alt="Anal Gland Expression"
-                    className="service-image"
+                    className="service-groom-image"
                   />
                   <h3>Anal Gland Expression</h3>
                   <p>
@@ -121,7 +121,7 @@ export default function Grooming() {
                   <img
                     src="https://cdn-fastly.petguide.com/media/2022/02/28/8289572/best-brushes-for-shedding-dogs.jpg?size=720x845&nocrop=1"
                     alt="De-shedding Treatments"
-                    className="service-image"
+                    className="service-groom-image"
                   />
                   <h3>De-shedding Treatments</h3>
                   <p>

@@ -93,24 +93,25 @@ body {
     color: #401f08; 
 }
 
-.card-body{
+.card-body-emergency{
     height: 170px;
+    padding: 1rem;
 }
 
-.card-body h5{
+.card-body-emergency h5{
     text-align: center !important;
     color:#000000;
     font-weight: 600;
 
 }
 
-.card-body p{
+.card-body-emergency p{
     color:#5c5656;
     text-align: justify;
     text-align-last: center;
 }
 
-.card{
+.card-emergency{
     background-color: #fcf1dc;
     border: none;
     border-radius: 15px;

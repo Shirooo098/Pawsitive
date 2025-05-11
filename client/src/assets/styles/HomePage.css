@@ -166,8 +166,8 @@
         margin-bottom: 40px;
     }
 
-    .services-section {
-        background-image: url("../../assets/cat-background.png");
+    .services-section-home {
+        background-image: url("../images/cat-background.png");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -176,7 +176,7 @@
     }
     
 
-    .service-card {
+    .service-card-home {
         display: flex;
         flex-direction: column;
         justify-content: center; 
@@ -188,7 +188,7 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .service-card-image {
+    .service-card-home-image {
         width: 100%;
         max-width: 100px;
         height: 100px;
@@ -197,24 +197,24 @@
         margin-bottom: 15px;
     }
 
-    .service-card:hover {
+    .service-card-home:hover {
         transform: translateY(-5px); /* Light hover effect */
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
     }
 
-    .service-card h3 {
+    .service-card-home h3 {
     font-size: 1.4rem;
     color: #64b5f6;  
     font-weight: bold;
     margin-bottom: 15px;
     }
 
-    .service-card p {
+    .service-card-home p {
         font-size: 1rem;
         color: #666;
     }
 
-    .service-card .btn {
+    .service-card-home .btn {
         background-color: #e592ae; 
         color: white;
         font-size: 1rem;
@@ -223,11 +223,11 @@
         transition: background-color 0.3s;
     }
 
-    .service-card .btn:hover {
+    .service-card-home .btn:hover {
         background-color: #ff4081;  /* Darker green on hover */
     }
 
-    .service-card .learn-more {
+    .service-card-home .learn-more {
         background-color: #64b5f6;
         color: white;
         font-size: 1.1rem;
@@ -239,7 +239,7 @@
         margin-top: auto; 
     }
 
-    .service-card .learn-more:hover {
+    .service-card-home .learn-more:hover {
         background-color: #ff4081;
     }
 
@@ -247,7 +247,7 @@
         display: flex;
     }
 
-    .row .col-md-3 .service-card {
+    .row .col-md-3 .service-card-home {
         flex: 1;
     }
 
@@ -274,8 +274,8 @@
     transition: transform 0.5s ease; /* For smooth manual scrolling */
 }
 
-/* Adoption card styling */
-.adoption-card {
+/* Adoption card-home styling */
+.adoption-card-home {
     background-color: #fafafa;
     padding: 20px;
     border-radius: 10px;
@@ -289,12 +289,12 @@
     flex: 0 0 auto; /* Don't grow or shrink */
 }
 
-.adoption-card:hover {
+.adoption-card-home:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
-.adoption-card img {
+.adoption-card-home img {
     width: 100%;
     height: 180px;
     object-fit: cover;
@@ -302,20 +302,20 @@
     margin-bottom: 20px;
 }
 
-.adoption-card h3 {
+.adoption-card-home h3 {
     font-size: 1.3rem;
     color: #64b5f6;
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-.adoption-card p {
+.adoption-card-home p {
     font-size: 0.9rem;
     color: #777;
     margin-bottom: 15px;
 }
 
-.adoption-card .btn {
+.adoption-card-home .btn {
     background-color: #e592ae;
     border: none;
     padding: 0px 15px;
@@ -326,7 +326,7 @@
     transition: background-color 0.3s;
 }
 
-.adoption-card .btn:hover {
+.adoption-card-home .btn:hover {
     background-color: #ff4081;
 }
 
@@ -354,18 +354,18 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .adoption-card {
+    .adoption-card-home {
         min-width: 240px;
     }
 }
 
 @media (max-width: 576px) {
-    .adoption-card {
+    .adoption-card-home {
         min-width: 200px;
     }
 }
     
-    .adoption-card {
+    .adoption-card-home {
         background-color: #fafafa;
         padding: 20px;
         border-radius: 10px;
@@ -375,7 +375,7 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        width: 19%; /* Approximately 5 cards per row (with margins) */
+        width: 19%; /* Approximately 5 card-homes per row (with margins) */
         min-width: 200px;
         margin: 0 0.5%;
     }
@@ -393,7 +393,7 @@
         max-width: 32%; 
     }
 
-    .adoption-card {
+    .adoption-card-home {
         background-color: #fafafa;  /* Very light gray to feel warm */
         padding: 20px;
         border-radius: 10px;
@@ -405,13 +405,13 @@
         justify-content: space-between;
     }
 
-    .adoption-card:hover {
+    .adoption-card-home:hover {
         transform: scale(1.05);  /* Slightly enlarge on hover */
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
     }
 
     /* Adoption Images */
-    .adoption-card img {
+    .adoption-card-home img {
         width: 100%;
         height: 220px;
         object-fit: cover;
@@ -419,24 +419,24 @@
         margin-bottom: 10px;
     }
 
-    .adoption-card:hover {
+    .adoption-card-home:hover {
         transform: scale(1.05);
     }
 
         
-    .adoption-card h3 {
+    .adoption-card-home h3 {
         font-size: 1.5rem;
         color: #64b5f6;  /* Warm green */
         font-weight: bold;
         margin-bottom: 10px;
     }
 
-    .adoption-card p {
+    .adoption-card-home p {
         font-size: 1rem;
         color: #777;  /* Soft gray */
     }
 
-    .adoption-card .btn {
+    .adoption-card-home .btn {
         background-color: #e592ae;
         border: none;
         padding: 10px;
@@ -444,7 +444,7 @@
         font-weight: bold;
     }
 
-    .adoption-card .btn:hover {
+    .adoption-card-home .btn:hover {
         background-color: #ff4081;
     }
 

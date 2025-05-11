@@ -37,7 +37,7 @@ function App(){
             <Route path="/checkUp" element={<CheckUp />} />
             <Route path="/dentalCare" element={<DentalCare />} />
             <Route path="/emergency" element={<Emergency />} />
-            <Route path="/grooming" element={<Grooming />} />
+            <Route path="/groom" element={<Grooming />} />
             <Route path="/nutritional" element={<Nutritional />} />
             <Route path="/surgery" element={<Surgery />} />
             <Route path="/vaccination" element={<Vaccination />} />

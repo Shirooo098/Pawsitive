@@ -79,9 +79,9 @@ export default function Emergency() {
             },
           ].map((card, index) => (
             <div className="col-md-4" key={index}>
-              <div className="card mb-4 box-shadow">
+              <div className="card-emergency mb-4 box-shadow">
                 <img className="card-img-top" src={card.image} alt={card.title} />
-                <div className="card-body">
+                <div className="card-body-emergency">
                   <h5>{card.title}</h5>
                   <p>{card.desc}</p>
                 </div>

@@ -39,19 +39,19 @@ body {
     color: white;
 }
 
-.container {
+.container-pb {
     padding: 20px;
     margin-top: 20px;
 }
 
 /* Hero Section */
-.hero-section {
+.hero-section-petBoarding {
     background: url('../images/dogs.jpeg') no-repeat center center;
     background-size: cover; 
     height: 140vh; 
     display: flex;
     align-items: flex-start; 
-    justify-content: flex-end;
+    justify-content: center;
     text-align: center;
     position: relative;
 }
@@ -71,7 +71,7 @@ body {
     z-index: 1;
 }
 
-.hero-section h1 {
+.hero-section-petBoarding h1 {
     color: #8B4513; 
     font-size: 90px;
     font-weight: bold;
@@ -80,13 +80,12 @@ body {
     padding-top: 30px;
     margin-bottom: 15px;
 }
-
-.hero-section p {
+.hero-section-petBoarding p {
     font-size: 23px;
     color: #A0522D;
 }
 
-.hero-section .btn-primary {
+.hero-section-petBoarding .btn-primary-pb {
     background-color: #FF6347;
     padding: 15px 25px;
     font-size: 20px;
@@ -96,11 +95,11 @@ body {
     transition: background 0.3s ease;
 }
 
-.hero-section .btn-primary:hover {
+.hero-section-petBoarding .btn-primary-pb:hover {
     background-color: #B22222;
 }
 
-.hero-section .btn-secondary {
+.hero-section-petBoarding  .btn-secondary-pb {
     background: transparent;
     margin-left: 10px;
     color: #FF6347;
@@ -113,7 +112,7 @@ body {
     transition: background 0.3s ease, color 0.3s ease;
 }
 
-.hero-section .btn-secondary:hover {
+.hero-section-petBoarding  .btn-secondary-pb:hover {
     background-color: #B22222; 
     color: white; 
 }

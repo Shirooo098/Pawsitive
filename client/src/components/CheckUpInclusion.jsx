@@ -38,7 +38,7 @@ export default function CheckUpInclusion() {
             </div>
           </div>
           <div className={`col-md-8 ${reverse ? "order-md-1" : ""}`}>
-            <div className="info-section">
+            <div className="info-section-checkup">
               <h3>{title}</h3>
               <p>{text}</p>
             </div>
