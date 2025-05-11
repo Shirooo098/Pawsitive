@@ -2,6 +2,12 @@ import axios from 'axios';
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
+
+if (!process.env.NEXT_PUBLIC_API_URL) {
+  throw new Error("NEXT_PUBLIC_API_URL is not defined!");
+}
+console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+
 export const registerValidation = async (formData) => {
     try {
         const { confirmPassword, ...filteredFormData } = formData;
