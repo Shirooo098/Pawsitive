@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom';
 import { checkAuth } from '../../api/auth'
 import { fetchAppointment } from '../../api/userAppointment';
 
@@ -22,6 +23,8 @@ export default function History() {
         <>
             <div>
                 <h1>History Page</h1>
+                <Link to='/profile'>Profile</Link>
+                <Link to='/adoptionHistory'>Adoptions</Link>
             </div>
 
             <table>
