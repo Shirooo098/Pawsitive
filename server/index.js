@@ -297,6 +297,20 @@ app.post("/logout", (req, res) => {
         res.json({ message: "Already logged out" });
     }
 });
+app.get("/auth/check", (req, res) => {
+    if (req.isAuthenticated()) {
+        res.json({
+          authenticated: true,
+          user: {
+            id: req.user.id,
+            email: req.user.email,
+            role: req.user.role
+          },
+        });
+      } else {
+        res.json({ authenticated: false });
+      }
+});
 
 passport.use(
     new Strategy({ usernameField: "email"},async function verify(email, password, cb){
