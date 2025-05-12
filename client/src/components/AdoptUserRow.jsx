@@ -13,7 +13,7 @@ export default function AdoptUserRow({userAdopt, onDelete}) {
             <td>{userAdopt.email}</td>
             <td>{userAdopt.contact}</td>
             <td>{userAdopt.reason}</td>
-            <td><img src={`${API_BASE_URL}/${userAdopt.petimage}`} alt={userAdopt.petname} /></td>
+            <td><img src={`${API_BASE_URL}${userAdopt.petimage}`} alt={userAdopt.petname} /></td>
             <td>{userAdopt.petname}</td>
             <td>{status}</td>
             <td><button onClick={() => onDelete(userAdopt.id)}>Delete</button> </td>

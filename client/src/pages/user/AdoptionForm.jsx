@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAdoptPetDetails, sendAdoption } from '../../api/userAdoption';
 import { checkAuth } from '../../api/auth';
+import { API_BASE_URL } from '../../api/auth';
 
 export default function AdoptionForm() {
     const navigate = useNavigate();
@@ -101,7 +102,7 @@ export default function AdoptionForm() {
             <div className="row align-items-center mb-5 pet-card">
                 <div className="col-md-4 text-center">
                     <img
-                    src={`http://localhost:3000${petDetail.petimage}`}
+                    src={`${API_BASE_URL}${petDetail.petimage}`}
                     alt="Pet Image"
                     className="img-fluid"
                     />

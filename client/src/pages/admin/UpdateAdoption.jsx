@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import React from 'react'
 import { fetchAdoptDetails, updateAdoptionRequest } from "../../api/adminAdoption";
+import { API_BASE_URL } from "../../api/auth";
 
 export default function UpdateAdoption() {
     const navigate = useNavigate();
@@ -103,7 +104,7 @@ export default function UpdateAdoption() {
                             <h2>Pet Information</h2>
 
                             <div className="rowPetImage">
-                                <img src={`http://localhost:3000${adopt.petimage}`} alt="" />
+                                <img src={`${API_BASE_URL}${adopt.petimage}`} alt="" />
                             </div>
 
                             <div className="rowPetName">

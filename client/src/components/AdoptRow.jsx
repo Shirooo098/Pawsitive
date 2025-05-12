@@ -13,7 +13,7 @@ export default function AdoptRow({adopt, onUpdate, onDelete}) {
             <td>{adopt.email}</td>
             <td>{adopt.contact}</td>
             <td>{adopt.reason}</td>
-            <td><img src={`${API_BASE_URL}/${adopt.petimage}`} alt={adopt.petname} /></td>
+            <td><img src={`${API_BASE_URL}${adopt.petimage}`} alt={adopt.petname} /></td>
             <td>{adopt.petname}</td>
             <td>{status}</td>
             <td>
