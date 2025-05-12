@@ -81,6 +81,27 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
+app.use(async (req, res, next) => {
+    try {
+        // Simple query to check connection
+        await db.query('SELECT 1');
+        next();
+    } catch (err) {
+        console.error('Database connection error:', err);
+        if (err.code === 'ECONNRESET') {
+            // Attempt to reconnect
+            try {
+                await db.connect();
+                next();
+            } catch (reconnectErr) {
+                res.status(503).json({ error: "Database unavailable" });
+            }
+        } else {
+            res.status(500).json({ error: "Database error" });
+        }
+    }
+});
+
 app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
 
