@@ -1,81 +1,57 @@
+import axios from "axios";
 import { API_BASE_URL } from "./auth";
 
 export const fetchAdoptPets = async() => {
     try {
-        const response = await fetch(`${API_BASE_URL}`, {
-            method: 'GET',
-            credentials: 'include'
+        const res = await axios.get(`${API_BASE_URL}`, {
+            withCredentials: true
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch pets');
-        }
-
-        const data = await response.json();
-        console.log(data);
-        return data;
+        console.log(res.data);
+        return res.data;
     } catch (error) {
-        console.error("Error fetching pets:", error);
+        console.error("Error fetching image:", error);
     }
 }
 
 export const fetchAdoptPetDetails = async(id) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/adopt/${id}`, {
-            method: 'GET',
-            credentials: 'include'
+        const res = await axios.get(`${API_BASE_URL}/adopt/${id}`, {
+            withCredentials: true
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch pet details');
-        }
-
-        const data = await response.json();
-        console.log(data);
-        return data;
+        console.log(res.data);
+        return res.data;
+        
     } catch (error) {
         console.error("Error fetching pet details:", error);
+
     }
 }
 
 export const sendAdoption = async(adoptionData, id) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/adopt`, {
-            method: 'POST',
-            headers: { 
-                "Content-Type": "application/json"
-            },
-            credentials: 'include',
-            body: JSON.stringify(adoptionData)
-        });
+        const res = await axios.post(`${API_BASE_URL}/adopt`, adoptionData, {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true
+        })
 
-        if (!response.ok) {
-            throw new Error('Failed to send adoption request');
-        }
-
-        const data = await response.json();
-        console.log("Adoption data sent:", data);
+        console.log("Adoption data sent:", res.data);
         alert("Adoption Request Sent Successfully!");
-        return data;
+        
+        return res.data;
     } catch (error) {
-        console.error("Error:", error.message);
+        console.error("Error:", error.response ? error.response.data : error.message);
     }
 }
 
 export const fetchAdoptionHistory = async() => { 
     try {
-        const response = await fetch(`${API_BASE_URL}/adoptionHistory`, {
-            method: 'GET',
-            credentials: 'include'
+        const res = await axios.get(`${API_BASE_URL}/adoptionHistory`, {
+            withCredentials: true
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch adoption history');
-        }
-
-        const data = await response.json();
-        console.log("Adoption History:", data);
-        return data;
+        console.log("Adoption History:", res.data);
+        return res.data;
     } catch (error) {
         console.error("Error fetching adoption history:", error);
     }
