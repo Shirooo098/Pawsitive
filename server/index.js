@@ -156,7 +156,8 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true
     },
-    proxy: true
+    proxy: true,
+    name: 'pawsitive.sid'
 }));
 
 // Passport Configuration
@@ -214,12 +215,33 @@ app.post("/register", async(req, res) => {
 
 app.post("/login", (req, res, next) => {
     console.log("Login Request:", req.body); 
+    console.log("Session config:", req.session);
+
     passport.authenticate("local", (err, user, info) => {
-        if(err) return res.status(500).json({ error : "Server error"});
-        if(!user) return res.status(401).json({ error : info.message});
+        console.log("Passport authenticate callback:", {err, user, info});
+        if(err){
+           console.error("Authentication error:", err);
+            return res.status(500).json({ 
+                error: "Server error",
+                details: process.env.NODE_ENV === 'development' ? err.message : undefined
+            });
+        } 
+        if(!user) {
+            console.log("Authentication failed:", info);
+            return res.status(401).json({ 
+                error: info.message || "Authentication failed" 
+            });
+        }
 
         req.login(user, (err) => {
-            if(err) return res.status(500).json({ error: "Login Failed" });
+            if(err) {
+                console.error("Session login error:", err);
+                return res.status(500).json({ 
+                    error: "Login Failed",
+                    details: process.env.NODE_ENV === 'development' ? err.message : undefined
+                });
+            }
+            console.log("User logged in successfully:", user.id);
             return res.json({
                 message: "Login Sucessful",
                 user: {
