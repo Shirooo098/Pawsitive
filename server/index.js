@@ -237,31 +237,7 @@ const allowedOrigins = [
   'http://localhost:5173'
 ];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    console.log('Request origin:', origin);
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.log('Origin not allowed by CORS:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  exposedHeaders: ['Set-Cookie'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204
-};
-
-app.use(cors(corsOptions));
-
-// Enable pre-flight requests for all routes
-app.options('*', cors(corsOptions));
+app.use(cors());
 
 // Additional headers for extra CORS support
 app.use((req, res, next) => {
