@@ -305,7 +305,17 @@ app.get("/appointment", (req, res) => {
 
 app.post("/logout", (req, res) => {
     if (req.isAuthenticated()) {
+        // First destroy the session
         req.session.destroy((err) => {
+            if (err) {
+                console.error("Error destroying session:", err);
+                return res.status(500).json({
+                    error: "Logout failed",
+                    message: "Failed to end session"
+                });
+            }
+
+            // Then logout the user
             req.logout((err) => {
                 if (err) {
                     console.error("Error logging out:", err);
@@ -314,17 +324,32 @@ app.post("/logout", (req, res) => {
                         message: "Failed to complete logout"
                     });
                 }
-                
-                res.clearCookie('pawsitive.sid');
+
+                // Clear all cookies
+                res.clearCookie('pawsitive.sid', {
+                    path: '/',
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+                });
+
+                // Send success response
                 res.json({ message: "Logout successful" });
             });
         });
     } else {
+        // If user is not authenticated, just send success response
         res.json({ message: "Already logged out" });
     }
 });
+
 app.get("/auth/check", (req, res) => {
-    if (req.isAuthenticated()) {
+    // Add session check
+    if (!req.session) {
+        return res.json({ authenticated: false });
+    }
+
+    if (req.isAuthenticated() && req.user) {
         res.json({
             authenticated: true,
             user: {
