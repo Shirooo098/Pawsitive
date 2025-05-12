@@ -66,34 +66,52 @@ const findAvailablePort = async (startPort) => {
 // Enhanced server start function
 const startServer = () => {
     try {
-        const server = app.listen(PORT, '0.0.0.0', () => {
+        // Enable IPv6 support
+        const server = app.listen(PORT, '::', () => {
             console.log(`Server is running on port ${PORT}`);
             console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-            console.log(`Database connection status: ${isConnected ? 'connected' : 'disconnected'}`);
+            console.log('IPv6 binding enabled');
         });
 
+        // Add keep-alive configuration
+        server.keepAliveTimeout = 65000; // Slightly higher than ALB's idle timeout
+        server.headersTimeout = 66000; // Slightly higher than keepAliveTimeout
+
+        // Handle server errors
         server.on('error', (err) => {
+            console.error('Server error:', err);
             if (err.code === 'EADDRINUSE') {
-                console.error(`Port ${PORT} is in use. Please check Railway configuration.`);
-                process.exit(1);
-            } else {
-                console.error('Server error:', err);
-                process.exit(1);
+                console.error(`Port ${PORT} is in use`);
             }
+            process.exit(1);
         });
 
         // Graceful shutdown
-        process.on('SIGTERM', () => {
-            console.log('SIGTERM received. Shutting down gracefully...');
-            server.close(() => {
-                console.log('Server closed');
-                db.end().then(() => {
+        const shutdown = async () => {
+            console.log('Shutting down gracefully...');
+            server.close(async () => {
+                console.log('HTTP server closed');
+                try {
+                    await db.end();
                     console.log('Database connections closed');
                     process.exit(0);
-                });
+                } catch (err) {
+                    console.error('Error closing database', err);
+                    process.exit(1);
+                }
             });
-        });
 
+            // Force shutdown after 30 seconds
+            setTimeout(() => {
+                console.error('Could not close connections in time, forcefully shutting down');
+                process.exit(1);
+            }, 30000);
+        };
+
+        process.on('SIGTERM', shutdown);
+        process.on('SIGINT', shutdown);
+
+        return server;
     } catch (err) {
         console.error('Failed to start server:', err);
         process.exit(1);
@@ -110,131 +128,93 @@ const initializeServer = async () => {
     }
 };
 
-// Enhanced database configuration
+// Database Configuration
 const dbConfig = {
     connectionString: process.env.POSTGRES_URL,
     ssl: process.env.NODE_ENV === 'production' ? { 
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
+        sslmode: 'require'
     } : false,
-    max: 3,
+    max: 3, // Reduced pool size for Railway's limitations
     min: 0,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000, // Increased timeout
+    connectionTimeoutMillis: 10000,
     application_name: 'pawsitive-app',
     keepAlive: true,
     keepAliveInitialDelayMillis: 10000,
-    statement_timeout: 15000, // Increased timeout
-    query_timeout: 10000, // Increased timeout
-    connectionRetryTimeout: 45000, // Increased retry timeout
-    maxRetries: 5, // Added max retries
-    retryDelay: 1000 // Base delay between retries
+    statement_timeout: 15000,
+    query_timeout: 10000,
+    // Railway specific settings
+    pool: {
+        min: 0,
+        max: 3,
+        acquireTimeoutMillis: 30000,
+        createTimeoutMillis: 30000,
+        destroyTimeoutMillis: 5000,
+        idleTimeoutMillis: 30000,
+        reapIntervalMillis: 1000,
+        createRetryIntervalMillis: 200
+    }
 };
 
-let db = new pg.Pool(dbConfig);
-
-let isConnected = false;
-let reconnectAttempts = 0;
-const MAX_RECONNECT_ATTEMPTS = 10;
-const RECONNECT_BASE_DELAY = 1000;
-let isReconnecting = false;
-
-// Enhanced connection monitoring
-const monitorConnection = async () => {
-    if (isReconnecting) return;
-    
+// Enhanced connection verification
+const verifyConnection = async () => {
     try {
-        const client = await Promise.race([
-            db.connect(),
-            new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Connection timeout')), 10000)
-            )
-        ]);
-
+        const client = await db.connect();
         try {
-            await client.query('SELECT 1');
-            isConnected = true;
-            reconnectAttempts = 0;
-            console.log('Database connection verified');
-        } catch (err) {
-            isConnected = false;
-            console.error('Query failed in health check:', {
-                code: err.code,
-                message: err.message,
-                detail: err.detail
-            });
-            throw err;
+            await client.query('SELECT NOW()');
+            console.log('Database connection verified successfully');
+            return true;
         } finally {
             client.release();
         }
     } catch (err) {
-        isConnected = false;
-        console.error('Connection health check failed:', {
+        console.error('Database connection verification failed:', {
             code: err.code,
             message: err.message,
-            stack: err.stack
+            host: new URL(process.env.POSTGRES_URL).hostname
         });
-
-        if (!isReconnecting) {
-            reconnectWithRetry();
-        }
+        return false;
     }
 };
 
-// Enhanced reconnection logic
-const reconnectWithRetry = async () => {
-    if (isReconnecting) return;
-    isReconnecting = true;
-
-    try {
-        while (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-            reconnectAttempts++;
-            const delay = Math.min(
-                RECONNECT_BASE_DELAY * Math.pow(2, reconnectAttempts - 1),
-                30000
-            );
-
-            console.log(`Reconnection attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}, waiting ${delay}ms`);
-            await new Promise(resolve => setTimeout(resolve, delay));
-
-            try {
-                // Close existing pool
-                await db.end().catch(err => 
-                    console.warn('Error closing pool:', err.message)
-                );
-                
-                // Create new pool with current config
-                db = new pg.Pool({
-                    ...dbConfig,
-                    // Add dynamic retry parameters
-                    max: Math.max(1, dbConfig.max - reconnectAttempts), // Reduce pool size with each retry
-                    connectionTimeoutMillis: dbConfig.connectionTimeoutMillis * (1 + reconnectAttempts * 0.5) // Increase timeout with each retry
-                });
-
-                const client = await db.connect();
-                await client.query('SELECT 1');
-                client.release();
-                
-                isConnected = true;
-                console.log('Database reconnected successfully');
-                break;
-            } catch (err) {
-                console.error('Reconnection attempt failed:', {
-                    attempt: reconnectAttempts,
-                    code: err.code,
-                    message: err.message,
-                    detail: err.detail
-                });
-                
-                if (reconnectAttempts === MAX_RECONNECT_ATTEMPTS) {
-                    console.error('Max reconnection attempts reached, server will exit');
-                    throw err;
-                }
-            }
+// Initialize database pool with verification
+let db;
+try {
+    console.log('Initializing database connection to:', 
+        new URL(process.env.POSTGRES_URL).hostname);
+    db = new pg.Pool(dbConfig);
+    
+    // Add error handler
+    db.on('error', (err) => {
+        console.error('Unexpected database error:', {
+            code: err.code,
+            message: err.message,
+            fatal: err.fatal
+        });
+        if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+            console.error('Database connection was lost');
         }
-    } finally {
-        isReconnecting = false;
+    });
+
+    // Add connect handler
+    db.on('connect', (client) => {
+        console.log('New database connection established');
+        client.query('SET statement_timeout = 15000');
+    });
+
+} catch (err) {
+    console.error('Failed to initialize database pool:', err);
+    process.exit(1);
+}
+
+// Verify initial connection
+verifyConnection().then(isConnected => {
+    if (!isConnected) {
+        console.error('Initial database connection verification failed');
+        process.exit(1);
     }
-};
+});
 
 // Event Listeners
 db.on('error', (err) => {
@@ -337,31 +317,35 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS Configuration
+// Add security headers
+app.use((req, res, next) => {
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    next();
+});
+
+// CORS Configuration with specific origins
 const allowedOrigins = [
-  'https://pawsitive-client-vert.vercel.app',
-  'http://localhost:3000',
-  'http://localhost:5173'
+    'https://pawsitive-client-vert.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5173'
 ];
 
 const corsOptions = {
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      return callback(null, true);
-    }
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log('Origin not allowed by CORS:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  credentials: true,
-  optionsSuccessStatus: 200
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: true,
+    maxAge: 86400, // 24 hours
+    optionsSuccessStatus: 200
 };
 
 // Apply CORS middleware
@@ -413,26 +397,22 @@ if (!process.env.COOKIE_SESSION_SECRET || !process.env.POSTGRES_URL) {
 
 // Session Configuration
 app.use(session({
-  store: new PgSession({
-    pool: db,
-    tableName: 'user_sessions',
-    pruneSessionInterval: 86400,
-    createTableIfMissing: true,
-    errorLog: console.error
-  }),
-  secret: session_secret,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    secure: process.env.NODE_ENV === 'production', // true in production
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    httpOnly: true,
-    path: '/',
-    domain: process.env.NODE_ENV === 'production' ? '.railway.app' : undefined
-  },
-  proxy: true,
-  name: 'pawsitive.sid' // Custom session cookie name
+    store: new PgSession({
+        pool: db,
+        tableName: 'user_sessions',
+        createTableIfMissing: true,
+        pruneSessionInterval: 60
+    }),
+    secret: process.env.COOKIE_SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        httpOnly: true
+    },
+    proxy: true
 }));
 
 // Routes and other middleware
