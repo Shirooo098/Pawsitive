@@ -736,10 +736,6 @@ app.get('/health', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running at Port ${PORT}`);
-});
-
 const passwordHashing = (
         res, 
         firstName, 
