@@ -52,8 +52,6 @@ function Appointment(){
     const handleCancel = () => {
         setAppointmentData({
             scheduleDate: '',
-            fullName: '',
-            email: '',
             contact: '',
             address: '',
             petType: '',
@@ -71,7 +69,7 @@ function Appointment(){
 
                 setAppointmentData((prev) => ({
                     ...prev,
-                    fullName: `${userDetails.user.firstName}${userDetails.user.lastName}`,
+                    fullName: `${userDetails.user.firstname}${userDetails.user.lastnname}`,
                     email: userDetails.user.email
                 }))
             }   
