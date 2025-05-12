@@ -137,19 +137,35 @@ const sessionConfig = {
         errorLog: (err) => console.error('Session store error:', err)
     }),
     secret: session_secret,
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: 24 * 60 * 60 * 1000,
-        httpOnly: true
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        httpOnly: true,
+        path: '/'
     },
     proxy: true,
-    name: 'pawsitive.sid'
+    name: 'pawsitive.sid',
+    rolling: true
 };
 
+// Enable trust proxy if in production
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
+
 app.use(session(sessionConfig));
+
+// Debug middleware to log session and authentication status
+app.use((req, res, next) => {
+    console.log('Session ID:', req.sessionID);
+    console.log('Session:', req.session);
+    console.log('Is Authenticated:', req.isAuthenticated());
+    console.log('User:', req.user);
+    next();
+});
 
 // Add error handling for session errors
 app.use((req, res, next) => {
@@ -256,16 +272,31 @@ app.post("/login", (req, res, next) => {
                 });
             }
 
-            console.log("User logged in successfully:", user.userid);
-            return res.json({
-                message: "Login successful",
-                user: {
-                    id: user.userid,
-                    email: user.email,
-                    role: user.type,
-                    firstname: user.firstname,
-                    lastname: user.lastname
+            // Save session explicitly
+            req.session.save((err) => {
+                if (err) {
+                    console.error("Session save error:", err);
+                    return res.status(500).json({
+                        error: "Login failed",
+                        message: "Failed to save session"
+                    });
                 }
+
+                console.log("User logged in successfully:", user.userid);
+                console.log("Session after login:", req.session);
+                console.log("Session ID after login:", req.sessionID);
+                
+                return res.json({
+                    message: "Login successful",
+                    user: {
+                        id: user.userid,
+                        email: user.email,
+                        type: user.type,
+                        firstname: user.firstname,
+                        lastname: user.lastname
+                    },
+                    sessionId: req.sessionID
+                });
             });
         });
     })(req, res, next);
@@ -312,16 +343,18 @@ app.post("/logout", (req, res) => {
 app.get("/auth/check", (req, res) => {
     if (req.isAuthenticated()) {
         res.json({
-          authenticated: true,
-          user: {
-            id: req.user.id,
-            email: req.user.email,
-            role: req.user.role
-          },
+            authenticated: true,
+            user: {
+                id: req.user.id,
+                email: req.user.email,
+                type: req.user.type,
+                firstname: req.user.firstname,
+                lastname: req.user.lastname
+            }
         });
-      } else {
+    } else {
         res.json({ authenticated: false });
-      }
+    }
 });
 
 passport.use(
@@ -359,20 +392,24 @@ passport.use(
 
 // Update passport serialization
 passport.serializeUser((user, cb) => {
+    console.log('Serializing user:', user);
     process.nextTick(() => {
-        cb(null, {
+        const sessionUser = {
             id: user.userid,
             email: user.email,
-            role: user.type,
+            type: user.type,
             firstname: user.firstname,
             lastname: user.lastname
-        });
+        };
+        console.log('Serialized user data:', sessionUser);
+        cb(null, sessionUser);
     });
 });
 
 passport.deserializeUser((user, cb) => {
+    console.log('Deserializing user:', user);
     process.nextTick(() => {
-        return cb(null, user);
+        cb(null, user);
     });
 });
 
