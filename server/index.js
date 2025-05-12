@@ -12,7 +12,7 @@ import userRoutes from './routes/userRoutes.js'
 import pgSession from 'connect-pg-simple';
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 const saltRounds = 10;
 const PgSession = pgSession(session);
 
@@ -141,12 +141,16 @@ const verifyInitialConnection = async () => {
 // Periodic Health Checks
 setInterval(monitorConnection, 30000);
 
-// Middleware
-app.use(cors({
+// CORS Configuration
+const corsOptions = {
   origin: client,
-  credentials: true
-}));
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
 
+// Middleware
+app.use(cors(corsOptions));
 app.use('/uploads', express.static('uploads/'));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -247,11 +251,18 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// Start Server after verifying connection
+// Start server only after verifying connection
 verifyInitialConnection().then(() => {
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
     console.log(`Database connection status: ${isConnected ? 'connected' : 'disconnected'}`);
+  }).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`Port ${port} is already in use`);
+      process.exit(1);
+    } else {
+      console.error('Server error:', err);
+    }
   });
 }).catch(err => {
   console.error('Failed to initialize server:', err);
