@@ -261,7 +261,10 @@ app.post("/login", (req, res, next) => {
                 message: "Login successful",
                 user: {
                     id: user.userid,
-                    email: user.email
+                    email: user.email,
+                    role: user.type,
+                    firstname: user.firstname,
+                    lastname: user.lastname
                 }
             });
         });
@@ -269,12 +272,21 @@ app.post("/login", (req, res, next) => {
 });
 
 app.get("/appointment", (req, res) => {
+    console.log("Checking authentication status:", req.isAuthenticated(), req.user);
     if(req.isAuthenticated()){
-        return res.json({ authenticated: true});
-    }else{
-        res.json({ authenticated: false});
+        return res.json({ 
+            authenticated: true,
+            user: {
+                id: req.user.id,
+                email: req.user.email,
+                role: req.user.role,
+                firstname: req.user.firstname,
+                lastname: req.user.lastname
+            }
+        });
+    } else {
+        res.json({ authenticated: false });
     }
-
 });
 
 app.post("/logout", (req, res) => {
@@ -345,13 +357,24 @@ passport.use(
         }
 }))
 
+// Update passport serialization
 passport.serializeUser((user, cb) => {
-    cb(null, user);
-})
+    process.nextTick(() => {
+        cb(null, {
+            id: user.userid,
+            email: user.email,
+            role: user.type,
+            firstname: user.firstname,
+            lastname: user.lastname
+        });
+    });
+});
 
 passport.deserializeUser((user, cb) => {
-    cb(null, user);
-})
+    process.nextTick(() => {
+        return cb(null, user);
+    });
+});
 
 // Error Handling
 app.use((err, req, res, next) => {
