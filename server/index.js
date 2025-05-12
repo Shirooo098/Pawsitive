@@ -270,41 +270,95 @@ app.use(async (req, res, next) => {
 app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
 
-// Authentication Routes
+app.post("/register", async(req, res) => {
+    try {
+
+        console.log("Received in backend:", req.body);
+        const { firstName, lastName, email, password } = req.body;
+
+        const checkUser = await db.query("SELECT * FROM users WHERE email = $1", [
+            email
+        ])
+
+        if(checkUser.rows.length > 0 ){
+            res.json({ message: "Email already exists. Try logging in."})
+        }else {     
+            passwordHashing(res, firstName, lastName, email, password, saltRounds)
+        }
+    } catch (err) {
+        console.error(err.message);
+    }
+})
+
+app.post("/login", (req, res, next) => {
+    console.log("Login Request:", req.body); 
+    passport.authenticate("local", (err, user, info) => {
+        if(err) return res.status(500).json({ error : "Server error"});
+        if(!user) return res.status(401).json({ error : info.message});
+
+        req.login(user, (err) => {
+            if(err) return res.status(500).json({ error: "Login Failed" });
+            return res.json({
+                message: "Login Sucessful",
+                user: {
+                    id: user.id,
+                    email: user.email
+                }
+            })
+        })
+    })(req, res, next);
+})
+
+app.get("/appointment", (req, res) => {
+    if(req.isAuthenticated()){
+        return res.json({ authenticated: true});
+    }else{
+        res.json({ authenticated: false});
+    }
+
+});
+
+
 passport.use(
-    new Strategy({ usernameField: "email"}, async function verify(email, password, cb) {
+    new Strategy({ usernameField: "email"},async function verify(email, password, cb){
+        console.log(email);
+
         try {
-            const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
-            
-            if (result.rows.length > 0) {
+            const result = await db.query("SELECT * FROM users WHERE email = $1", [
+                email
+            ]);
+
+            if(result.rows.length > 0){
+                console.log(result.rows);
                 const user = result.rows[0];
                 const storedHashedPassword = user.password;
 
                 bcrypt.compare(password, storedHashedPassword, (err, result) => {
-                    if (err) return cb(err);
-                    if (result) {
+                    if(err) return cb(err);
+
+                    if(result){
+                        console.log("Login Success, Email:", user.email);
                         return cb(null, user);
                     } else {
-                        return cb(null, false, { message: "Incorrect Password" });
+                        return cb(null, false, { message: "Incorrect Password "});
                     }
-                });
-            } else {
+                })
+            }else{
                 return cb(null, false, "User not found");
             }
         } catch (error) {
-            console.error("Login Error:", error);
-            return cb(error);
+           console.error("Login Error:", error);
+           return cb(error);
         }
-    })
-);
+}))
 
 passport.serializeUser((user, cb) => {
     cb(null, user);
-});
+})
 
 passport.deserializeUser((user, cb) => {
     cb(null, user);
-});
+})
 
 // Error Handling
 app.use((err, req, res, next) => {
@@ -316,3 +370,25 @@ app.use((err, req, res, next) => {
 });
 
 startServer();   
+
+const passwordHashing = (
+        res, 
+        firstName, 
+        lastName, 
+        email,
+        password,
+        saltRounds
+    ) => {
+        bcrypt.hash(password, saltRounds, async (err, hash) => {
+            if(err){
+                console.error("Error Hashing password:", err);
+            }else{
+                console.log("Hashed Password:", hash);
+                const newUser = await db.query(
+                    "INSERT INTO users (firstname, lastname, email, password) VALUES($1, $2, $3, $4)",
+                    [firstName, lastName, email, hash]
+                );
+                res.json(newUser.rows[0]);
+            }
+    });
+}
