@@ -46,7 +46,7 @@ export default function AdoptionForm() {
                 setAdoptionData((prev) => ({
                     ...prev,
                     userID: userDetails.user.userID,
-                    fullName: `${userDetails.user.firstName}${userDetails.user.lastName}`,
+                    fullName: `${userDetails.user.firstname}${userDetails.user.lastname}`,
                     email: userDetails.user.email,
                 }))
             }   
