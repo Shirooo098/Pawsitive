@@ -235,21 +235,7 @@ db.on('connect', () => {
   console.log('Database connection established');
 });
 
-// More frequent health checks in production
-const HEALTH_CHECK_INTERVAL = process.env.NODE_ENV === 'production' ? 15000 : 30000;
-setInterval(monitorConnection, HEALTH_CHECK_INTERVAL);
 
-// Initial Connection Verification with Timeout
-const verifyInitialConnection = async () => {
-  console.log('Verifying initial database connection...');
-  
-  return Promise.race([
-    monitorConnection(),
-    new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Initial connection timeout')), 30000)
-    )
-  ]);
-};
 
 // Database Middleware with Enhanced Error Handling
 app.use(async (req, res, next) => {
