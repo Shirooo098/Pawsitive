@@ -31,24 +31,20 @@ const client = process.env.FRONTEND_URL;
 // const db_port = process.env.POSTGRE_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
-// Database configuration
 const dbConfig = {
   connectionString: process.env.POSTGRES_URL,
   ssl: process.env.NODE_ENV === 'production' ? { 
     rejectUnauthorized: false 
   } : false,
-  max: 3, // Reduce pool size further for Railway
+  max: 3, 
   min: 0,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
   application_name: 'pawsitive-app',
   keepAlive: true,
   keepAliveInitialDelayMillis: 10000,
-  // Add statement timeout
   statement_timeout: 10000,
-  // Add query timeout
   query_timeout: 5000,
-  // Add connection retry settings
   connectionRetryTimeout: 30000,
   connectionTimeoutMillis: 5000
 };
@@ -61,14 +57,12 @@ console.log('Initializing database pool with config:', {
 
 let db = new pg.Pool(dbConfig);
 
-// Connection State Management
 let isConnected = false;
 let reconnectAttempts = 0;
 const MAX_RECONNECT_ATTEMPTS = 10;
 const RECONNECT_BASE_DELAY = 1000;
 let isReconnecting = false;
 
-// Enhanced Connection Health Monitoring
 const monitorConnection = async () => {
   if (isReconnecting) return;
   
@@ -98,15 +92,13 @@ const monitorConnection = async () => {
       code: err.code,
       message: err.message
     });
-    
-    // Initiate reconnection if not already in progress
+
     if (!isReconnecting) {
       reconnectWithRetry();
     }
   }
 };
 
-// Enhanced Reconnection Logic
 const reconnectWithRetry = async () => {
   if (isReconnecting) return;
   isReconnecting = true;
@@ -123,13 +115,10 @@ const reconnectWithRetry = async () => {
       await new Promise(resolve => setTimeout(resolve, delay));
 
       try {
-        // Close existing pool
         await db.end();
         
-        // Create new pool
         db = new pg.Pool(dbConfig);
-        
-        // Test connection
+
         const client = await db.connect();
         await client.query('SELECT 1');
         client.release();
@@ -685,4 +674,4 @@ const passwordHashing = (
                 res.json(newUser.rows[0]);
             }
     });
-}
+}   
