@@ -6,6 +6,8 @@ export default function AdoptUserRow({userAdopt, onDelete}) {
     const formatDate = date.toLocaleDateString('en-CA');
     const status = userAdopt.status.charAt(0).toUpperCase() + userAdopt.status.slice(1);    
 
+
+    console.log(API_BASE_URL);
     return(
         <tr>
             <td>{formatDate}</td>
