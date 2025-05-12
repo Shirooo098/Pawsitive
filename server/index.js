@@ -142,15 +142,48 @@ const verifyInitialConnection = async () => {
 setInterval(monitorConnection, 30000);
 
 // CORS Configuration
+const allowedOrigins = [
+  'https://pawsitive-client-vert.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:5173'
+];
+
 const corsOptions = {
-  origin: client,
+  origin: function (origin, callback) {
+    console.log('Request origin:', origin);
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('Origin not allowed by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Set-Cookie'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
-// Middleware
 app.use(cors(corsOptions));
+
+// Enable pre-flight requests for all routes
+app.options('*', cors(corsOptions));
+
+// Additional headers for extra CORS support
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  next();
+});
+
+// Middleware
 app.use('/uploads', express.static('uploads/'));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -252,20 +285,48 @@ app.get('/health', async (req, res) => {
 });
 
 // Start server only after verifying connection
-verifyInitialConnection().then(() => {
-  const server = app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-    console.log(`Database connection status: ${isConnected ? 'connected' : 'disconnected'}`);
-  }).on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      console.error(`Port ${port} is already in use`);
-      process.exit(1);
-    } else {
-      console.error('Server error:', err);
+const startServer = async (retries = 3) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await verifyInitialConnection();
+      
+      const server = app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+        console.log(`Database connection status: ${isConnected ? 'connected' : 'disconnected'}`);
+        console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
+      });
+
+      server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+          console.error(`Port ${port} is already in use`);
+          server.close();
+          if (i === retries - 1) {
+            console.error('Max retries reached. Exiting...');
+            process.exit(1);
+          }
+        } else {
+          console.error('Server error:', err);
+          process.exit(1);
+        }
+      });
+
+      return server;
+    } catch (err) {
+      console.error(`Attempt ${i + 1}/${retries} failed:`, err);
+      if (i === retries - 1) {
+        console.error('Failed to start server after multiple attempts');
+        process.exit(1);
+      }
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
-  });
-}).catch(err => {
-  console.error('Failed to initialize server:', err);
+  }
+};
+
+// Start the server
+startServer().catch(err => {
+  console.error('Failed to start server:', err);
   process.exit(1);
 });
 
@@ -276,6 +337,12 @@ process.on('unhandledRejection', (reason, promise) => {
 
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${port} is already in use. Please try the following:
+    1. Stop any other servers running on port ${port}
+    2. Wait a few seconds and try again
+    3. Or use a different port by setting the PORT environment variable`);
+  }
   process.exit(1);
 });
 
