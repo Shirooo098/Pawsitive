@@ -303,53 +303,95 @@ app.get("/appointment", (req, res) => {
     }
 });
 
-app.post("/logout", (req, res) => {
+app.post("/logout", async (req, res) => {
     if (req.isAuthenticated()) {
-        // First destroy the session
-        req.session.destroy((err) => {
-            if (err) {
-                console.error("Error destroying session:", err);
-                return res.status(500).json({
-                    error: "Logout failed",
-                    message: "Failed to end session"
-                });
-            }
+        try {
+            // Delete the session from the database
+            const sessionID = req.sessionID;
+            await db.query('DELETE FROM user_sessions WHERE sid = $1', [sessionID]);
 
-            // Then logout the user
-            req.logout((err) => {
+            // Destroy the session
+            req.session.destroy((err) => {
                 if (err) {
-                    console.error("Error logging out:", err);
+                    console.error("Error destroying session:", err);
                     return res.status(500).json({
                         error: "Logout failed",
-                        message: "Failed to complete logout"
+                        message: "Failed to end session"
                     });
                 }
 
-                // Clear all cookies
-                res.clearCookie('pawsitive.sid', {
-                    path: '/',
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
-                });
+                // Logout the user
+                req.logout((err) => {
+                    if (err) {
+                        console.error("Error logging out:", err);
+                        return res.status(500).json({
+                            error: "Logout failed",
+                            message: "Failed to complete logout"
+                        });
+                    }
 
-                // Send success response
-                res.json({ message: "Logout successful" });
+                    // Clear the cookie
+                    res.clearCookie('pawsitive.sid', {
+                        path: '/',
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === 'production',
+                        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+                    });
+
+                    res.json({ message: "Logout successful" });
+                });
             });
-        });
+        } catch (error) {
+            console.error("Database error during logout:", error);
+            res.status(500).json({
+                error: "Logout failed",
+                message: "Failed to clean up session"
+            });
+        }
     } else {
-        // If user is not authenticated, just send success response
         res.json({ message: "Already logged out" });
     }
 });
 
-app.get("/auth/check", (req, res) => {
-    // Add session check
-    if (!req.session) {
-        return res.json({ authenticated: false });
-    }
+app.get("/auth/check", async (req, res) => {
+    try {
+        // Clean up expired sessions
+        await db.query(`
+            DELETE FROM user_sessions 
+            WHERE expire < NOW()
+        `);
 
-    if (req.isAuthenticated() && req.user) {
+        // Check if session exists and is valid
+        if (!req.session || !req.isAuthenticated() || !req.user) {
+            // If no valid session, ensure cookie is cleared
+            res.clearCookie('pawsitive.sid', {
+                path: '/',
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+            });
+            return res.json({ authenticated: false });
+        }
+
+        // Verify session in database
+        const result = await db.query(
+            'SELECT sid FROM user_sessions WHERE sid = $1 AND expire > NOW()',
+            [req.sessionID]
+        );
+
+        if (result.rows.length === 0) {
+            // Session not found in database or expired
+            req.session.destroy();
+            res.clearCookie('pawsitive.sid', {
+                path: '/',
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+            });
+            return res.json({ authenticated: false });
+        }
+
+        // Valid session found
         res.json({
             authenticated: true,
             user: {
@@ -360,8 +402,12 @@ app.get("/auth/check", (req, res) => {
                 lastname: req.user.lastname
             }
         });
-    } else {
-        res.json({ authenticated: false });
+    } catch (error) {
+        console.error("Error during auth check:", error);
+        res.status(500).json({ 
+            error: "Authentication check failed",
+            message: "Internal server error"
+        });
     }
 });
 
