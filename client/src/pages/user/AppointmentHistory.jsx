@@ -80,5 +80,6 @@ export default function AppointmentHistory() {
                 </table>
             )}
         </div>
+        
     );
 }
