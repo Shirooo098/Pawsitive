@@ -230,6 +230,21 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// CORS Debug Middleware (before CORS configuration)
+app.use((req, res, next) => {
+  console.log('Incoming request:', {
+    origin: req.headers.origin,
+    method: req.method,
+    path: req.path,
+    headers: {
+      'access-control-request-method': req.headers['access-control-request-method'],
+      'access-control-request-headers': req.headers['access-control-request-headers'],
+      'origin': req.headers.origin
+    }
+  });
+  next();
+});
+
 // CORS Configuration
 const allowedOrigins = [
   'https://pawsitive-client-vert.vercel.app',
@@ -237,15 +252,60 @@ const allowedOrigins = [
   'http://localhost:5173'
 ];
 
-app.use(cors());
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
 
-// Additional headers for extra CORS support
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('Origin not allowed by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
+// Additional security headers
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  // Ensure CORS headers are set even if the request fails
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Origin', req.headers.origin || allowedOrigins[0]);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
   next();
+});
+
+// Error handler specifically for CORS errors
+app.use((err, req, res, next) => {
+  if (err.message === 'Not allowed by CORS') {
+    console.error('CORS Error:', {
+      origin: req.headers.origin,
+      method: req.method,
+      path: req.path
+    });
+    return res.status(403).json({
+      error: 'CORS Error',
+      message: 'Origin not allowed',
+      allowedOrigins
+    });
+  }
+  next(err);
 });
 
 // Middleware
@@ -272,11 +332,15 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    secure: process.env.NODE_ENV === 'production', // true in production
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    httpOnly: true,
+    path: '/',
+    domain: process.env.NODE_ENV === 'production' ? '.railway.app' : undefined
   },
-  proxy: true
+  proxy: true,
+  name: 'pawsitive.sid' // Custom session cookie name
 }));
 
 // Routes and other middleware
