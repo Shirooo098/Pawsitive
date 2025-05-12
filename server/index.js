@@ -327,25 +327,30 @@ app.use((req, res, next) => {
 });
 
 // CORS Configuration with specific origins
+// Configure allowed origins
 const allowedOrigins = [
-    'https://pawsitive-client-vert.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:5173'
+  'https://pawsitive-client-vert.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:5173'
 ];
 
+// Enhanced CORS options
 const corsOptions = {
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    credentials: true,
-    maxAge: 86400, // 24 hours
-    optionsSuccessStatus: 200
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  maxAge: 86400 // 24 hours
 };
 
 // Apply CORS middleware
@@ -354,16 +359,19 @@ app.use(cors(corsOptions));
 // Handle preflight requests
 app.options('*', cors(corsOptions));
 
-// Additional security headers
 app.use((req, res, next) => {
-  // Ensure CORS headers are set even if the request fails
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Origin', req.headers.origin || allowedOrigins[0]);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  }
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
   next();
 });
 
@@ -457,10 +465,6 @@ process.on('uncaughtException', (err) => {
     }, 1000);
 });
 
-app.use(cors({
-    origin: client,
-    credentials: true
-}));
 
 app.use('/uploads', express.static('uploads/'));
 app.use(express.json());
