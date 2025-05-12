@@ -3,12 +3,12 @@
     border-radius: 1rem;
 }
 .text-center button {
+    background-color: #64b5f6;
     color: white;
     border: none;
 }
 .text-center button:hover {
     background-color: #ff4081;
-    color: white;
 }
 .adoption-form{
     border-radius: 8px;

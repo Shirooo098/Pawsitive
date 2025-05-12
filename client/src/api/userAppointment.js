@@ -14,20 +14,24 @@ export const sendAppointment = async (appointmentData) => {
         return response.data
     } catch (error) {
         console.error("Error:", error.response ? error.response.data : error.message);
+        throw error;
     }
 }
 
 export const fetchAppointment = async() => {
     try {
-        
-        const response = await axios.get(`${API_BASE_URL}/appointment`, {
+        const response = await axios.get(`${API_BASE_URL}/history`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
-        })
+        });
 
-        console.log("Appointment fetched:", response.data);
+        console.log("Appointments fetched:", response.data);
         return response.data;
     } catch (error) {
-        console.error('Error fetching appointment', error);
+        console.error('Error fetching appointments:', error);
+        if (error.response?.status === 404) {
+            return []; // Return empty array if no appointments found
+        }
+        throw error;
     }
 }

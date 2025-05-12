@@ -54,7 +54,7 @@ export default function Profile() {
                                 <label htmlFor="fullName">Name</label>
                                 <input type="text"
                                     name="fullName"
-                                    value={`${userData.firstName} ${userData.lastName}`}
+                                    value={`${userData.firstname} ${userData.lastname}`}
                                     disabled
                                 />
                             </div>
