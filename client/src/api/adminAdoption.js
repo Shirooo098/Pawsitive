@@ -1,16 +1,21 @@
-import axios from 'axios';
 import { API_BASE_URL } from './auth';
 
 export const uploadImage = async (formData) => {
     try {
-        const response = await axios.post(`${API_BASE_URL}/admin/addPet`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-            withCredentials: true
+        const response = await fetch(`${API_BASE_URL}/admin/addPet`, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData // FormData is already properly formatted, no need for Content-Type
         });
-        
-        console.log("Image uploaded successfully", response.data);
+
+        if (!response.ok) {
+            throw new Error('Failed to upload image');
+        }
+
+        const data = await response.json();
+        console.log("Image uploaded successfully", data);
         alert("Successfully Added Data...");
-        return response.data;
+        return data;
     } catch (error) {
         console.error("Error uploading image:", error);
     } 
@@ -18,12 +23,20 @@ export const uploadImage = async (formData) => {
 
 export const fetchAdoptPetRequest = async () => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/admin/manageAdoption`, {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true
-        })
+        const response = await fetch(`${API_BASE_URL}/admin/manageAdoption`, {
+            method: 'GET',
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            credentials: 'include'
+        });
 
-        return response.data;
+        if (!response.ok) {
+            throw new Error('Failed to fetch adoption requests');
+        }
+
+        const data = await response.json();
+        return data;
     } catch (error) {
         console.error("Error Fetching Adoption Requests:", error);
     }
@@ -31,45 +44,68 @@ export const fetchAdoptPetRequest = async () => {
 
 export const deleteAdoption = async (id) => {
     try {
-        const response = await axios.delete(`${API_BASE_URL}/admin/deleteAdoption/${id}`, {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true
+        const response = await fetch(`${API_BASE_URL}/admin/deleteAdoption/${id}`, {
+            method: 'DELETE',
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            credentials: 'include'
         });
 
-        alert('Appointment Successfully Deleted', response.data);
+        if (!response.ok) {
+            throw new Error('Failed to delete adoption');
+        }
+
+        const data = await response.json();
+        alert('Appointment Successfully Deleted');
+        return data;
     } catch (error) {
-        console.error("Error Deleting Adoption:", id);
+        console.error("Error Deleting Adoption:", error);
     }
 }
 
 export const fetchAdoptDetails = async(id) => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/admin/updateAdoption/${id}`,{
-            headers: { "Content-Type": "application/jspon" },
-            withCredentials: true
-        })
+        const response = await fetch(`${API_BASE_URL}/admin/updateAdoption/${id}`, {
+            method: 'GET',
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            credentials: 'include'
+        });
 
-        console.log("Adoption Data Fetch Succesfully", response.data);
-        return response.data;
+        if (!response.ok) {
+            throw new Error('Failed to fetch adoption details');
+        }
+
+        const data = await response.json();
+        console.log("Adoption Data Fetch Successfully", data);
+        return data;
     } catch (error) {
-        console.error("Error Fetching Adoption ID:", error)
+        console.error("Error Fetching Adoption ID:", error);
     }
 }
 
 export const updateAdoptionRequest = async(id, status) => {
     try {
-        const response = await axios.patch(`${API_BASE_URL}/admin/updateAdoption/${id}`, 
-            {status}, 
-            {
-                headers: {"Content-Type": "application/json"},
-                withCredentials: true 
-            }
-        );
+        const response = await fetch(`${API_BASE_URL}/admin/updateAdoption/${id}`, {
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
+            body: JSON.stringify({ status })
+        });
 
-        alert("Adoption updated successfully", response.data);
-        console.log("Adoption updated successfully", response.data);
-        return response.data;
+        if (!response.ok) {
+            throw new Error('Failed to update adoption');
+        }
+
+        const data = await response.json();
+        alert("Adoption updated successfully");
+        console.log("Adoption updated successfully", data);
+        return data;
     } catch (error) {
-        console.error("Error updating appointment:", id);
+        console.error("Error updating adoption:", error);
     }
 }
