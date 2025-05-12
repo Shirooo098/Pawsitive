@@ -12,7 +12,8 @@ import userRoutes from './routes/userRoutes.js'
 import pgSession from 'connect-pg-simple';
 
 const app = express();
-const port = process.env.PORT || 8080;
+// Railway automatically assigns PORT, default to 3001 locally to avoid conflicts
+const PORT = process.env.PORT || 3001;
 const saltRounds = 10;
 const PgSession = pgSession(session);
 
@@ -31,27 +32,80 @@ const client = process.env.FRONTEND_URL;
 // const db_port = process.env.POSTGRE_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
-// Enhanced port handling
-const startServerOnPort = async (port) => {
-    try {
-        await new Promise((resolve, reject) => {
-            const server = app.listen(port, () => {
-                console.log(`Server successfully started on port ${port}`);
-                resolve();
+// Enhanced port handling with async port finding
+const findAvailablePort = async (startPort) => {
+    const net = await import('net');
+    
+    const isPortAvailable = (port) => {
+        return new Promise((resolve) => {
+            const server = net.createServer();
+            server.once('error', () => {
+                server.close();
+                resolve(false);
             });
+            
+            server.once('listening', () => {
+                server.close();
+                resolve(true);
+            });
+            
+            server.listen(port);
+        });
+    };
 
-            server.on('error', (err) => {
-                if (err.code === 'EADDRINUSE') {
-                    console.log(`Port ${port} is busy, trying ${port + 1}...`);
-                    server.close();
-                    startServerOnPort(port + 1);
-                } else {
-                    reject(err);
-                }
+    let currentPort = startPort;
+    while (currentPort < startPort + 100) { // Try up to 100 ports
+        if (await isPortAvailable(currentPort)) {
+            return currentPort;
+        }
+        currentPort++;
+    }
+    throw new Error('No available ports found');
+};
+
+// Enhanced server start function
+const startServer = () => {
+    try {
+        const server = app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Server is running on port ${PORT}`);
+            console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+            console.log(`Database connection status: ${isConnected ? 'connected' : 'disconnected'}`);
+        });
+
+        server.on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                console.error(`Port ${PORT} is in use. Please check Railway configuration.`);
+                process.exit(1);
+            } else {
+                console.error('Server error:', err);
+                process.exit(1);
+            }
+        });
+
+        // Graceful shutdown
+        process.on('SIGTERM', () => {
+            console.log('SIGTERM received. Shutting down gracefully...');
+            server.close(() => {
+                console.log('Server closed');
+                db.end().then(() => {
+                    console.log('Database connections closed');
+                    process.exit(0);
+                });
             });
         });
+
     } catch (err) {
         console.error('Failed to start server:', err);
+        process.exit(1);
+    }
+};
+
+// Initialize server with error handling
+const initializeServer = async () => {
+    try {
+        await startServer();
+    } catch (err) {
+        console.error('Critical error during server initialization:', err);
         process.exit(1);
     }
 };
@@ -407,26 +461,20 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// Start server with enhanced error handling
-startServerOnPort(port).catch(err => {
-    console.error('Failed to start server:', err);
-    process.exit(1);
-});
+// Replace the old server start code with the new initialization
+initializeServer();
 
 // Error Handling
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
-  if (err.code === 'EADDRINUSE') {
-    console.error(`Port ${port} is already in use. Please try the following:
-    1. Stop any other servers running on port ${port}
-    2. Wait a few seconds and try again
-    3. Or use a different port by setting the PORT environment variable`);
-  }
-  process.exit(1);
+    console.error('Uncaught Exception:', err);
+    // Give time for any cleanup
+    setTimeout(() => {
+        process.exit(1);
+    }, 1000);
 });
 
 app.use(cors({
@@ -688,8 +736,8 @@ app.get('/health', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server is running at Port ${port}`);
+app.listen(PORT, () => {
+    console.log(`Server is running at Port ${PORT}`);
 });
 
 const passwordHashing = (
