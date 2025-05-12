@@ -33,56 +33,38 @@ const session_secret = process.env.COOKIE_SESSION_SECRET;
 
 const dbConfig = {
     connectionString: process.env.POSTGRES_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { 
-        rejectUnauthorized: false,
-        sslmode: 'require'
-    } : false,
-    max: 3,
-    min: 0,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
-    application_name: 'pawsitive-app',
-    keepAlive: true,
-    keepAliveInitialDelayMillis: 10000,
-    statement_timeout: 15000,
-    query_timeout: 10000
 };
 
+// Initialize database pool
 let db;
 let server;
 
 const initializeDatabase = async () => {
     try {
-        console.log('Initializing database connection to:', 
-            new URL(process.env.POSTGRES_URL).hostname);
         db = new pg.Pool(dbConfig);
         
-        // Test database connection
+        // Test the connection
         const client = await db.connect();
-        await client.query('SELECT 1');
-        client.release();
         console.log('Database connection successful');
-        
+        client.release();
+
+        // Add error handler for the pool
         db.on('error', (err) => {
-            console.error('Unexpected database error:', {
-                code: err.code,
-                message: err.message,
-                fatal: err.fatal
-            });
-            if (err.fatal) {
-                process.exit(1);
+            console.error('Unexpected database error:', err);
+            if (err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET') {
+                console.log('Attempting to reconnect to database...');
+                setTimeout(initializeDatabase, 5000);
             }
         });
 
-        db.on('connect', (client) => {
-            console.log('New database connection established');
-            client.query('SET statement_timeout = 15000');
-        });
-
-        return db;
+        return true;
     } catch (err) {
-        console.error('Failed to initialize database pool:', err);
-        throw err;
+        console.error('Failed to initialize database:', err);
+        return false;
     }
 };
 
@@ -145,7 +127,8 @@ app.use(session({
         pool: db,
         tableName: 'user_sessions',
         createTableIfMissing: true,
-        pruneSessionInterval: 60
+        pruneSessionInterval: 60,
+        errorLog: (err) => console.error('Session store error:', err)
     }),
     secret: session_secret,
     resave: false,
@@ -160,33 +143,38 @@ app.use(session({
     name: 'pawsitive.sid'
 }));
 
-// Passport Configuration
+// Move passport initialization after session middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Database Middleware
+// Database Middleware - Add error handling
 app.use(async (req, res, next) => {
+    if (!db) {
+        console.error('Database connection not initialized');
+        return res.status(503).json({
+            error: "Database connection not available",
+            message: "Please try again in a few moments"
+        });
+    }
+
     try {
         const client = await db.connect();
         try {
             await client.query('SELECT 1');
+            req.db = db;
             next();
         } finally {
             client.release();
         }
     } catch (err) {
         console.error('Database check failed:', err);
-        res.status(503).json({ 
-            error: "Database temporarily unavailable",
-            message: "Please try again in a few moments"
-        });
+        if (!res.headersSent) {
+            res.status(503).json({ 
+                error: "Database temporarily unavailable",
+                message: "Please try again in a few moments"
+            });
+        }
     }
-});
-
-// Database Middleware - Add this before routes
-app.use((req, res, next) => {
-    req.db = db;
-    next();
 });
 
 // Routes
@@ -313,74 +301,42 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Enhanced server start function
+// Start server function
 const startServer = async () => {
     try {
-        // Initialize database first
-        await initializeDatabase();
+        const dbInitialized = await initializeDatabase();
+        if (!dbInitialized) {
+            console.error('Could not initialize database, retrying in 5 seconds...');
+            setTimeout(startServer, 5000);
+            return;
+        }
 
-        // Enable IPv6 support with fallback to IPv4
-        server = app.listen(PORT, '::', () => {
-            console.log(`Server is running on port ${PORT}`);
-            console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-            console.log('IPv6 binding enabled');
-        }).on('error', (err) => {
-            if (err.code === 'EADDRINUSE') {
-                console.log('IPv6 binding failed, falling back to IPv4');
-                server = app.listen(PORT, '0.0.0.0', () => {
-                    console.log(`Server is running on port ${PORT} (IPv4)`);
+        const port = process.env.PORT || 3000;
+        server = app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+        });
+
+        // Graceful shutdown
+        const shutdown = async () => {
+            console.log('Shutting down gracefully...');
+            if (server) {
+                server.close(() => {
+                    console.log('HTTP server closed');
                 });
-            } else {
-                throw err;
             }
-        });
-
-        // Add keep-alive configuration
-        server.keepAliveTimeout = 65000;
-        server.headersTimeout = 66000;
-
-        // Handle server errors
-        server.on('error', (err) => {
-            console.error('Server error:', err);
-            if (err.code === 'EADDRINUSE') {
-                console.error(`Port ${PORT} is in use`);
+            if (db) {
+                await db.end();
+                console.log('Database pool closed');
             }
-            process.exit(1);
-        });
-
-        // Graceful shutdown handler
-        const shutdown = async (signal) => {
-            console.log(`Received ${signal}. Shutting down gracefully...`);
-            
-            // Stop accepting new connections
-            server.close(async () => {
-                console.log('HTTP server closed');
-                try {
-                    // Close all database connections
-                    await db.end();
-                    console.log('Database connections closed');
-                    process.exit(0);
-                } catch (err) {
-                    console.error('Error closing database:', err);
-                    process.exit(1);
-                }
-            });
-
-            // Force shutdown after 25 seconds (Railway gives 30s)
-            setTimeout(() => {
-                console.error('Could not close connections in time, forcefully shutting down');
-                process.exit(1);
-            }, 25000);
+            process.exit(0);
         };
 
-        // Register shutdown handlers
-        process.on('SIGTERM', () => shutdown('SIGTERM'));
-        process.on('SIGINT', () => shutdown('SIGINT'));
+        process.on('SIGTERM', shutdown);
+        process.on('SIGINT', shutdown);
 
-        return server;
     } catch (err) {
-        console.error('Failed to start server:', err);
-        throw err;
+        console.error('Server startup error:', err);
+        process.exit(1);
     }
 };
 
