@@ -33,38 +33,7 @@ const client = process.env.FRONTEND_URL;
 // const db_port = process.env.POSTGRE_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
-// Enhanced port handling with async port finding
-const findAvailablePort = async (startPort) => {
-    const net = await import('net');
-    
-    const isPortAvailable = (port) => {
-        return new Promise((resolve) => {
-            const server = net.createServer();
-            server.once('error', () => {
-                server.close();
-                resolve(false);
-            });
-            
-            server.once('listening', () => {
-                server.close();
-                resolve(true);
-            });
-            
-            server.listen(port);
-        });
-    };
 
-    let currentPort = startPort;
-    while (currentPort < startPort + 100) { // Try up to 100 ports
-        if (await isPortAvailable(currentPort)) {
-            return currentPort;
-        }
-        currentPort++;
-    }
-    throw new Error('No available ports found');
-};
-
-// Database Configuration
 const dbConfig = {
     connectionString: process.env.POSTGRES_URL,
     ssl: process.env.NODE_ENV === 'production' ? { 
@@ -181,7 +150,7 @@ app.use(session({
         createTableIfMissing: true,
         pruneSessionInterval: 60
     }),
-    secret: process.env.COOKIE_SESSION_SECRET,
+    secret: session_secret,
     resave: false,
     saveUninitialized: false,
     cookie: {
