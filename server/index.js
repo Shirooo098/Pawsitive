@@ -122,9 +122,15 @@ app.use((req, res, next) => {
 });
 
 // Session Configuration
-app.use(session({
+const sessionConfig = {
     store: new PgSession({
-        pool: db,
+        conObject: {
+            connectionString: process.env.POSTGRES_URL,
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+            max: 20,
+            idleTimeoutMillis: 30000,
+            connectionTimeoutMillis: 10000
+        },
         tableName: 'user_sessions',
         createTableIfMissing: true,
         pruneSessionInterval: 60,
@@ -141,7 +147,17 @@ app.use(session({
     },
     proxy: true,
     name: 'pawsitive.sid'
-}));
+};
+
+app.use(session(sessionConfig));
+
+// Add error handling for session errors
+app.use((req, res, next) => {
+    if (!req.session) {
+        return next(new Error('Session initialization failed'));
+    }
+    next();
+});
 
 // Move passport initialization after session middleware
 app.use(passport.initialize());
@@ -203,43 +219,54 @@ app.post("/register", async(req, res) => {
 
 app.post("/login", (req, res, next) => {
     console.log("Login Request:", req.body); 
-    console.log("Session config:", req.session);
+
+    // Check if database is connected
+    if (!db) {
+        return res.status(503).json({
+            error: "Database connection not available",
+            message: "Please try again in a few moments"
+        });
+    }
 
     passport.authenticate("local", (err, user, info) => {
-        console.log("Passport authenticate callback:", {err, user, info});
-        if(err){
-           console.error("Authentication error:", err);
+        console.log("Passport authenticate callback:", { err, user, info });
+        
+        if (err) {
+            console.error("Authentication error:", err);
             return res.status(500).json({ 
-                error: "Server error",
-                details: process.env.NODE_ENV === 'development' ? err.message : undefined
+                error: "Authentication failed",
+                message: "An internal error occurred during authentication"
             });
         } 
-        if(!user) {
+        
+        if (!user) {
             console.log("Authentication failed:", info);
             return res.status(401).json({ 
-                error: info.message || "Authentication failed" 
+                error: "Authentication failed",
+                message: info.message || "Invalid credentials"
             });
         }
 
-        req.login(user, (err) => {
-            if(err) {
-                console.error("Session login error:", err);
+        req.login(user, (loginErr) => {
+            if (loginErr) {
+                console.error("Session login error:", loginErr);
                 return res.status(500).json({ 
-                    error: "Login Failed",
-                    details: process.env.NODE_ENV === 'development' ? err.message : undefined
+                    error: "Login failed",
+                    message: "Failed to create session"
                 });
             }
+
             console.log("User logged in successfully:", user.id);
             return res.json({
-                message: "Login Sucessful",
+                message: "Login successful",
                 user: {
                     id: user.id,
                     email: user.email
                 }
-            })
-        })
+            });
+        });
     })(req, res, next);
-})
+});
 
 app.get("/appointment", (req, res) => {
     if(req.isAuthenticated()){
