@@ -277,6 +277,26 @@ app.get("/appointment", (req, res) => {
 
 });
 
+app.post("/logout", (req, res) => {
+    if (req.isAuthenticated()) {
+        req.session.destroy((err) => {
+            req.logout((err) => {
+                if (err) {
+                    console.error("Error logging out:", err);
+                    return res.status(500).json({
+                        error: "Logout failed",
+                        message: "Failed to complete logout"
+                    });
+                }
+                
+                res.clearCookie('pawsitive.sid');
+                res.json({ message: "Logout successful" });
+            });
+        });
+    } else {
+        res.json({ message: "Already logged out" });
+    }
+});
 
 passport.use(
     new Strategy({ usernameField: "email"},async function verify(email, password, cb){

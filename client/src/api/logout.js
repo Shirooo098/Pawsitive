@@ -3,7 +3,7 @@ import { API_BASE_URL } from "./auth";
 
 export const logout = async (setIsLoggedIn) => {
     try {
-        const res = await axios.get(`${API_BASE_URL}/logout`, {
+        const res = await axios.post(`${API_BASE_URL}/logout`, {
             withCredentials: true,
         })
 
