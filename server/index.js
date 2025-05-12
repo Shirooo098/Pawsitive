@@ -37,13 +37,20 @@ const dbConfig = {
   ssl: process.env.NODE_ENV === 'production' ? { 
     rejectUnauthorized: false 
   } : false,
-  max: 5, // Reduced pool size for Railway
-  min: 1,
+  max: 3, // Reduce pool size further for Railway
+  min: 0,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
+  connectionTimeoutMillis: 5000,
   application_name: 'pawsitive-app',
   keepAlive: true,
-  keepAliveInitialDelayMillis: 10000
+  keepAliveInitialDelayMillis: 10000,
+  // Add statement timeout
+  statement_timeout: 10000,
+  // Add query timeout
+  query_timeout: 5000,
+  // Add connection retry settings
+  connectionRetryTimeout: 30000,
+  connectionTimeoutMillis: 5000
 };
 
 console.log('Initializing database pool with config:', {
@@ -52,22 +59,36 @@ console.log('Initializing database pool with config:', {
     dbConfig.connectionString.replace(/:[^:]*@/, ':****@') : 'undefined'
 });
 
-const db = new pg.Pool(dbConfig);
+let db = new pg.Pool(dbConfig);
 
 // Connection State Management
 let isConnected = false;
 let reconnectAttempts = 0;
-const MAX_RECONNECT_ATTEMPTS = 5;
-const RECONNECT_BASE_DELAY = 2000;
+const MAX_RECONNECT_ATTEMPTS = 10;
+const RECONNECT_BASE_DELAY = 1000;
+let isReconnecting = false;
 
-// Connection Health Monitoring
+// Enhanced Connection Health Monitoring
 const monitorConnection = async () => {
+  if (isReconnecting) return;
+  
   try {
-    const client = await db.connect();
+    const client = await Promise.race([
+      db.connect(),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Connection timeout')), 5000)
+      )
+    ]);
+
     try {
       await client.query('SELECT 1');
       isConnected = true;
       reconnectAttempts = 0;
+      console.log('Database connection healthy');
+    } catch (err) {
+      isConnected = false;
+      console.error('Query failed in health check:', err.message);
+      throw err;
     } finally {
       client.release();
     }
@@ -77,69 +98,148 @@ const monitorConnection = async () => {
       code: err.code,
       message: err.message
     });
+    
+    // Initiate reconnection if not already in progress
+    if (!isReconnecting) {
+      reconnectWithRetry();
+    }
   }
 };
 
-// Exponential Backoff Reconnection
+// Enhanced Reconnection Logic
 const reconnectWithRetry = async () => {
-  if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
-    console.error('Max reconnection attempts reached');
-    return;
-  }
-
-  reconnectAttempts++;
-  const delay = Math.min(
-    RECONNECT_BASE_DELAY * Math.pow(2, reconnectAttempts - 1),
-    30000
-  );
-
-  console.log(`Reconnection attempt ${reconnectAttempts}, waiting ${delay}ms`);
-  await new Promise(resolve => setTimeout(resolve, delay));
+  if (isReconnecting) return;
+  isReconnecting = true;
 
   try {
-    await monitorConnection();
-    if (isConnected) {
-      console.log('Reconnected successfully');
+    while (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+      reconnectAttempts++;
+      const delay = Math.min(
+        RECONNECT_BASE_DELAY * Math.pow(1.5, reconnectAttempts - 1),
+        30000
+      );
+
+      console.log(`Reconnection attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}, waiting ${delay}ms`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+
+      try {
+        // Close existing pool
+        await db.end();
+        
+        // Create new pool
+        db = new pg.Pool(dbConfig);
+        
+        // Test connection
+        const client = await db.connect();
+        await client.query('SELECT 1');
+        client.release();
+        
+        isConnected = true;
+        console.log('Database reconnected successfully');
+        break;
+      } catch (err) {
+        console.error('Reconnection attempt failed:', {
+          attempt: reconnectAttempts,
+          code: err.code,
+          message: err.message
+        });
+        
+        if (reconnectAttempts === MAX_RECONNECT_ATTEMPTS) {
+          console.error('Max reconnection attempts reached');
+          throw err;
+        }
+      }
     }
-  } catch (err) {
-    console.error('Reconnection failed:', err.message);
-    await reconnectWithRetry();
+  } finally {
+    isReconnecting = false;
   }
 };
 
 // Event Listeners
+db.on('error', (err) => {
+  console.error('Database pool error:', {
+    code: err.code,
+    message: err.message
+  });
+  
+  if (!isReconnecting && (err.code === 'ECONNRESET' || err.code === 'ECONNREFUSED')) {
+    isConnected = false;
+    reconnectWithRetry();
+  }
+});
+
 db.on('connect', () => {
   isConnected = true;
   reconnectAttempts = 0;
   console.log('Database connection established');
 });
 
-db.on('error', (err) => {
-  isConnected = false;
-  console.error('Database pool error:', {
-    code: err.code,
-    message: err.message
-  });
-  if (err.code === 'ECONNRESET' || err.code === 'ECONNREFUSED') {
-    reconnectWithRetry();
-  }
-});
+// More frequent health checks in production
+const HEALTH_CHECK_INTERVAL = process.env.NODE_ENV === 'production' ? 15000 : 30000;
+setInterval(monitorConnection, HEALTH_CHECK_INTERVAL);
 
-// Initial Connection Verification
+// Initial Connection Verification with Timeout
 const verifyInitialConnection = async () => {
   console.log('Verifying initial database connection...');
-  try {
-    await monitorConnection();
-    if (!isConnected) {
-      await reconnectWithRetry();
-    }
-  } catch (err) {
-    console.error('Initial connection verification failed:', err.message);
-  }
+  
+  return Promise.race([
+    monitorConnection(),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Initial connection timeout')), 30000)
+    )
+  ]);
 };
 
-// Periodic Health Checks
-setInterval(monitorConnection, 30000);
+// Database Middleware with Enhanced Error Handling
+app.use(async (req, res, next) => {
+  if (!isConnected) {
+    console.log('Database not connected, attempting to reconnect...');
+    try {
+      await reconnectWithRetry();
+      if (!isConnected) {
+        return res.status(503).json({
+          error: "Database unavailable",
+          message: "Service is temporarily unavailable, please try again in a few moments",
+          retryAfter: 30
+        });
+      }
+    } catch (err) {
+      console.error('Reconnection in middleware failed:', err);
+      return res.status(503).json({
+        error: "Database connection failed",
+        message: "Service is temporarily unavailable, please try again later",
+        retryAfter: 60
+      });
+    }
+  }
+
+  // Attach enhanced query retry wrapper
+  req.queryWithRetry = async (text, params, maxRetries = 3) => {
+    let lastError;
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        const result = await Promise.race([
+          db.query(text, params),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Query timeout')), 5000)
+          )
+        ]);
+        return result;
+      } catch (err) {
+        lastError = err;
+        if (err.code === 'ECONNRESET' || err.message.includes('timeout')) {
+          console.log(`Query failed (attempt ${i + 1}/${maxRetries}), retrying...`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+          continue;
+        }
+        throw err;
+      }
+    }
+    throw lastError;
+  };
+
+  next();
+});
 
 // CORS Configuration
 const allowedOrigins = [
@@ -213,50 +313,6 @@ app.use(session({
   },
   proxy: true
 }));
-
-// Database Availability Middleware
-app.use(async (req, res, next) => {
-  if (!isConnected) {
-    console.log('Database not connected, attempting to reconnect...');
-    try {
-      await reconnectWithRetry();
-      if (!isConnected) {
-        return res.status(503).json({
-          error: "Database unavailable",
-          message: "Service is temporarily unavailable"
-        });
-      }
-    } catch (err) {
-      console.error('Reconnection in middleware failed:', err);
-      return res.status(503).json({
-        error: "Database connection failed",
-        message: "Please try again later"
-      });
-    }
-  }
-
-  // Attach a retry wrapper to the request
-  req.queryWithRetry = async (text, params) => {
-    let lastError;
-    for (let i = 0; i < 3; i++) {
-      try {
-        const result = await db.query(text, params);
-        return result;
-      } catch (err) {
-        lastError = err;
-        if (err.code === 'ECONNRESET') {
-          console.log(`Query failed (attempt ${i + 1}), retrying...`);
-          await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-          continue;
-        }
-        throw err;
-      }
-    }
-    throw lastError;
-  };
-
-  next();
-});
 
 // Routes and other middleware
 app.use(passport.initialize());
