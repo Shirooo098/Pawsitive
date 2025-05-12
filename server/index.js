@@ -36,36 +36,57 @@ const db = new pg.Pool({
     ssl: {
         rejectUnauthorized: false
     },
-    max: 20, 
-
-})
-
-db.on('error', (err) => {
-    console.error('Unexpected error on idle client', err);
-    process.exit(-1);
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+    maxRetries: 5,
+    acquireTimeoutMillis: 8000
 });
 
-// Add connection verification function
-const verifyConnection = async (retries = 5, delay = 1000) => {
+// Add connection state tracking
+let isConnected = false;
+
+// Add error handling for the pool
+db.on('error', (err) => {
+    console.error('Unexpected error on idle client', err);
+    isConnected = false;
+});
+
+db.on('connect', () => {
+    console.log('Database connection established');
+    isConnected = true;
+});
+
+
+const verifyConnection = async (retries = 5, delay = 2000) => {
     for (let i = 0; i < retries; i++) {
         try {
+            console.log(`Attempting database connection (attempt ${i + 1}/${retries})`);
+            console.log('Using connection string:', process.env.POSTGRES_URL.replace(/:[^:]*@/, ':****@')); // Hide password
             const client = await db.connect();
+            await client.query('SELECT 1'); 
             client.release();
-            console.log('Database connection established successfully');
+            console.log('Database connection verified successfully');
             return true;
         } catch (err) {
-            console.error(`Connection attempt ${i + 1} failed:`, err.message);
+            console.error(`Connection attempt ${i + 1} failed:`, {
+                code: err.code,
+                message: err.message,
+                detail: err.detail
+            });
+            
             if (i < retries - 1) {
                 console.log(`Retrying in ${delay/1000} seconds...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
-                // Exponential backoff
-                delay *= 2;
+                delay *= 1.5; 
             }
         }
     }
     throw new Error('Failed to connect to database after multiple attempts');
 };
 
+
+console.log('Initializing database connection...');
 verifyConnection().catch(err => {
     console.error('Failed to establish initial database connection:', err);
     process.exit(1);
@@ -115,20 +136,46 @@ app.use((err, req, res, next) => {
 });
 
 app.use(async (req, res, next) => {
+    if (!isConnected) {
+        console.log('Database disconnected, attempting to reconnect...');
+        try {
+            await verifyConnection(3, 2000);
+        } catch (err) {
+            console.error('Failed to reconnect in middleware:', err);
+            return res.status(503).json({ 
+                error: "Database temporarily unavailable",
+                message: "Server is attempting to restore connection"
+            });
+        }
+    }
+
     try {
         await db.query('SELECT 1');
         next();
     } catch (err) {
-        console.error('Database connection error:', err);
-        if (err.code === 'ECONNRESET') {
+        console.error('Database query error:', {
+            code: err.code,
+            message: err.message,
+            detail: err.detail
+        });
+
+        if (err.code === 'ECONNRESET' || err.code === 'ECONNREFUSED') {
+            isConnected = false;
             try {
-                await db.connect();
+                await verifyConnection(2, 2000);
                 next();
             } catch (reconnectErr) {
-                res.status(503).json({ error: "Database unavailable" });
+                console.error('Failed to reconnect after query error:', reconnectErr);
+                res.status(503).json({ 
+                    error: "Database temporarily unavailable",
+                    message: "Connection lost, attempting to restore"
+                });
             }
         } else {
-            res.status(500).json({ error: "Database error" });
+            res.status(500).json({ 
+                error: "Database error",
+                message: "An unexpected database error occurred"
+            });
         }
     }
 });
