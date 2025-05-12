@@ -31,65 +31,241 @@ const client = process.env.FRONTEND_URL;
 // const db_port = process.env.POSTGRE_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
-const db = new pg.Pool({
-    connectionString: process.env.POSTGRES_URL,
-    ssl: {
-        rejectUnauthorized: false
-    },
-    max: 20,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 5000,
-    maxRetries: 5,
-    acquireTimeoutMillis: 8000
-});
-
-// Add connection state tracking
-let isConnected = false;
-
-// Add error handling for the pool
-db.on('error', (err) => {
-    console.error('Unexpected error on idle client', err);
-    isConnected = false;
-});
-
-db.on('connect', () => {
-    console.log('Database connection established');
-    isConnected = true;
-});
-
-
-const verifyConnection = async (retries = 5, delay = 2000) => {
-    for (let i = 0; i < retries; i++) {
-        try {
-            console.log(`Attempting database connection (attempt ${i + 1}/${retries})`);
-            console.log('Using connection string:', process.env.POSTGRES_URL.replace(/:[^:]*@/, ':****@')); // Hide password
-            const client = await db.connect();
-            await client.query('SELECT 1'); 
-            client.release();
-            console.log('Database connection verified successfully');
-            return true;
-        } catch (err) {
-            console.error(`Connection attempt ${i + 1} failed:`, {
-                code: err.code,
-                message: err.message,
-                detail: err.detail
-            });
-            
-            if (i < retries - 1) {
-                console.log(`Retrying in ${delay/1000} seconds...`);
-                await new Promise(resolve => setTimeout(resolve, delay));
-                delay *= 1.5; 
-            }
-        }
-    }
-    throw new Error('Failed to connect to database after multiple attempts');
+// Database configuration
+const dbConfig = {
+  connectionString: process.env.POSTGRES_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { 
+    rejectUnauthorized: false 
+  } : false,
+  max: 5, // Reduced pool size for Railway
+  min: 1,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
+  application_name: 'pawsitive-app',
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 10000
 };
 
+console.log('Initializing database pool with config:', {
+  ...dbConfig,
+  connectionString: dbConfig.connectionString ? 
+    dbConfig.connectionString.replace(/:[^:]*@/, ':****@') : 'undefined'
+});
 
-console.log('Initializing database connection...');
-verifyConnection().catch(err => {
-    console.error('Failed to establish initial database connection:', err);
-    process.exit(1);
+const db = new pg.Pool(dbConfig);
+
+// Connection State Management
+let isConnected = false;
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 5;
+const RECONNECT_BASE_DELAY = 2000;
+
+// Connection Health Monitoring
+const monitorConnection = async () => {
+  try {
+    const client = await db.connect();
+    try {
+      await client.query('SELECT 1');
+      isConnected = true;
+      reconnectAttempts = 0;
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    isConnected = false;
+    console.error('Connection health check failed:', {
+      code: err.code,
+      message: err.message
+    });
+  }
+};
+
+// Exponential Backoff Reconnection
+const reconnectWithRetry = async () => {
+  if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+    console.error('Max reconnection attempts reached');
+    return;
+  }
+
+  reconnectAttempts++;
+  const delay = Math.min(
+    RECONNECT_BASE_DELAY * Math.pow(2, reconnectAttempts - 1),
+    30000
+  );
+
+  console.log(`Reconnection attempt ${reconnectAttempts}, waiting ${delay}ms`);
+  await new Promise(resolve => setTimeout(resolve, delay));
+
+  try {
+    await monitorConnection();
+    if (isConnected) {
+      console.log('Reconnected successfully');
+    }
+  } catch (err) {
+    console.error('Reconnection failed:', err.message);
+    await reconnectWithRetry();
+  }
+};
+
+// Event Listeners
+db.on('connect', () => {
+  isConnected = true;
+  reconnectAttempts = 0;
+  console.log('Database connection established');
+});
+
+db.on('error', (err) => {
+  isConnected = false;
+  console.error('Database pool error:', {
+    code: err.code,
+    message: err.message
+  });
+  if (err.code === 'ECONNRESET' || err.code === 'ECONNREFUSED') {
+    reconnectWithRetry();
+  }
+});
+
+// Initial Connection Verification
+const verifyInitialConnection = async () => {
+  console.log('Verifying initial database connection...');
+  try {
+    await monitorConnection();
+    if (!isConnected) {
+      await reconnectWithRetry();
+    }
+  } catch (err) {
+    console.error('Initial connection verification failed:', err.message);
+  }
+};
+
+// Periodic Health Checks
+setInterval(monitorConnection, 30000);
+
+// Middleware
+app.use(cors({
+  origin: client,
+  credentials: true
+}));
+
+app.use('/uploads', express.static('uploads/'));
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Environment Validation
+if (!process.env.COOKIE_SESSION_SECRET || !process.env.POSTGRES_URL) {
+  console.error('Missing required environment variables');
+  process.exit(1);
+}
+
+// Session Configuration
+app.use(session({
+  store: new PgSession({
+    pool: db,
+    tableName: 'user_sessions',
+    pruneSessionInterval: 86400,
+    createTableIfMissing: true,
+    errorLog: console.error
+  }),
+  secret: session_secret,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+  },
+  proxy: true
+}));
+
+// Database Availability Middleware
+app.use(async (req, res, next) => {
+  if (!isConnected) {
+    console.log('Database not connected, attempting to reconnect...');
+    try {
+      await reconnectWithRetry();
+      if (!isConnected) {
+        return res.status(503).json({
+          error: "Database unavailable",
+          message: "Service is temporarily unavailable"
+        });
+      }
+    } catch (err) {
+      console.error('Reconnection in middleware failed:', err);
+      return res.status(503).json({
+        error: "Database connection failed",
+        message: "Please try again later"
+      });
+    }
+  }
+
+  // Attach a retry wrapper to the request
+  req.queryWithRetry = async (text, params) => {
+    let lastError;
+    for (let i = 0; i < 3; i++) {
+      try {
+        const result = await db.query(text, params);
+        return result;
+      } catch (err) {
+        lastError = err;
+        if (err.code === 'ECONNRESET') {
+          console.log(`Query failed (attempt ${i + 1}), retrying...`);
+          await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+          continue;
+        }
+        throw err;
+      }
+    }
+    throw lastError;
+  };
+
+  next();
+});
+
+// Routes and other middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/admin', adminRoutes);
+app.use('/', userRoutes);
+
+// Health Check Endpoint
+app.get('/health', async (req, res) => {
+  try {
+    await db.query('SELECT 1');
+    res.json({
+      status: 'healthy',
+      database: 'connected',
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    res.status(503).json({
+      status: 'unhealthy',
+      database: 'disconnected',
+      error: err.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Start Server after verifying connection
+verifyInitialConnection().then(() => {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+    console.log(`Database connection status: ${isConnected ? 'connected' : 'disconnected'}`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize server:', err);
+  process.exit(1);
+});
+
+// Error Handling
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
 });
 
 app.use(cors({
@@ -139,42 +315,51 @@ app.use(async (req, res, next) => {
     if (!isConnected) {
         console.log('Database disconnected, attempting to reconnect...');
         try {
-            await verifyConnection(3, 2000);
+            await verifyConnection(2, 2000);
         } catch (err) {
             console.error('Failed to reconnect in middleware:', err);
             return res.status(503).json({ 
                 error: "Database temporarily unavailable",
-                message: "Server is attempting to restore connection"
+                message: "Server is attempting to restore connection. Please try again in a few moments.",
+                retry_after: 30
             });
         }
     }
 
     try {
-        await db.query('SELECT 1');
-        next();
+        const client = await Promise.race([
+            db.connect(),
+            new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Connection timeout')), 5000)
+            )
+        ]);
+
+        try {
+            await client.query('SELECT 1');
+            client.release();
+            next();
+        } catch (queryErr) {
+            client.release();
+            throw queryErr;
+        }
     } catch (err) {
-        console.error('Database query error:', {
+        console.error('Database operation failed:', {
             code: err.code,
             message: err.message,
             detail: err.detail
         });
 
-        if (err.code === 'ECONNRESET' || err.code === 'ECONNREFUSED') {
+        if (err.code === 'ECONNRESET' || err.code === 'ECONNREFUSED' || err.message.includes('timeout')) {
             isConnected = false;
-            try {
-                await verifyConnection(2, 2000);
-                next();
-            } catch (reconnectErr) {
-                console.error('Failed to reconnect after query error:', reconnectErr);
-                res.status(503).json({ 
-                    error: "Database temporarily unavailable",
-                    message: "Connection lost, attempting to restore"
-                });
-            }
+            return res.status(503).json({ 
+                error: "Database temporarily unavailable",
+                message: "Connection lost, attempting to restore. Please try again in a few moments.",
+                retry_after: 30
+            });
         } else {
-            res.status(500).json({ 
+            return res.status(500).json({ 
                 error: "Database error",
-                message: "An unexpected database error occurred"
+                message: "An unexpected database error occurred. Please try again later."
             });
         }
     }
@@ -301,6 +486,46 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser((user, cb) => {
     cb(null, user);
 })
+
+// Add health check endpoint
+app.get('/health', async (req, res) => {
+    try {
+        if (!isConnected) {
+            return res.status(503).json({
+                status: 'error',
+                message: 'Database disconnected',
+                connected: false
+            });
+        }
+
+        const client = await Promise.race([
+            db.connect(),
+            new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Health check timeout')), 5000)
+            )
+        ]);
+
+        try {
+            await client.query('SELECT 1');
+            client.release();
+            res.json({
+                status: 'healthy',
+                message: 'Service is healthy',
+                connected: true
+            });
+        } catch (err) {
+            client.release();
+            throw err;
+        }
+    } catch (err) {
+        console.error('Health check failed:', err);
+        res.status(503).json({
+            status: 'error',
+            message: 'Database health check failed',
+            connected: false
+        });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server is running at Port ${port}`);
