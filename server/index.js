@@ -93,35 +93,18 @@ const corsOptions = {
     maxAge: 86400 // 24 hours
 };
 
-// Middleware Setup
+// Middleware Setup - Basic middleware first
 app.use(cors(corsOptions));
 app.use('/uploads', express.static('uploads/'));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Security Headers
-app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
-        res.header('Access-Control-Allow-Credentials', 'true');
-        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    }
-    
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('X-XSS-Protection', '1; mode=block');
-    
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-    
-    next();
-});
+// Enable trust proxy if in production
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
 
-// Session Configuration
+// Session Configuration - Must come before passport
 const sessionConfig = {
     store: new PgSession({
         conObject: {
@@ -159,13 +142,6 @@ if (process.env.NODE_ENV === 'production') {
 app.use(session(sessionConfig));
 
 // Debug middleware to log session and authentication status
-app.use((req, res, next) => {
-    console.log('Session ID:', req.sessionID);
-    console.log('Session:', req.session);
-    console.log('Is Authenticated:', req.isAuthenticated());
-    console.log('User:', req.user);
-    next();
-});
 
 // Add error handling for session errors
 app.use((req, res, next) => {
@@ -178,6 +154,14 @@ app.use((req, res, next) => {
 // Move passport initialization after session middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use((req, res, next) => {
+    console.log('Session ID:', req.sessionID);
+    console.log('Session:', req.session);
+    console.log('Is Authenticated:', req.isAuthenticated());
+    console.log('User:', req.user);
+    next();
+});
 
 // Database Middleware - Add error handling
 app.use(async (req, res, next) => {
@@ -209,29 +193,28 @@ app.use(async (req, res, next) => {
     }
 });
 
-// Routes
+// Routes - Must come after all middleware
 app.use('/admin', adminRoutes);
 app.use('/', userRoutes);
 
 app.post("/register", async(req, res) => {
     try {
-
         console.log("Received in backend:", req.body);
         const { firstName, lastName, email, password } = req.body;
 
         const checkUser = await db.query("SELECT * FROM users WHERE email = $1", [
             email
-        ])
+        ]);
 
         if(checkUser.rows.length > 0 ){
-            res.json({ message: "Email already exists. Try logging in."})
-        }else {     
-            passwordHashing(res, firstName, lastName, email, password, saltRounds)
+            res.json({ message: "Email already exists. Try logging in."});
+        } else {     
+            passwordHashing(res, firstName, lastName, email, password, saltRounds);
         }
     } catch (err) {
         console.error(err.message);
     }
-})
+});
 
 app.post("/login", (req, res, next) => {
     console.log("Login Request:", req.body); 
