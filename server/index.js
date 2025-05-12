@@ -256,11 +256,11 @@ app.post("/login", (req, res, next) => {
                 });
             }
 
-            console.log("User logged in successfully:", user.id);
+            console.log("User logged in successfully:", user.userid);
             return res.json({
                 message: "Login successful",
                 user: {
-                    id: user.id,
+                    id: user.userid,
                     email: user.email
                 }
             });
