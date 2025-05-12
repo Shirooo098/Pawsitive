@@ -2,6 +2,30 @@ import express from 'express';
 
 const router = express.Router();
 
+// Database connection check middleware
+const checkDbConnection = async (req, res, next) => {
+    if (!req.db) {
+        return res.status(500).json({ 
+            error: "Database connection not available",
+            message: "Please try again in a few moments"
+        });
+    }
+    try {
+        const client = await req.db.connect();
+        await client.query('SELECT 1');
+        client.release();
+        next();
+    } catch (err) {
+        console.error("Database check failed:", err);
+        return res.status(503).json({ 
+            error: "Database temporarily unavailable",
+            message: "Please try again in a few moments"
+        });
+    }
+};
+
+// Apply database check middleware to all routes
+router.use(checkDbConnection);
 
 router.post("/appointment", async(req, res) => {
     try {

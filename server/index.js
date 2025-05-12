@@ -63,71 +63,6 @@ const findAvailablePort = async (startPort) => {
     throw new Error('No available ports found');
 };
 
-// Enhanced server start function
-const startServer = () => {
-    try {
-        // Enable IPv6 support
-        const server = app.listen(PORT, '::', () => {
-            console.log(`Server is running on port ${PORT}`);
-            console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-            console.log('IPv6 binding enabled');
-        });
-
-        // Add keep-alive configuration
-        server.keepAliveTimeout = 65000; // Slightly higher than ALB's idle timeout
-        server.headersTimeout = 66000; // Slightly higher than keepAliveTimeout
-
-        // Handle server errors
-        server.on('error', (err) => {
-            console.error('Server error:', err);
-            if (err.code === 'EADDRINUSE') {
-                console.error(`Port ${PORT} is in use`);
-            }
-            process.exit(1);
-        });
-
-        // Graceful shutdown
-        const shutdown = async () => {
-            console.log('Shutting down gracefully...');
-            server.close(async () => {
-                console.log('HTTP server closed');
-                try {
-                    await db.end();
-                    console.log('Database connections closed');
-                    process.exit(0);
-                } catch (err) {
-                    console.error('Error closing database', err);
-                    process.exit(1);
-                }
-            });
-
-            // Force shutdown after 30 seconds
-            setTimeout(() => {
-                console.error('Could not close connections in time, forcefully shutting down');
-                process.exit(1);
-            }, 30000);
-        };
-
-        process.on('SIGTERM', shutdown);
-        process.on('SIGINT', shutdown);
-
-        return server;
-    } catch (err) {
-        console.error('Failed to start server:', err);
-        process.exit(1);
-    }
-};
-
-// Initialize server with error handling
-const initializeServer = async () => {
-    try {
-        await startServer();
-    } catch (err) {
-        console.error('Critical error during server initialization:', err);
-        process.exit(1);
-    }
-};
-
 // Database Configuration
 const dbConfig = {
     connectionString: process.env.POSTGRES_URL,
@@ -148,27 +83,42 @@ const dbConfig = {
 
 // Initialize database pool
 let db;
-try {
-    console.log('Initializing database connection to:', 
-        new URL(process.env.POSTGRES_URL).hostname);
-    db = new pg.Pool(dbConfig);
-    
-    db.on('error', (err) => {
-        console.error('Unexpected database error:', {
-            code: err.code,
-            message: err.message,
-            fatal: err.fatal
-        });
-    });
+let server;
 
-    db.on('connect', (client) => {
-        console.log('New database connection established');
-        client.query('SET statement_timeout = 15000');
-    });
-} catch (err) {
-    console.error('Failed to initialize database pool:', err);
-    process.exit(1);
-}
+const initializeDatabase = async () => {
+    try {
+        console.log('Initializing database connection to:', 
+            new URL(process.env.POSTGRES_URL).hostname);
+        db = new pg.Pool(dbConfig);
+        
+        // Test database connection
+        const client = await db.connect();
+        await client.query('SELECT 1');
+        client.release();
+        console.log('Database connection successful');
+        
+        db.on('error', (err) => {
+            console.error('Unexpected database error:', {
+                code: err.code,
+                message: err.message,
+                fatal: err.fatal
+            });
+            if (err.fatal) {
+                process.exit(1);
+            }
+        });
+
+        db.on('connect', (client) => {
+            console.log('New database connection established');
+            client.query('SET statement_timeout = 15000');
+        });
+
+        return db;
+    } catch (err) {
+        console.error('Failed to initialize database pool:', err);
+        throw err;
+    }
+};
 
 // Configure allowed origins
 const allowedOrigins = [
@@ -264,6 +214,12 @@ app.use(async (req, res, next) => {
             message: "Please try again in a few moments"
         });
     }
+});
+
+// Database Middleware - Add this before routes
+app.use((req, res, next) => {
+    req.db = db;
+    next();
 });
 
 // Routes
@@ -369,7 +325,114 @@ app.use((err, req, res, next) => {
     });
 });
 
-startServer();   
+// Enhanced server start function
+const startServer = async () => {
+    try {
+        // Initialize database first
+        await initializeDatabase();
+
+        // Enable IPv6 support with fallback to IPv4
+        server = app.listen(PORT, '::', () => {
+            console.log(`Server is running on port ${PORT}`);
+            console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+            console.log('IPv6 binding enabled');
+        }).on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+                console.log('IPv6 binding failed, falling back to IPv4');
+                server = app.listen(PORT, '0.0.0.0', () => {
+                    console.log(`Server is running on port ${PORT} (IPv4)`);
+                });
+            } else {
+                throw err;
+            }
+        });
+
+        // Add keep-alive configuration
+        server.keepAliveTimeout = 65000;
+        server.headersTimeout = 66000;
+
+        // Handle server errors
+        server.on('error', (err) => {
+            console.error('Server error:', err);
+            if (err.code === 'EADDRINUSE') {
+                console.error(`Port ${PORT} is in use`);
+            }
+            process.exit(1);
+        });
+
+        // Graceful shutdown handler
+        const shutdown = async (signal) => {
+            console.log(`Received ${signal}. Shutting down gracefully...`);
+            
+            // Stop accepting new connections
+            server.close(async () => {
+                console.log('HTTP server closed');
+                try {
+                    // Close all database connections
+                    await db.end();
+                    console.log('Database connections closed');
+                    process.exit(0);
+                } catch (err) {
+                    console.error('Error closing database:', err);
+                    process.exit(1);
+                }
+            });
+
+            // Force shutdown after 25 seconds (Railway gives 30s)
+            setTimeout(() => {
+                console.error('Could not close connections in time, forcefully shutting down');
+                process.exit(1);
+            }, 25000);
+        };
+
+        // Register shutdown handlers
+        process.on('SIGTERM', () => shutdown('SIGTERM'));
+        process.on('SIGINT', () => shutdown('SIGINT'));
+
+        return server;
+    } catch (err) {
+        console.error('Failed to start server:', err);
+        throw err;
+    }
+};
+
+// Add health check endpoint
+app.get('/health', async (req, res) => {
+    try {
+        // Check database connection
+        const client = await db.connect();
+        await client.query('SELECT 1');
+        client.release();
+        
+        res.status(200).json({
+            status: 'healthy',
+            timestamp: new Date().toISOString(),
+            uptime: process.uptime()
+        });
+    } catch (err) {
+        console.error('Health check failed:', err);
+        res.status(503).json({
+            status: 'unhealthy',
+            error: err.message
+        });
+    }
+});
+
+// Initialize server with error handling
+const initializeServer = async () => {
+    try {
+        await startServer();
+    } catch (err) {
+        console.error('Critical error during server initialization:', err);
+        process.exit(1);
+    }
+};
+
+// Start server
+initializeServer().catch(err => {
+    console.error('Failed to start application:', err);
+    process.exit(1);
+});
 
 const passwordHashing = (
         res, 
