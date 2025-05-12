@@ -19,6 +19,7 @@ const PgSession = pgSession(session);
 
 const client = process.env.FRONTEND_URL;
 
+
 // const db_user = process.env.POSTGRE_DB_USER;
 // const db_host = process.env.POSTGRE_HOST;
 // const db_name = process.env.POSTGRE_DB_NAME;
@@ -81,7 +82,6 @@ const dbConfig = {
     query_timeout: 10000
 };
 
-// Initialize database pool
 let db;
 let server;
 
