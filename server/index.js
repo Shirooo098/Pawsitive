@@ -31,29 +31,50 @@ const client = process.env.FRONTEND_URL;
 // const db_port = process.env.POSTGRE_PORT;
 const session_secret = process.env.COOKIE_SESSION_SECRET;
 
-const dbConfig = {
-  connectionString: process.env.POSTGRES_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { 
-    rejectUnauthorized: false 
-  } : false,
-  max: 3, 
-  min: 0,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
-  application_name: 'pawsitive-app',
-  keepAlive: true,
-  keepAliveInitialDelayMillis: 10000,
-  statement_timeout: 10000,
-  query_timeout: 5000,
-  connectionRetryTimeout: 30000,
-  connectionTimeoutMillis: 5000
+// Enhanced port handling
+const startServerOnPort = async (port) => {
+    try {
+        await new Promise((resolve, reject) => {
+            const server = app.listen(port, () => {
+                console.log(`Server successfully started on port ${port}`);
+                resolve();
+            });
+
+            server.on('error', (err) => {
+                if (err.code === 'EADDRINUSE') {
+                    console.log(`Port ${port} is busy, trying ${port + 1}...`);
+                    server.close();
+                    startServerOnPort(port + 1);
+                } else {
+                    reject(err);
+                }
+            });
+        });
+    } catch (err) {
+        console.error('Failed to start server:', err);
+        process.exit(1);
+    }
 };
 
-console.log('Initializing database pool with config:', {
-  ...dbConfig,
-  connectionString: dbConfig.connectionString ? 
-    dbConfig.connectionString.replace(/:[^:]*@/, ':****@') : 'undefined'
-});
+// Enhanced database configuration
+const dbConfig = {
+    connectionString: process.env.POSTGRES_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { 
+        rejectUnauthorized: false
+    } : false,
+    max: 3,
+    min: 0,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000, // Increased timeout
+    application_name: 'pawsitive-app',
+    keepAlive: true,
+    keepAliveInitialDelayMillis: 10000,
+    statement_timeout: 15000, // Increased timeout
+    query_timeout: 10000, // Increased timeout
+    connectionRetryTimeout: 45000, // Increased retry timeout
+    maxRetries: 5, // Added max retries
+    retryDelay: 1000 // Base delay between retries
+};
 
 let db = new pg.Pool(dbConfig);
 
@@ -63,85 +84,102 @@ const MAX_RECONNECT_ATTEMPTS = 10;
 const RECONNECT_BASE_DELAY = 1000;
 let isReconnecting = false;
 
+// Enhanced connection monitoring
 const monitorConnection = async () => {
-  if (isReconnecting) return;
-  
-  try {
-    const client = await Promise.race([
-      db.connect(),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Connection timeout')), 5000)
-      )
-    ]);
-
+    if (isReconnecting) return;
+    
     try {
-      await client.query('SELECT 1');
-      isConnected = true;
-      reconnectAttempts = 0;
-      console.log('Database connection healthy');
-    } catch (err) {
-      isConnected = false;
-      console.error('Query failed in health check:', err.message);
-      throw err;
-    } finally {
-      client.release();
-    }
-  } catch (err) {
-    isConnected = false;
-    console.error('Connection health check failed:', {
-      code: err.code,
-      message: err.message
-    });
+        const client = await Promise.race([
+            db.connect(),
+            new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Connection timeout')), 10000)
+            )
+        ]);
 
-    if (!isReconnecting) {
-      reconnectWithRetry();
+        try {
+            await client.query('SELECT 1');
+            isConnected = true;
+            reconnectAttempts = 0;
+            console.log('Database connection verified');
+        } catch (err) {
+            isConnected = false;
+            console.error('Query failed in health check:', {
+                code: err.code,
+                message: err.message,
+                detail: err.detail
+            });
+            throw err;
+        } finally {
+            client.release();
+        }
+    } catch (err) {
+        isConnected = false;
+        console.error('Connection health check failed:', {
+            code: err.code,
+            message: err.message,
+            stack: err.stack
+        });
+
+        if (!isReconnecting) {
+            reconnectWithRetry();
+        }
     }
-  }
 };
 
+// Enhanced reconnection logic
 const reconnectWithRetry = async () => {
-  if (isReconnecting) return;
-  isReconnecting = true;
+    if (isReconnecting) return;
+    isReconnecting = true;
 
-  try {
-    while (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-      reconnectAttempts++;
-      const delay = Math.min(
-        RECONNECT_BASE_DELAY * Math.pow(1.5, reconnectAttempts - 1),
-        30000
-      );
+    try {
+        while (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+            reconnectAttempts++;
+            const delay = Math.min(
+                RECONNECT_BASE_DELAY * Math.pow(2, reconnectAttempts - 1),
+                30000
+            );
 
-      console.log(`Reconnection attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}, waiting ${delay}ms`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+            console.log(`Reconnection attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}, waiting ${delay}ms`);
+            await new Promise(resolve => setTimeout(resolve, delay));
 
-      try {
-        await db.end();
-        
-        db = new pg.Pool(dbConfig);
+            try {
+                // Close existing pool
+                await db.end().catch(err => 
+                    console.warn('Error closing pool:', err.message)
+                );
+                
+                // Create new pool with current config
+                db = new pg.Pool({
+                    ...dbConfig,
+                    // Add dynamic retry parameters
+                    max: Math.max(1, dbConfig.max - reconnectAttempts), // Reduce pool size with each retry
+                    connectionTimeoutMillis: dbConfig.connectionTimeoutMillis * (1 + reconnectAttempts * 0.5) // Increase timeout with each retry
+                });
 
-        const client = await db.connect();
-        await client.query('SELECT 1');
-        client.release();
-        
-        isConnected = true;
-        console.log('Database reconnected successfully');
-        break;
-      } catch (err) {
-        console.error('Reconnection attempt failed:', {
-          attempt: reconnectAttempts,
-          code: err.code,
-          message: err.message
-        });
-        
-        if (reconnectAttempts === MAX_RECONNECT_ATTEMPTS) {
-          console.error('Max reconnection attempts reached');
-          throw err;
+                const client = await db.connect();
+                await client.query('SELECT 1');
+                client.release();
+                
+                isConnected = true;
+                console.log('Database reconnected successfully');
+                break;
+            } catch (err) {
+                console.error('Reconnection attempt failed:', {
+                    attempt: reconnectAttempts,
+                    code: err.code,
+                    message: err.message,
+                    detail: err.detail
+                });
+                
+                if (reconnectAttempts === MAX_RECONNECT_ATTEMPTS) {
+                    console.error('Max reconnection attempts reached, server will exit');
+                    throw err;
+                }
+            }
         }
-      }
+    } finally {
+        isReconnecting = false;
     }
-  } finally {
-    isReconnecting = false;
-  }
 };
 
 // Event Listeners
@@ -369,50 +407,10 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// Start server only after verifying connection
-const startServer = async (retries = 3) => {
-  for (let i = 0; i < retries; i++) {
-    try {
-      await verifyInitialConnection();
-      
-      const server = app.listen(port, () => {
-        console.log(`Server is running on port ${port}`);
-        console.log(`Database connection status: ${isConnected ? 'connected' : 'disconnected'}`);
-        console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-        console.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
-      });
-
-      server.on('error', (err) => {
-        if (err.code === 'EADDRINUSE') {
-          console.error(`Port ${port} is already in use`);
-          server.close();
-          if (i === retries - 1) {
-            console.error('Max retries reached. Exiting...');
-            process.exit(1);
-          }
-        } else {
-          console.error('Server error:', err);
-          process.exit(1);
-        }
-      });
-
-      return server;
-    } catch (err) {
-      console.error(`Attempt ${i + 1}/${retries} failed:`, err);
-      if (i === retries - 1) {
-        console.error('Failed to start server after multiple attempts');
-        process.exit(1);
-      }
-      // Wait before retrying
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    }
-  }
-};
-
-// Start the server
-startServer().catch(err => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
+// Start server with enhanced error handling
+startServerOnPort(port).catch(err => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
 });
 
 // Error Handling
