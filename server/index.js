@@ -35,8 +35,41 @@ const db = new pg.Pool({
     connectionString: process.env.POSTGRES_URL,
     ssl: {
         rejectUnauthorized: false
-    }
+    },
+    max: 20, 
+
 })
+
+db.on('error', (err) => {
+    console.error('Unexpected error on idle client', err);
+    process.exit(-1);
+});
+
+// Add connection verification function
+const verifyConnection = async (retries = 5, delay = 1000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const client = await db.connect();
+            client.release();
+            console.log('Database connection established successfully');
+            return true;
+        } catch (err) {
+            console.error(`Connection attempt ${i + 1} failed:`, err.message);
+            if (i < retries - 1) {
+                console.log(`Retrying in ${delay/1000} seconds...`);
+                await new Promise(resolve => setTimeout(resolve, delay));
+                // Exponential backoff
+                delay *= 2;
+            }
+        }
+    }
+    throw new Error('Failed to connect to database after multiple attempts');
+};
+
+verifyConnection().catch(err => {
+    console.error('Failed to establish initial database connection:', err);
+    process.exit(1);
+});
 
 app.use(cors({
     origin: client,
@@ -83,13 +116,11 @@ app.use((err, req, res, next) => {
 
 app.use(async (req, res, next) => {
     try {
-        // Simple query to check connection
         await db.query('SELECT 1');
         next();
     } catch (err) {
         console.error('Database connection error:', err);
         if (err.code === 'ECONNRESET') {
-            // Attempt to reconnect
             try {
                 await db.connect();
                 next();
