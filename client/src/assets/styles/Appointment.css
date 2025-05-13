@@ -133,7 +133,7 @@
     display: flex;
     justify-content: center;
 }
-.profileEditBtn{
+.profileHeader button{
     padding: 0.5em;
     float: right;
     margin-bottom: 0.25em;

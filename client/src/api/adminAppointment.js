@@ -4,7 +4,7 @@ import { API_BASE_URL } from './auth';
 
 export const fetchAppointments = async() => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/admin/manageAppointments`, {
+        const response = await axios.get(`${API_BASE_URL}/admin/manageAppointment`, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         })  
