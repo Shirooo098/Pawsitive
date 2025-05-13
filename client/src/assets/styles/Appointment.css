@@ -87,7 +87,9 @@
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-.formBtn-container{
+.formBtn-container,
+.appointmentBtn-container,
+.profileBtn-container{
     display: flex;
     flex-direction: row-reverse;
 }

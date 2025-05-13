@@ -188,6 +188,27 @@ router.get("/adoptionHistory", async(req, res) => {
         console.error("Error fetching adoption history:", error);
         res.status(500).json({ error: "Failed to fetch adoption history" });
     }
+});
+
+router.patch("/updateProfile", async(req, res) => {
+    try {
+        const {contact, address} = req.body;
+
+
+        const result = await req.db.query(`UPDATE users SET contact = $1, address = $2 WHERE userid = $3 RETURNING *`,
+            [contact, address, req.user.id]
+        );
+
+        if(result.rowCount === 0) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res,json({ message: "Profile updated successfully", user: result.rows[0] });
+        
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        res.status(500).json({ error: "Failed to update profile" });
+    }
 })
 
 const verifyUser = (req, res) => {

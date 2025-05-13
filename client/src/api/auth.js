@@ -2,8 +2,6 @@ import axios from 'axios';
 
 export const API_BASE_URL = "https://pawsitive-production.up.railway.app"
 
-
-
 export const registerValidation = async (formData) => {
     try {
         const { confirmPassword, ...filteredFormData } = formData;
@@ -53,5 +51,20 @@ export const checkAuth = async () => {
         console.error("Auth check failed:", error);
 
         return false;
+    }
+}
+
+export const profileUpdate = async(userData) => {
+    try {
+        const response = await axios.patch(`${API_BASE_URL}/updateProfile`, userData, {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true
+        });
+
+        console.log("Response:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error:", error.response?.data?.message || error.message);
+        return { error: error.response?.data?.message }
     }
 }

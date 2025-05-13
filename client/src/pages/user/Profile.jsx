@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { checkAuth } from '../../api/auth'
+import { checkAuth, profileUpdate } from '../../api/auth'
 import { Link } from "react-router-dom";
 
 export default function Profile() {
@@ -10,9 +10,41 @@ export default function Profile() {
         contact: '',
         address:  '',
     });
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+
     const handleSubmit = async(e) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError(null);
+        setSuccess(null);
+
+        try {
+            const response = await profileUpdate(userData);
+            if(response.error){
+                setError(response.error);
+            } else {
+                setSuccess("Profile updated successfully.");
+                if (response.user) {
+                    setUserData(prev => ({
+                        ...prev,
+                        ...response.user
+                    }));
+                }
+            }
+        } catch (error) {
+            setError("Failed to update profile. Please try again.");
+            console.error("Profile update error:", err);
+        }finally {
+            setIsLoading(false);
+            setIsEditing(false);
+        }
+       
     }
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -34,6 +66,9 @@ export default function Profile() {
         fetchUserInformation();
     }, [])
 
+
+
+
     console.log("User Data:", userData);
 
     return (
@@ -46,7 +81,20 @@ export default function Profile() {
                 <form onSubmit={handleSubmit}>
                     <div className="formHeader">
                         <h1>User Profile</h1>
+                        {!isEditing && (
+                            <button 
+                                type="button" 
+                                onClick={handleEdit}
+                                className="edit-btn"
+                            >
+                                Edit Profile
+                            </button>
+                        )}
                     </div>
+
+                    {error && <div className="error-message">{error}</div>}
+                    {success && <div className="success-message">{success}</div>}
+
                     <div className="schedule-information">
                         <div className="colUser">
                             <h2>Profile Information</h2>
@@ -73,7 +121,8 @@ export default function Profile() {
                                 <input type="text"
                                     name="contact"
                                     onChange={handleChange}
-                                    // value={userData.contact}
+                                    value={userData.contact || ''}
+                                    disabled={!isEditing}
                                 />
                             </div>
 
@@ -82,13 +131,31 @@ export default function Profile() {
                                 <input type="text"
                                     name="address"
                                     onChange={handleChange}
-                                    // value={userData.address}
+                                    value={userData.address || ''}
+                                    disabled={!isEditing}
                                 />
                             </div>
                         </div>
-
-
                     </div>
+
+                    {isEditing && (
+                        <div className="profileBtn-contaier">
+                            <button 
+                                type="submit" 
+                                className="formSubmitBtn"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Saving...' : 'Save Changes'}
+                            </button>
+                            <button 
+                                type="button" 
+                                onClick={handleCancel}
+                                className="formCancelBtn"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    )}
                     </form>
                 </div>
         </>
