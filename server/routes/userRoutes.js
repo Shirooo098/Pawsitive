@@ -192,8 +192,9 @@ router.get("/adoptionHistory", async(req, res) => {
 
 router.patch("/updateProfile", async(req, res) => {
     try {
-        const {contact, address} = req.body;
 
+        verifyUser(req, res);
+        const {contact, address} = req.body;
 
         const result = await req.db.query(`UPDATE users SET contact = $1, address = $2 WHERE userid = $3 RETURNING *`,
             [contact, address, req.user.id]
@@ -203,7 +204,7 @@ router.patch("/updateProfile", async(req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        res,json({ message: "Profile updated successfully", user: result.rows[0] });
+        res.json({ message: "Profile updated successfully", user: result.rows[0] });
         
     } catch (error) {
         console.error("Error updating profile:", error);
@@ -215,7 +216,7 @@ const verifyUser = (req, res) => {
     if (!req.isAuthenticated()) {
         return res.status(401).json({ 
             error: "Unauthorized",
-            message: "Please login to book."
+            message: "Please login first."
         });
     }
 
