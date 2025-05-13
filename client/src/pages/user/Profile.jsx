@@ -55,6 +55,13 @@ export default function Profile() {
         }));
     };
 
+    const handleEdit = () => {
+        setIsEditing(true);
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+    }
     useEffect(() => {
         const fetchUserInformation = async() => {
             const userInformation = await checkAuth()
