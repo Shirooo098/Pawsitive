@@ -88,10 +88,8 @@ function Navbar() {
                         <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
                         <li><Link className="dropdown-item" to="/appointmentHistory">Appointment History</Link></li>
                         <li><Link className="dropdown-item" to="/adoptionHistory">Adoption History</Link></li>
+                        <li><Link className="dropdown-item" onClick={handleLogout}>Logout</Link> </li>
                       </ul>
-                    </li>
-                    <li className="nav-item">
-                      <button className="btn btn-link nav-link text-primary" onClick={handleLogout}>Logout</button>
                     </li>
                   </>
                 ) : (
