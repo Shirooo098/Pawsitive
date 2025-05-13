@@ -38,10 +38,6 @@ export default function AppointmentHistory() {
         <div className="appointment-history">
             <div className="header">
                 <h1>Appointment History</h1>
-                <nav>
-                    <Link to='/profile' className="nav-link">Profile</Link>
-                    <Link to='/adoptionHistory' className="nav-link">Adoptions</Link>
-                </nav>
             </div>
 
             {appointments.length === 0 ? (

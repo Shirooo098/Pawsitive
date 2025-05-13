@@ -24,8 +24,6 @@ export default function AdoptionHistory() {
     <>
         <div>
             <h1>Adoption History</h1>
-            <Link to='/profile'>Profile</Link>
-            <Link to='/appointmentHistory'>Appointments</Link>
         </div>
 
         <select value={filterStatus} onChange={(e) => {

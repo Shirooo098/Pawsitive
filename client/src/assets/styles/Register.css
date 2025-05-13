@@ -17,6 +17,7 @@ body{
 }
 
 form{
+    width: clamp(10vw, 500px, 90vw);
     background-color: #fff;
     box-shadow: 0 0 10px rgba(40, 5, 241, 0.1);
     padding: 1em;
@@ -88,7 +89,7 @@ input:focus{
     margin-top: 0.5em;
 }
 
-.registerBtn{
+.registerBtn, .loginBtn{
     margin-top: 1em;
     border: none;
     color: #fff;
