@@ -1,4 +1,4 @@
-import '../../assets/css/Adoption.css'
+import './../../assets/css/Adoption.css'
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { checkAuth } from '../../api/auth'
