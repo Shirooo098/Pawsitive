@@ -47,7 +47,6 @@ export default function Profile() {
         }
        
     }
-    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -76,8 +75,6 @@ export default function Profile() {
 
         fetchUserInformation();
     }, [])
-
-    console.log("User Data:", userData.contact, userData.address);
 
     return (
         <>

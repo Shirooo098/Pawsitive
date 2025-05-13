@@ -73,8 +73,22 @@ function Navbar() {
                 </li>
                 {isLoggedIn ? (
                   <>
-                    <li className="nav-item">
-                      <Link className="nav-link text-primary" to="/profile">Profile</Link>
+                    <li className="nav-item dropdown">
+                      <a
+                        className="nav-link dropdown-toggle text-primary"
+                        href="#"
+                        id="servicesDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        Profile
+                      </a>
+                      <ul className="dropdown-menu" aria-labelledby="servicesDropdown">
+                        <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
+                        <li><Link className="dropdown-item" to="/appointmentHistory">Appointment History</Link></li>
+                        <li><Link className="dropdown-item" to="/adoptionHistory">Adoption History</Link></li>
+                      </ul>
                     </li>
                     <li className="nav-item">
                       <button className="btn btn-link nav-link text-primary" onClick={handleLogout}>Logout</button>

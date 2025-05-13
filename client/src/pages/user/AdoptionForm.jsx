@@ -48,6 +48,8 @@ export default function AdoptionForm() {
                     userID: userDetails.user.id,
                     fullName: `${userDetails.user.firstname} ${userDetails.user.lastname}`,
                     email: userDetails.user.email,
+                    contact: userDetails.user.contact,
+                    address: userDetails.user.address
                 }))
             }   
         }
@@ -165,7 +167,7 @@ export default function AdoptionForm() {
                         type="text"
                         className="form-control"
                         name="contact"
-                        value={adoptionData.contact}
+                        value={adoptionData.contact || ""}
                         onChange={handleChange}
                     />
                 </div>
@@ -177,7 +179,7 @@ export default function AdoptionForm() {
                         className="form-control"
                         id="address"
                         name="address"
-                        value={adoptionData.address}
+                        value={adoptionData.address || ""}
                         onChange={handleChange}
                         required=""
                     />
