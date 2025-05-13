@@ -20,8 +20,8 @@ export default function AdoptRow({adopt, onUpdate, onDelete}) {
                 {
                     status !== 'approved' && (
                         <>
-                            <button onClick={() => onUpdate(adopt.id)}>Update</button>
-                            <button onClick={() => onDelete(adopt.id)}>Delete</button>
+                            <button className='btn btn-primary' onClick={() => onUpdate(adopt.id)}>Update</button>
+                            <button className='btn btn-danger' onClick={() => onDelete(adopt.id)}>Delete</button>
                         </>
                     )
                 }

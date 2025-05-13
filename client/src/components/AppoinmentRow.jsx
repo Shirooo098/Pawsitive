@@ -17,8 +17,8 @@ export default function AppoinmentRow({appt, onUpdate, onDelete}) {
                 {
                     status !== 'approved' && (
                         <>
-                            <button onClick={() => onUpdate(appt.appointmentid)}>Update</button>
-                            <button onClick={() => onDelete(appt.appointmentid)}>Delete</button>
+                            <button className='btn btn-primary' onClick={() => onUpdate(appt.appointmentid)}>Update</button>
+                            <button className='btn btn-danger' onClick={() => onDelete(appt.appointmentid)}>Delete</button>
                         </>
                     )
                 }

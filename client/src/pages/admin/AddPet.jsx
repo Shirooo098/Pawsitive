@@ -98,8 +98,8 @@ export default function AddPet() {
                     </div>
 
                     <div className="formBtn-container">
-                        <button className="formCancelBtn" type="button">Cancel</button>
-                        <button className="formSubmitBtn" type="submit">Add Pet</button>
+                        <button className="btn btn-danger" type="button">Cancel</button>
+                        <button className="btn btn-primary" type="submit">Add Pet</button>
                     </div>
                 </form>
             </div>

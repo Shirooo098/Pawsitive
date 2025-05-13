@@ -157,8 +157,8 @@ export default function UpdateAdoption() {
                 </div>
 
                 <div className="formBtn-container">
-                    <button className="formCancelBtn" type="button">Cancel</button>
-                    <button className="formBtnSubmit" type="submit">Submit</button>
+                    <button className="btn btn-danger" type="button">Cancel</button>
+                    <button className="btn btn-primary" type="submit">Submit</button>
                 </div>
             </form>
         </div>

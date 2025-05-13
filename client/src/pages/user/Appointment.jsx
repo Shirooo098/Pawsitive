@@ -197,8 +197,8 @@ function Appointment(){
 
                     </div>
                     <div className="appointmentBtn-container">
-                        <button className="formBtnSubmit" type="submit">Submit</button>
-                        <button className="formCancelBtn" type="button" onClick={handleCancel}>Cancel</button>
+                        <button className="btn btn-primary" type="submit">Submit</button>
+                        <button className="btn btn-danger" type="button" onClick={handleCancel}>Cancel</button>
                     </div>
                 </form>
             </div>

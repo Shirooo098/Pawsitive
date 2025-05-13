@@ -92,7 +92,7 @@ export default function Profile() {
                             <button 
                                 type="button" 
                                 onClick={handleEdit}
-                                className="profileEditBtn"
+                                className="btn btn-primary"
                             >
                                 Edit Profile
                             </button>
