@@ -400,7 +400,9 @@ app.get("/auth/check", async (req, res) => {
                 email: req.user.email,
                 type: req.user.type,
                 firstname: req.user.firstname,
-                lastname: req.user.lastname
+                lastname: req.user.lastname,
+                contact: req.user.contact,
+                address: req.user.address,
             }
         });
     } catch (error) {
