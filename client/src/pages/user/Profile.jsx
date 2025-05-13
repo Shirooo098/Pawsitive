@@ -77,7 +77,7 @@ export default function Profile() {
         fetchUserInformation();
     }, [])
 
-    console.log("User Data:", userData);
+    console.log("User Data:", userData.contact, userData.address);
 
     return (
         <>
