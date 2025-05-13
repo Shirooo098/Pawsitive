@@ -198,7 +198,7 @@ const verifyUser = (req, res) => {
         });
     }
 
-    if (!req.user || !req.user.userid) {
+    if (!req.user || !req.user.id) {
         console.error("Invalid user object:", req.user);
         return res.status(500).json({
             error: "Authentication error",
