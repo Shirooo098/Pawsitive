@@ -30,7 +30,7 @@ router.use(checkDbConnection);
 router.post("/appointment", async(req, res) => {
     try {
 
-        verifyUser();
+        verifyUser(req);
 
         const { 
             scheduleDate, 
@@ -190,7 +190,7 @@ router.get("/adoptionHistory", async(req, res) => {
     }
 })
 
-const verifyUser = () => {
+const verifyUser = (req) => {
     if (!req.isAuthenticated()) {
         return res.status(401).json({ 
             error: "Unauthorized",
