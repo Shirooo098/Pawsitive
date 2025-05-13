@@ -86,13 +86,13 @@ export default function Profile() {
 
             <div className="appointment-container">
                 <form onSubmit={handleSubmit}>
-                    <div className="formHeader">
+                    <div className="profileHeader">
                         <h1>User Profile</h1>
                         {!isEditing && (
                             <button 
                                 type="button" 
                                 onClick={handleEdit}
-                                className="edit-btn"
+                                className="profileEditBtn"
                             >
                                 Edit Profile
                             </button>
@@ -146,10 +146,10 @@ export default function Profile() {
                     </div>
 
                     {isEditing && (
-                        <div className="profileBtn-contaier">
+                        <div className="profileBtn-container">
                             <button 
                                 type="submit" 
-                                className="formSubmitBtn"
+                                className="btn btn-primary"
                                 disabled={isLoading}
                             >
                                 {isLoading ? 'Saving...' : 'Save Changes'}
@@ -157,7 +157,7 @@ export default function Profile() {
                             <button 
                                 type="button" 
                                 onClick={handleCancel}
-                                className="formCancelBtn"
+                                className="btn btn-danger"
                             >
                                 Cancel
                             </button>

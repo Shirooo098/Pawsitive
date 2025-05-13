@@ -92,7 +92,11 @@
 .profileBtn-container{
     display: flex;
     flex-direction: row-reverse;
+    padding: 1em;
+    gap: 0.5em;
 }
+
+
 .formStatus-container{
     display: flex;
     justify-content: center;
@@ -121,6 +125,7 @@
     padding: 0.5em;
 }
 .profileHeader{
+    padding: 1em;
     border-bottom: 2px solid #133e87 ;
 }
 
@@ -130,5 +135,6 @@
 }
 .profileEditBtn{
     padding: 0.5em;
+    float: right;
     margin-bottom: 0.25em;
 }
