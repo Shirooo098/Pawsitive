@@ -69,7 +69,7 @@ function Appointment(){
 
                 setAppointmentData((prev) => ({
                     ...prev,
-                    fullName: `${userDetails.user.firstname}${userDetails.user.lastnname}`,
+                    fullName: `${userDetails.user.firstname}${userDetails.user.lastname}`,
                     email: userDetails.user.email
                 }))
             }   

@@ -29,6 +29,9 @@ router.use(checkDbConnection);
 
 router.post("/appointment", async(req, res) => {
     try {
+
+        verifyUser();
+
         const { 
             scheduleDate, 
             fullName, 
@@ -186,5 +189,22 @@ router.get("/adoptionHistory", async(req, res) => {
         res.status(500).json({ error: "Failed to fetch adoption history" });
     }
 })
+
+const verifyUser = () => {
+    if (!req.isAuthenticated()) {
+        return res.status(401).json({ 
+            error: "Unauthorized",
+            message: "Please login to book."
+        });
+    }
+
+    if (!req.user || !req.user.userid) {
+        console.error("Invalid user object:", req.user);
+        return res.status(500).json({
+            error: "Authentication error",
+            message: "User information is incomplete"
+        });
+    }
+}
 
 export default router;
