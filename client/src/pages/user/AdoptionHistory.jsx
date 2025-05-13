@@ -35,7 +35,8 @@ export default function AdoptionHistory() {
             <option value="Declined">Declined</option>
         </select>
 
-        <table className='table table-striped'>
+       <div className="table-container">
+         <table className='table table-striped'>
               <thead>
                 <tr>
                   <th scope='col'>Date</th>
@@ -57,6 +58,7 @@ export default function AdoptionHistory() {
                 ))}
               </tbody>
             </table>
+       </div>
     </>
   )
 }

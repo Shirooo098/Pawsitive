@@ -57,30 +57,31 @@ export default function ManageAppointment() {
         <option value="Declined">Declined</option>
       </select>
 
-      <table className='table table-striped'>
-      <caption>A list of your upcoming appointments.</caption>
-      <thead>
-        <tr>
-          <th scope='col'>Date</th>
-          <th scope='col'>Full Name</th>
-          <th scope='col'>Contact</th>
-          <th scope='col'>Pet Type</th>
-          <th scope='col'>Service</th>
-          <th scope='col'>Status</th>
-          <th scope='col'>Edit</th>
-        </tr>
-      </thead>
-      <tbody>
-        {filterAppoinments.map((appt, index) => (
-         <AppoinmentRow
-          key={index}
-          appt={appt}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-         />
-        ))}
-      </tbody>
-    </table>
+      <div className="table-container">
+        <table className='table table-striped'>
+        <thead>
+          <tr>
+            <th scope='col'>Date</th>
+            <th scope='col'>Full Name</th>
+            <th scope='col'>Contact</th>
+            <th scope='col'>Pet Type</th>
+            <th scope='col'>Service</th>
+            <th scope='col'>Status</th>
+            <th scope='col'>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filterAppoinments.map((appt, index) => (
+          <AppoinmentRow
+            key={index}
+            appt={appt}
+            onUpdate={handleUpdate}
+            onDelete={handleDelete}
+          />
+          ))}
+        </tbody>
+        </table>
+      </div>
     </>
   )
 }

@@ -58,31 +58,33 @@ export default function ManageAdoption() {
         <option value="Declined">Declined</option>
       </select>
 
-      <table className='table table-striped'> 
-      <thead>
-        <tr>
-          <th scope='col'>Date</th>
-          <th scope='col'>Full Name</th>
-          <th scope='col'>Email</th>
-          <th scope='col'>Contact</th>
-          <th scope='col'>Reason</th>
-          <th scope='col'>Pet Image</th>
-          <th scope='col'>Pet Name</th>
-          <th scope='col'>Status</th>
-          <th scope='col'>Edit</th>
-        </tr>
-      </thead>
-      <tbody>
-        {filterAdoptions.map((adopt, index) => (
-         <AdoptRow
-          key={index}
-          adopt={adopt}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-         />
-        ))}
-      </tbody>
-    </table>
+      <div className="table-container">
+        <table className='table table-striped'> 
+        <thead>
+          <tr>
+            <th scope='col'>Date</th>
+            <th scope='col'>Full Name</th>
+            <th scope='col'>Email</th>
+            <th scope='col'>Contact</th>
+            <th scope='col'>Reason</th>
+            <th scope='col'>Pet Image</th>
+            <th scope='col'>Pet Name</th>
+            <th scope='col'>Status</th>
+            <th scope='col'>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filterAdoptions.map((adopt, index) => (
+          <AdoptRow
+            key={index}
+            adopt={adopt}
+            onUpdate={handleUpdate}
+            onDelete={handleDelete}
+          />
+          ))}
+        </tbody>
+      </table>
+      </div>
     </>
   )
 }

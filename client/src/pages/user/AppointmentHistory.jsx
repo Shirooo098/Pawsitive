@@ -40,7 +40,8 @@ export default function AppointmentHistory() {
                 <h1>Appointment History</h1>
             </div>
 
-            {appointments.length === 0 ? (
+            <div className="table-container">
+                {appointments.length === 0 ? (
                 <div className="no-appointments">
                     <p>No appointments found.</p>
                     <Link to="/appointment" className="schedule-link">Schedule an appointment</Link>
@@ -75,6 +76,7 @@ export default function AppointmentHistory() {
                     </tbody>
                 </table>
             )}
+            </div>
         </div>
         
     );
