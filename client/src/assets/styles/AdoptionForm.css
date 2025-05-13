@@ -13,3 +13,7 @@
 .adoption-form{
     border-radius: 8px;
 }
+.pet-container{
+    display: flex;
+    justify-content: center;
+}

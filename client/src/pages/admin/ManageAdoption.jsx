@@ -57,18 +57,18 @@ export default function ManageAdoption() {
         <option value="Approved">Approved</option>
       </select>
 
-      <table>
+      <table className='table table-striped'> 
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Full Name</th>
-          <th>Email</th>
-          <th>Contact</th>
-          <th>Reason</th>
-          <th>Pet Image</th>
-          <th>Pet Name</th>
-          <th>Status</th>
-          <th>Edit</th>
+          <th scope='col'>Date</th>
+          <th scope='col'>Full Name</th>
+          <th scope='col'>Email</th>
+          <th scope='col'>Contact</th>
+          <th scope='col'>Reason</th>
+          <th scope='col'>Pet Image</th>
+          <th scope='col'>Pet Name</th>
+          <th scope='col'>Status</th>
+          <th scope='col'>Edit</th>
         </tr>
       </thead>
       <tbody>
