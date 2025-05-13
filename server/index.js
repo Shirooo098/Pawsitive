@@ -274,7 +274,9 @@ app.post("/login", (req, res, next) => {
                         email: user.email,
                         type: user.type,
                         firstname: user.firstname,
-                        lastname: user.lastname
+                        lastname: user.lastname,
+                        contact: user.contact,
+                        address: user.address
                     },
                     sessionId: req.sessionID
                 });
