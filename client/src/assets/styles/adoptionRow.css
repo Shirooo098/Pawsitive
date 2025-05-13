@@ -1,0 +1,43 @@
+img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+.adoption-container{
+    width: 80svw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+.adoption{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+}
+.adoption-details{
+    display: flex;
+}
+
+.pet-information{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding-left: 12px ;
+}
+.pet-information > p {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+.status-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+.status p{
+    font-weight: 600;
+    font-size: 1.2rem;
+}
