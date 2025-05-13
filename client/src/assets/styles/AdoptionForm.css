@@ -2,12 +2,12 @@
 .pet-card img {
     border-radius: 1rem;
 }
-.text-center button {
+.text-center2 button {
     background-color: #64b5f6;
     color: white;
     border: none;
 }
-.text-center button:hover {
+.text-center2 button:hover {
     background-color: #ff4081;
 }
 .adoption-form{

@@ -45,8 +45,8 @@ export default function AdoptionForm() {
 
                 setAdoptionData((prev) => ({
                     ...prev,
-                    userID: userDetails.user.userID,
-                    fullName: `${userDetails.user.firstname}${userDetails.user.lastname}`,
+                    userID: userDetails.user.id,
+                    fullName: `${userDetails.user.firstname} ${userDetails.user.lastname}`,
                     email: userDetails.user.email,
                 }))
             }   
@@ -196,7 +196,7 @@ export default function AdoptionForm() {
                         onChange={handleChange}
                     />
                 </div>
-                <div className="text-center">
+                <div className="text-center2">
                     <button type="submit" className="btn btn-pawsitive px-5">
                         Submit Application
                     </button>

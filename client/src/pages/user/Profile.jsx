@@ -23,7 +23,10 @@ export default function Profile() {
         setSuccess(null);
 
         try {
-            const response = await profileUpdate(userData);
+            const response = await profileUpdate({
+                contact: userData.contact,
+                address: userData.address
+            });
             if(response.error){
                 setError(response.error);
             } else {
@@ -64,7 +67,8 @@ export default function Profile() {
     }
     useEffect(() => {
         const fetchUserInformation = async() => {
-            const userInformation = await checkAuth()
+            const userInformation = await checkAuth();
+            console.log("API Response Data:", userInformation);
             if(userInformation && userInformation.user){
                 setUserData(userInformation.user);
             }
@@ -72,9 +76,6 @@ export default function Profile() {
 
         fetchUserInformation();
     }, [])
-
-
-
 
     console.log("User Data:", userData);
 
@@ -128,7 +129,7 @@ export default function Profile() {
                                 <input type="text"
                                     name="contact"
                                     onChange={handleChange}
-                                    value={userData.contact || ''}
+                                    value={userData.contact}
                                     disabled={!isEditing}
                                 />
                             </div>
@@ -138,7 +139,7 @@ export default function Profile() {
                                 <input type="text"
                                     name="address"
                                     onChange={handleChange}
-                                    value={userData.address || ''}
+                                    value={userData.address}
                                     disabled={!isEditing}
                                 />
                             </div>
