@@ -46,6 +46,9 @@ function Navbar() {
                 <li className="nav-item">
                   <Link className="nav-link text-primary" to="/">Home</Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link text-primary" to="/about">About</Link>
+                </li>
                 <li className="nav-item dropdown">
                   <a
                     className="nav-link dropdown-toggle text-primary"
@@ -67,9 +70,6 @@ function Navbar() {
                     <li><Link className="dropdown-item" to="/surgery">Surgery</Link></li>
                     <li><Link className="dropdown-item" to="/vaccination">Vaccinations</Link></li>
                   </ul>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link text-primary" to="/about">About</Link>
                 </li>
                 {isLoggedIn ? (
                   <>
