@@ -46,14 +46,14 @@ export default function AppointmentHistory() {
                     <Link to="/appointment" className="schedule-link">Schedule an appointment</Link>
                 </div>
             ) : (
-                <table className="appointments-table">
+                <table className='table table-striped'>
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Pet Name</th>
-                            <th>Pet Type</th>
-                            <th>Service</th>
-                            <th>Status</th>
+                            <th scope='col'>Date</th>
+                            <th scope='col'>Pet Name</th>
+                            <th scope='col'>Pet Type</th>
+                            <th scope='col'>Service</th>
+                            <th scope='col'>Status</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -55,6 +55,7 @@ export default function ManageAdoption() {
         <option value="All">All</option>
         <option value="Pending">Pending</option>
         <option value="Approved">Approved</option>
+        <option value="Declined">Declined</option>
       </select>
 
       <table className='table table-striped'> 

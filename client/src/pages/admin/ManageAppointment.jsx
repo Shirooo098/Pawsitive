@@ -54,19 +54,20 @@ export default function ManageAppointment() {
         <option value="All">All</option>
         <option value="Pending">Pending</option>
         <option value="Approved">Approved</option>
+        <option value="Declined">Declined</option>
       </select>
 
-      <table>
+      <table className='table table-striped'>
       <caption>A list of your upcoming appointments.</caption>
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Full Name</th>
-          <th>Contact</th>
-          <th>Pet Type</th>
-          <th>Service</th>
-          <th>Status</th>
-          <th>Edit</th>
+          <th scope='col'>Date</th>
+          <th scope='col'>Full Name</th>
+          <th scope='col'>Contact</th>
+          <th scope='col'>Pet Type</th>
+          <th scope='col'>Service</th>
+          <th scope='col'>Status</th>
+          <th scope='col'>Edit</th>
         </tr>
       </thead>
       <tbody>
