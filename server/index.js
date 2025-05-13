@@ -459,8 +459,8 @@ passport.serializeUser((user, cb) => {
             type: user.type,
             firstname: user.firstname,
             lastname: user.lastname,
-            contact: req.user.contact,
-            address: req.user.address
+            contact: user.contact,
+            address: user.address
         };
         console.log('Serialized user data:', sessionUser);
         cb(null, sessionUser);
