@@ -57,7 +57,7 @@ router.post("/appointment", async(req, res) => {
                 petName, 
                 petAge, 
                 service,
-                req.user.userid
+                req.user.id
             ]
         );
         
@@ -71,7 +71,7 @@ router.post("/appointment", async(req, res) => {
 
 router.get('/history', async(req, res) => {
     try {
-        const userID = req.user.userid;
+        const userID = req.user.id;
         console.log("User data:", userID);
         const result = await req.db.query("SELECT * FROM appointments WHERE user_id = $1 ORDER BY appointment_date ASC",
             [userID]
@@ -137,7 +137,7 @@ router.post('/adopt', async(req, res) => {
         reason,
     } = req.body
 
-    const userID = req.user.userid;
+    const userID = req.user.id;
 
     try {
         const newAdoption = await req.db.query(
@@ -165,7 +165,7 @@ router.post('/adopt', async(req, res) => {
 
 router.get("/adoptionHistory", async(req, res) => {
     try {
-        const userID = req.user.userid; 
+        const userID = req.user.id; 
         console.log("User data:", userID);
 
         const result = await req.db.query(
