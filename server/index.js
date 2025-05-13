@@ -12,8 +12,6 @@ import userRoutes from './routes/userRoutes.js'
 import pgSession from 'connect-pg-simple';
 
 const app = express();
-// Railway automatically assigns PORT, default to 3001 locally to avoid conflicts
-const PORT = process.env.PORT || 3001;
 const saltRounds = 10;
 const PgSession = pgSession(session);
 
@@ -303,25 +301,12 @@ app.get("/appointment", (req, res) => {
     }
 });
 
-app.post("/logout", (req, res) => {
-    if (!req.isAuthenticated()) {
-        return res.json({ message: "Already logged out" });
-    }
-
-    // Get the session ID before destroying it
-    const sessionId = req.sessionID;
-
-    // Destroy the session first
-    req.session.destroy((err) => {
-        if (err) {
-            console.error("Error destroying session:", err);
-            return res.status(500).json({
-                error: "Logout failed",
-                message: "Failed to destroy session"
-            });
+app.post("/logout", async (req, res) => {
+    try {
+        if (!req.isAuthenticated()) {
+            return res.json({ message: "Already logged out" });
         }
 
-        // Then logout the user
         req.logout((err) => {
             if (err) {
                 console.error("Error during logout:", err);
@@ -331,23 +316,42 @@ app.post("/logout", (req, res) => {
                 });
             }
 
-            // Clear the session from the database (if using connect-pg-simple)
-            if (db) {
-                db.query('DELETE FROM user_sessions WHERE sid = $1', [sessionId])
-                    .catch(dbErr => console.error("Error cleaning session from DB:", dbErr));
-            }
+            const sessionId = req.sessionID;
 
-            // Clear the cookie
-            res.clearCookie('pawsitive.sid', {
-                path: '/',
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+            req.session.destroy(async (err) => {
+                if (err) {
+                    console.error("Error destroying session:", err);
+                    return res.status(500).json({
+                        error: "Logout failed",
+                        message: "Failed to destroy session"
+                    });
+                }
+
+                try {
+                    if (db) {
+                        await db.query('DELETE FROM user_sessions WHERE sid = $1', [sessionId]);
+                    }
+                } catch (dbErr) {
+                    console.error("Error cleaning session from DB:", dbErr);
+                }
+
+                res.clearCookie('pawsitive.sid', {
+                    path: '/',
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+                });
+
+                res.json({ message: "Logout successful" });
             });
-
-            res.json({ message: "Logout successful" });
         });
-    });
+    } catch (error) {
+        console.error("Unexpected error during logout:", error);
+        res.status(500).json({
+            error: "Logout failed",
+            message: "An unexpected error occurred"
+        });
+    }
 });
 
 app.get("/auth/check", async (req, res) => {
