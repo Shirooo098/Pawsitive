@@ -61,6 +61,7 @@ export default function AddAdmin() {
                         <label htmlFor="firstName">First Name</label>
                         <input type="text"
                         name='firstName'
+                        onChange={handleChange}
                         value={adminData.firstName} />
                     {errors.firstName && <span>{errors.firstName}</span>}
                     </div>
