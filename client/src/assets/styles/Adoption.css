@@ -6,7 +6,7 @@ tr td img{
 }
 
 /* Table Container */
-.table-container {
+.table-container, .appointment-history {
   padding: 20px;
   overflow-x: auto; /* Allows horizontal scrolling on small screens */
 }

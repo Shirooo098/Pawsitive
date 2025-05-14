@@ -40,7 +40,7 @@ export default function AppointmentHistory() {
                 <h1>Appointment History</h1>
             </div>
 
-            <div className="table-container">
+           
                 {appointments.length === 0 ? (
                 <div className="no-appointments">
                     <p>No appointments found.</p>
@@ -55,7 +55,6 @@ export default function AppointmentHistory() {
                             <th scope='col'>Pet Type</th>
                             <th scope='col'>Service</th>
                             <th scope='col'>Status</th>
-                            <th scope='col'>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -78,7 +77,7 @@ export default function AppointmentHistory() {
                 </table>
             )}
             </div>
-        </div>
+
         
     );
 }
