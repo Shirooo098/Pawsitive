@@ -24,7 +24,7 @@ import Surgery from "./pages/Surgery";
 import Vaccination from "./pages/Vaccination";
 import About from "./pages/About";
 import AdoptionHistory from "./pages/user/AdoptionHistory";
-
+import AddAdmin from "./pages/admin/AddAdmin";
 
 function App(){
     return (
@@ -68,6 +68,11 @@ function App(){
               path="admin/addPet"
               element={
                 <ProtectedRoute requiredType="admin" element={<AddPet/>}/>
+              }/>
+            <Route
+              path="admin/addAdmin"
+              element={
+                <ProtectedRoute requiredType="admin" element={<AddAdmin/>}/>
               }/>
             <Route
               path="admin/manageAppointment"

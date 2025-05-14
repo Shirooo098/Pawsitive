@@ -35,6 +35,9 @@ function Navbar() {
                   <Link className="nav-link text-primary" to="/admin/manageAppointment">Appointment</Link>
                 </li>
                 <li className="nav-item">
+                  <Link className="nav-link text-primary" to="/admin/addAdmin">Add Admin</Link>
+                </li>
+                <li className="nav-item">
                   <Link className="nav-link text-primary" to="/admin/addPet">Pet</Link>
                 </li>
                 <li className="nav-item">

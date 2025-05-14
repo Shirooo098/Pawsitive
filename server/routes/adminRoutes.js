@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 
+const saltRounds = 10;
 const router = express.Router();
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -205,5 +206,58 @@ router.patch('/updateAdoption/:id', isAdmin, async(req, res) => {
     }
 })
 
+
+router.post('/addAdmin', isAdmin, async(req, res) => {
+    try {
+        const { 
+            firstName,
+            lastName,
+            email, 
+            password, 
+            type
+        } = req.body;
+
+        const checkUser = await db.query("SEKECT * FROM users WHERE email = $1", [
+            email
+        ])
+
+        if(checkUser.rows.length > 0){
+            res.json({message: "Email already exists. Try logging in."})
+        }else{
+            await passwordHashing(res, firstName, lastName, email, password, type, saltRounds)
+        }
+
+
+        console.log("Admin added Successfully:", result.rows[0]);
+        res.json({ message : "Admin added successfully", admin: result.rows[0]});
+
+    } catch (error) {
+        console.error("Error Adding Admin", error);
+        res.status(500).json({error: "Failed to add admin."});
+    }
+})
+
+const passwordHashing = (
+    res, 
+    firstName, 
+    lastName, 
+    email,
+    password,
+    type,
+    saltRounds
+) => {
+    bcrypt.hash(password, saltRounds, async (err, hash) => {
+        if(err){
+            console.error("Error Hashing password:", err);
+        }else{
+            console.log("Hashed Password:", hash);
+            const newUser = await db.query(
+                "INSERT INTO users (firstname, lastname, email, password, type) VALUES($1, $2, $3, $4, $5)",
+                [firstName, lastName, email, hash, type]
+            );
+            res.json(newUser.rows[0]);
+        }
+});
+}
 
 export default router;
