@@ -22,6 +22,7 @@ export default function AdoptionHistory() {
     }, [])
   return (
     <>
+     <div className="table-container">
         <div>
             <h1>Adoption History</h1>
         </div>
@@ -35,7 +36,6 @@ export default function AdoptionHistory() {
             <option value="Declined">Declined</option>
         </select>
 
-       <div className="table-container">
          <table className='table table-striped'>
               <thead>
                 <tr>
@@ -47,6 +47,7 @@ export default function AdoptionHistory() {
                   <th scope='col'>Pet Image</th>
                   <th scope='col'>Pet Name</th>
                   <th scope='col'>Status</th>
+                  <th scope='col'>Action</th>
                 </tr>
               </thead>
               <tbody>
