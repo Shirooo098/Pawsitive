@@ -225,7 +225,7 @@ router.post('/addAdmin', isAdmin, async(req, res) => {
         if(checkUser.rows.length > 0){
             res.json({message: "Email already exists. Try logging in."})
         }else{
-            await passwordHashing(res, firstName, lastName, email, password, type, saltRounds)
+            passwordHashing(res, firstName, lastName, email, password, type, saltRounds)
         }
     } catch (error) {
         console.error("Error Adding Admin", error);
@@ -253,7 +253,7 @@ const passwordHashing = (
             );
             res.json(newUser.rows[0]);
         }
-});
+    });
 }
 
 export default router;
