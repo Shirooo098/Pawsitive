@@ -4,3 +4,95 @@ tr td img{
     width: 100px;
     height: 100px;
 }
+
+/* Table Container */
+.table-container {
+  padding: 20px;
+  overflow-x: auto; /* Allows horizontal scrolling on small screens */
+}
+
+/* Table Styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+  /* Make table display as blocks */
+  .table, .table thead, .table tbody, .table th, .table td, .table tr {
+    display: block;
+  }
+  
+  /* Hide table headers (but keep for screen readers) */
+  .table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .table tr {
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+  }
+  
+  .table td {
+    /* Behave like rows */
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 50%;
+    text-align: left;
+  }
+  
+  /* Label the data */
+  .table td:before {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    content: attr(data-label);
+    font-weight: bold;
+    text-align: left;
+  }
+}
+
+/* Filter Styling */
+.table-container select {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  margin-bottom: 15px;
+}
+
+/* Image Styling */
+.table img {
+  max-width: 80px;
+  height: auto;
+  border-radius: 4px;
+}
+
+/* Status Badges */
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.status-approved {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.status-declined {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
