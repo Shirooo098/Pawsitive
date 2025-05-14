@@ -93,10 +93,7 @@ function LoginPage(){
                            
                         </div>
 
-                        <div className="login-container">
-                            <button className="btn btn-primary" type="submit">Login</button>
-                        </div>
-
+                        <button className="loginBtn btn-primary" type="submit">Login</button>
                         
                         <div className="login-link">
                             <p>Don't have an account? <Link to="/register">Register</Link></p>
