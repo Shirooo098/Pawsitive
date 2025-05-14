@@ -1,7 +1,7 @@
 {
   "version": 2,
   "builds": [
-    { 
+    {
       "src": "./server/index.js",
       "use": "@vercel/node"
     },
@@ -9,7 +9,7 @@
       "src": "client/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist"  
+        "distDir": "dist"
       }
     }
   ],
@@ -18,22 +18,18 @@
     {
       "src": "/server/(.*)",
       "dest": "/server/index.js",
-      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
-      "headers": {
-        "Access-Control-Allow-Origin": "*"
-      }
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"]
     },
 
     {
-      "src": "/[^.]+",
-      "dest": "/",
-      "status": 200
+      "src": "/(.*\\.\\w+)",
+      "dest": "/client/$1"
     },
     
     {
       "src": "/(.*)",
-      "dest": "/client",
-      "continue": true
+      "dest": "/client/index.html",
+      "status": 200
     }
   ]
 }
