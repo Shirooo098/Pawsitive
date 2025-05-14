@@ -13,8 +13,7 @@
       }
     }
   ],
-  "rewrites": [
-
+  "routes": [
     {
       "src": "/server/(.*)",
       "dest": "/server/index.js",
@@ -28,8 +27,7 @@
     
     {
       "src": "/(.*)",
-      "dest": "/client/index.html",
-      "status": 200
+      "dest": "/client/index.html"
     }
   ]
 }
