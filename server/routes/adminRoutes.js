@@ -218,7 +218,7 @@ router.post('/addAdmin', isAdmin, async(req, res) => {
             type
         } = req.body;
 
-        const checkUser = await req.db.query("SELECT * FROM users WHERE email = $1", [
+        const checkUser = await db.query("SELECT * FROM users WHERE email = $1", [
             email
         ])
 
