@@ -111,10 +111,7 @@
     }
 
     .btn-primary {
-        background-color: #e592ae; 
         border: none;
-        padding: 12px 24px;
-        font-size: 1.2rem;
         border-radius: 8px;
         font-weight: bold;
         transition: background-color 0.3s ease-in-out;
