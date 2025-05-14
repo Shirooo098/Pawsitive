@@ -1,5 +1,6 @@
 import express from 'express';
 import multer from 'multer';
+import bcrypt from "bcrypt";
 
 const saltRounds = 10;
 const router = express.Router();
