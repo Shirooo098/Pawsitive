@@ -16,7 +16,7 @@ body{
     align-items: center;
 }
 
-form{
+.authForm{
     width: clamp(10vw, 500px, 90vw);
     background-color: #fff;
     box-shadow: 0 0 10px rgba(40, 5, 241, 0.1);

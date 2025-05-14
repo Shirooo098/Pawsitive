@@ -8,7 +8,6 @@ export const uploadImage = async (formData) => {
             withCredentials: true
         });
         
-        console.log("Image uploaded successfully", response.data);
         alert("Successfully Added Data...");
         return response.data;
     } catch (error) {

@@ -3,14 +3,13 @@ import { API_BASE_URL } from './auth';
 
 export const sendAppointment = async (appointmentData) => {
     try {
-        console.log("Sending appointment data:", appointmentData)
 
         const response = await axios.post(`${API_BASE_URL}/appointment`, appointmentData, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
         });
 
-        console.log(response.data);
+        alert("Appointment request sent successfully!");
         return response.data
     } catch (error) {
         console.error("Error:", error.response ? error.response.data : error.message);
@@ -25,7 +24,6 @@ export const fetchAppointment = async() => {
             withCredentials: true
         });
 
-        console.log("Appointments fetched:", response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching appointments:', error);

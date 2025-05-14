@@ -16,11 +16,6 @@ export default function AdoptUserRow({userAdopt, onDelete}) {
             <td><img src={`${API_BASE_URL}${userAdopt.petimage}`} alt={userAdopt.petname} /></td>
             <td>{userAdopt.petname}</td>
             <td>{status}</td>
-            <td><button className="btn btn-danger" onClick={() => onDelete(userAdopt.id)}>Delete</button> </td>
-            { /* 
-                Add Complete Status in adoption
-            */}
-
         </tr>
     )
 }

@@ -7,7 +7,6 @@ export const fetchAdoptPets = async() => {
             withCredentials: true
         });
 
-        console.log(res.data);
         return res.data;
     } catch (error) {
         console.error("Error fetching image:", error);
@@ -19,9 +18,8 @@ export const fetchAdoptPetDetails = async(id) => {
         const res = await axios.get(`${API_BASE_URL}/adopt/${id}`, {
             withCredentials: true
         });
-        console.log(res.data);
+
         return res.data;
-        
     } catch (error) {
         console.error("Error fetching pet details:", error);
 
@@ -35,9 +33,7 @@ export const sendAdoption = async(adoptionData, id) => {
             withCredentials: true
         })
 
-        console.log("Adoption data sent:", res.data);
         alert("Adoption Request Sent Successfully!");
-        
         return res.data;
     } catch (error) {
         console.error("Error:", error.response ? error.response.data : error.message);
@@ -50,7 +46,6 @@ export const fetchAdoptionHistory = async() => {
             withCredentials: true
         });
 
-        console.log("Adoption History:", res.data);
         return res.data;
     } catch (error) {
         console.error("Error fetching adoption history:", error);

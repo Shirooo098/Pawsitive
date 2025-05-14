@@ -64,7 +64,7 @@ function LoginPage(){
     return(
         <div>
             <div className="register-container">
-                    <form onSubmit={handleSubmit}>
+                    <form className='authForm' onSubmit={handleSubmit}>
                         <div className="formHeader">
                             <h1>Login Form</h1>
 

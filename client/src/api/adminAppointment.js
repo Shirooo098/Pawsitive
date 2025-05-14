@@ -23,7 +23,7 @@ export const deleteAppointment = async(id) => {
         });
         
         alert('Appointment Successfully Deleted');
-        console.log("Appointment deleted successfully", response.data);
+        return response.data;
     } catch (error) {
         console.error("Error deleting Appointment:", id);
     }
@@ -36,7 +36,6 @@ export const fetchUserAppointment = async(id) =>{
             withCredentials: true
         });
         
-        console.log("Appointment fetch successfully", response.data);
         return response.data
     } catch (error) {
         console.error("Error fetching appointment:", id);
@@ -53,7 +52,7 @@ export const updateUserAppointment = async(id, status) => {
             }
         );
 
-        console.log("Appointment updated successfully", response.data);
+        alert("Appointment updated successfully", response.data);
         return response.data;
     } catch (error) {
         console.error("Error updating appointment:", id);

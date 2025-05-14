@@ -47,7 +47,6 @@ export default function AdoptionHistory() {
                   <th scope='col'>Pet Image</th>
                   <th scope='col'>Pet Name</th>
                   <th scope='col'>Status</th>
-                  <th scope='col'>Action</th>
                 </tr>
               </thead>
               <tbody>

@@ -31,7 +31,7 @@ function Appointment(){
         try {
             const res = await sendAppointment(appointmentData);
 
-            navigate("/appointment");
+            navigate("/");
             if(res.error){
                 setErrors({ server: res.error });
             }
@@ -69,7 +69,7 @@ function Appointment(){
 
                 setAppointmentData((prev) => ({
                     ...prev,
-                    fullName: `${userDetails.user.firstname}${userDetails.user.lastname}`,
+                    fullName: `${userDetails.user.firstname} ${userDetails.user.lastname}`,
                     email: userDetails.user.email,
                     contact: userDetails.user.contact,
                     address: userDetails.user.address
@@ -87,7 +87,6 @@ function Appointment(){
 
     return(
         <>
-            <h1>Appointment Page</h1>
             <div className="appointment-container">
                 <form onSubmit={handleSubmit}>
                     <div className="formHeader">

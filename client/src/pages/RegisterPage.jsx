@@ -78,7 +78,7 @@ function RegisterPage(){
         <div>
 
             <div className="register-container">
-                    <form onSubmit={handleSubmit}>
+                    <form className="authForm" onSubmit={handleSubmit}>
                         <div className="formHeader">
                             <h1>Register Form</h1>
 

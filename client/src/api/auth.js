@@ -11,7 +11,6 @@ export const registerValidation = async (formData) => {
             headers: { "Content-Type": "application/json" }
         });
 
-        console.log(response.data);
         return response.data;
 
     } catch (error) {
@@ -29,7 +28,6 @@ export const loginValidation = async (loginData, setIsLoggedIn, setUser) => {
             withCredentials: true
         });
 
-        console.log(response.data.user);
         setIsLoggedIn(true);
         setUser(response.data.user)
         return response.data;
@@ -61,7 +59,6 @@ export const profileUpdate = async(userData) => {
             withCredentials: true
         });
 
-        console.log("Response:", response.data);
         return response.data;
     } catch (error) {
         console.error("Error:", error.response?.data?.message || error.message);
