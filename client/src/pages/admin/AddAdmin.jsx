@@ -33,7 +33,7 @@ export default function AddAdmin() {
 
         setAdminData((prev) => ({
             ...prev,
-            name: value,
+            [name]: value,
             type: 'admin'
         }))
     }
