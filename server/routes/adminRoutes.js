@@ -227,11 +227,6 @@ router.post('/addAdmin', isAdmin, async(req, res) => {
         }else{
             await passwordHashing(res, firstName, lastName, email, password, type, saltRounds)
         }
-
-
-        console.log("Admin added Successfully:", result.rows[0]);
-        res.json({ message : "Admin added successfully", admin: result.rows[0]});
-
     } catch (error) {
         console.error("Error Adding Admin", error);
         res.status(500).json({error: "Failed to add admin."});
