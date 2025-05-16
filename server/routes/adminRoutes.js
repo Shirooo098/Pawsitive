@@ -254,7 +254,7 @@ router.delete('/deleteAdmin/:id', isAdmin, async(req, res) => {
 
     console.log(`Admin ID ${id}`)
     try {
-        const result = await req.db.query("DELETE FROM users WHERE id = $1 RETURNING *",
+        const result = await req.db.query("DELETE FROM users WHERE userid = $1 RETURNING *",
             [id]
         )
         if (result.rowCount === 0){
