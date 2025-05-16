@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import {useNavigate} from "react-router-dom";
-import { addAdmin } from '../../api/addAdmin';
+import { addAdmin, deleteAdmin } from '../../api/addAdmin';
+import AdminUserRow from '../../components/AdminUserRow';
 
 export default function AddAdmin() {
     const [errors, setErrors] = useState({});
@@ -12,6 +13,7 @@ export default function AddAdmin() {
         password: '',
         type: 'admin'
     })
+    const [adminUsers, setAdminUsers] = useState([]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,6 +49,30 @@ export default function AddAdmin() {
             type: 'admin'
         })
     }
+
+    const handleDelete = async(id) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this Admin?");
+        if(!confirmDelete) return;
+
+        try {
+            await deleteAdmin(id);
+
+            setAdminUsers(prev => prev.filter(admin => admin.id !== id));
+        } catch (error) {
+            console.error("Error deleting admin:", error);
+            alert("Failed to delete admin");
+        }
+    }
+
+    useEffect(() => {
+        const fetchAdminUsers = async() => {
+            const data = await fetchAdmins();
+            console.log("Admin Users from backend: ", data);
+            setAdminUsers(data || []);
+        }
+
+        fetchAdminUsers();
+    }, [])
 
   return (
     <>
@@ -105,10 +131,32 @@ export default function AddAdmin() {
                 </div>
 
                 <div className="appointmentBtn-container">
-                        <button className="btn btn-primary" type="submit">Submit</button>
-                        <button className="btn btn-danger" type="button" onClick={handleCancel}>Cancel</button>
-                    </div>
+                    <button className="btn btn-primary" type="submit">Submit</button>
+                    <button className="btn btn-danger" type="button" onClick={handleCancel}>Cancel</button>
+                </div>
             </form>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th scope='col'>First Name</th>
+                        <th scope='col'>Last Name</th>
+                        <th scope='col'>Email</th>
+                        <th scope='col'>Type</th>
+                        <th scope='col'>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {adminUsers.map((admin, index) => {
+                        <AdminUserRow
+                            key={index}
+                            adminUsers={admin}
+                            onDelete={handleDelete}
+                        />
+                    })}
+                </tbody>
+            </table>
+
         </div>
     </>
   )

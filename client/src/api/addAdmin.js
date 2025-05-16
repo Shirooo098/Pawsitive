@@ -15,3 +15,29 @@ export const addAdmin = async (adminData) => {
         console.error("Error adding Admin", error)
     }
 }
+
+export const fetchAdmins = async () => {
+    try {
+        const response = await axios.get(`${AOI_BASE_URL}/admin/addAdmin`, {
+            headers: { "Content-Type" : "application/json" },
+            withCredentials: true,
+        })
+
+        return response.data
+    } catch (error) {
+        console.error("Error fetching Admins", error)
+    }
+}
+
+export const deleteAdmin = async (id) => {
+    try {
+        const response = await axios.delete(`${API_BASE_URL}/admin/deleteAdmin/${id}`, {
+            headers: { "Content-Type" : "application/json" },
+            withCredentials: true,
+        })
+
+        return response.data
+    } catch (error) {
+        console.error("Error deleting Admin", error)
+    }
+}

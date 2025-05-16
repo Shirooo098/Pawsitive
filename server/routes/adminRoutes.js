@@ -233,6 +233,41 @@ router.post('/addAdmin', isAdmin, async(req, res) => {
     }
 })
 
+router.get('/addAdmin', isAdmin, async(req,res) => {
+    try {
+        const res = await req.db.query(`SELECT * FROM users WHERE type ='admin'`);
+        
+        if(res.rowCount === 0){
+            return res.status(404).json({ error: "No admins found"});
+        }
+
+        console.log("Sucessfully fetching Admins:", res.rows);
+        res.json(res.rows);
+    } catch (error) {
+        console.error("Error Fetching Admins:", error);
+        res.status(500).json({ error: "Failed to fetch admins"});
+    }
+})
+
+router.delete('/deleteAdmin/:id', isAdmin, async(req, res) => {
+    const {id} = req.params;
+
+    console.log(`Admin ID ${id}`)
+    try {
+        const result = await req.db.query("DELETE FROM users WHERE id = $1 RETURNING *",
+            [id]
+        )
+        if (result.rowCount === 0){
+        return res.status(404).json({ error : "Admin not found"})
+        }
+
+        res.json({ message: 'Admin deleted successfully', admin: result.rows[0]})
+    } catch (error) {
+        console.error("Error Deleting Admin:", error);
+        res.status(500).json({ error: 'Failed to delete Admin'});
+    }
+})
+
 const passwordHashing = (
     res, 
     firstName, 

@@ -35,7 +35,8 @@ export default function ManageAdoption() {
 
         setAdoptRequest(prev => prev.filter(adopt => adopt.id !== id));
     } catch (error) {
-      
+        console.error("Error deleting adoption request:", error);
+        alert("Failed to delete adoption request");
     }
   }
   const handleUpdate = (id) => {

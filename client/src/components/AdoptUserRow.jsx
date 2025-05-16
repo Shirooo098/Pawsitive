@@ -1,7 +1,7 @@
 import React from 'react'
 import { API_BASE_URL } from '../api/auth';
 
-export default function AdoptUserRow({userAdopt, onDelete}) {
+export default function AdoptUserRow({userAdopt}) {
     const date = new Date(userAdopt.scheduledate)
     const formatDate = date.toLocaleDateString('en-CA');
     const status = userAdopt.status.charAt(0).toUpperCase() + userAdopt.status.slice(1);    
