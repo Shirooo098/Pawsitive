@@ -9,7 +9,7 @@ export const addAdmin = async (adminData) => {
         })
 
         console.log("Admin Data:", response.data)
-        alert("Successfully added Admin0", response.data);
+        alert("Successfully added Admin", response.data);
         return response.data
     } catch (error) {
         console.error("Error adding Admin", error)

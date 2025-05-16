@@ -58,7 +58,8 @@ export default function AddAdmin() {
         try {
             await deleteAdmin(id);
 
-            setAdminUsers(prev => [...prev.filter(admin => admin.id !== id)]);
+            const data = await fetchAdmins();
+            setAdminUsers(data || []);
         } catch (error) {
             console.error("Error deleting admin:", error);
             alert("Failed to delete admin");
