@@ -18,7 +18,7 @@ export const addAdmin = async (adminData) => {
 
 export const fetchAdmins = async () => {
     try {
-        const response = await axios.get(`${AOI_BASE_URL}/admin/addAdmin`, {
+        const response = await axios.get(`${API_BASE_URL}/admin/addAdmin`, {
             headers: { "Content-Type" : "application/json" },
             withCredentials: true,
         })
