@@ -156,7 +156,6 @@ export default function AddAdmin() {
                     })}
                 </tbody>
             </table>
-
         </div>
     </>
   )
