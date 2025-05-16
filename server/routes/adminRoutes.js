@@ -218,14 +218,14 @@ router.post('/addAdmin', isAdmin, async(req, res) => {
             type
         } = req.body;
 
-        const checkUser = await db.query("SELECT * FROM users WHERE email = $1", [
+        const checkUser = await req.db.query("SELECT * FROM users WHERE email = $1", [
             email
         ])
 
         if(checkUser.rows.length > 0){
             res.json({message: "Email already exists. Try logging in."})
         }else{
-            passwordHashing(res, firstName, lastName, email, password, type, saltRounds)
+            passwordHashing(res, firstName, lastName, email, password, type, saltRounds, req.db)
         }
     } catch (error) {
         console.error("Error Adding Admin", error);
@@ -240,7 +240,8 @@ const passwordHashing = (
     email,
     password,
     type,
-    saltRounds
+    saltRounds, 
+    db
 ) => {
     bcrypt.hash(password, saltRounds, async (err, hash) => {
         if(err){
