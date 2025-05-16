@@ -51,6 +51,7 @@ export default function AddAdmin() {
     }
 
     const handleDelete = async(id) => {
+        console.log("Deleting admin with ID:", id);
         const confirmDelete = window.confirm("Are you sure you want to delete this Admin?");
         if(!confirmDelete) return;
 
