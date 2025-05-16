@@ -147,13 +147,13 @@ export default function AddAdmin() {
                     </tr>
                 </thead>
                 <tbody>
-                    {adminUsers.map((admin, index) => {
+                    {adminUsers.map((admin, index) => (
                         <AdminUserRow
                             key={index}
                             adminUsers={admin}
                             onDelete={handleDelete}
                         />
-                    })}
+                    ))}
                 </tbody>
             </table>
         </div>
