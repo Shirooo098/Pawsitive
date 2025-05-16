@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {useNavigate} from "react-router-dom";
-import { addAdmin, deleteAdmin } from '../../api/addAdmin';
+import { fetchAdmins, deleteAdmin } from '../../api/addAdmin';
 import AdminUserRow from '../../components/AdminUserRow';
 
 export default function AddAdmin() {
