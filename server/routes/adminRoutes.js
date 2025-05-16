@@ -244,7 +244,7 @@ const passwordHashing = (
     db
 ) => {
     bcrypt.hash(password, saltRounds, async (err, hash) => {
-        if(err){
+        if(err){``
             console.error("Error Hashing password:", err);
         }else{
             console.log("Hashed Password:", hash);
