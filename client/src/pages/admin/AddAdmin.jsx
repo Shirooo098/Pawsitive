@@ -51,7 +51,7 @@ export default function AddAdmin() {
   return (
     <>
         <div className="addAdmin-container">
-            <form onSubmit={handleSubmit}>
+            <form className="adminForm" onSubmit={handleSubmit}>
                 <div className="formHeader">
                     <h1>Add Admin</h1>
                 </div>
