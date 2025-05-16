@@ -109,3 +109,7 @@ input:focus{
     align-items: center;
     padding: 5em;
 }
+
+.addAdmin-container, table{
+    margin: 1em;
+}

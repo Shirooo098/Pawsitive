@@ -136,7 +136,7 @@ export default function AddAdmin() {
                 </div>
             </form>
 
-            <table>
+            <table className='table table-striped'>
                 <thead>
                     <tr>
                         <th scope='col'>First Name</th>
